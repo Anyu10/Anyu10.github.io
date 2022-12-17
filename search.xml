@@ -33,6 +33,8 @@
 <li>Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.</li>
 <li>Reduce: merges all intermediate values associated with the same intermediate key.</li>
 </ul>
+<span id="more"></span>
+
 <p>runtime system responsibility:</p>
 <ul>
 <li>Partitioning the input data.</li>
@@ -45,8 +47,6 @@
 <li>Special purpose coding on distributed systems is hard.</li>
 <li>Hide the messy details of parallelization, fault-tolerance, data distribution and load balancing.</li>
 </ul>
-<span id="more"></span>
-
 <h1 id="Programming-Model"><a href="#Programming-Model" class="headerlink" title="Programming Model"></a>Programming Model</h1><h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>map and reduce functions are deterministic functions: always get the same output with same input.</p>
 <p>map: (k1, v1) –&gt; list(k2, v2)</p>
 <p>reduce: (k2, list(v2)) –&gt; list(v3)</p>
@@ -62,7 +62,7 @@
 </li>
 <li><p>Inverted Index: The map function parses each document, and emits a sequence of $&lt;word, document ID&gt;$ pairs. The reduce function accepts all pairs for a given word, sorts the corresponding document IDs and emits a $&lt;word, list(document ID)&gt;$ pair. The set of all output pairs forms a simple inverted index. It is easy to augment this computation to keep track of word positions.</p>
 </li>
-<li><p>Distributed Sort: The map function extracts the key from each record, and emits a $&lt;key, record&gt;$ pair. The reduce function emits all pairs unchanged. This computation depends on the partitioning facilities described in Section 4.1 and the ordering properties described in Section 4.2. (TODO)</p>
+<li><p>Distributed Sort: The map function extracts the key from each record, and emits a $&lt;key, record&gt;$ pair. The reduce function emits all pairs unchanged. This computation depends on the partitioning functions and the R files’ ordering properties.</p>
 </li>
 </ul>
 <h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><p>Implementation environment:</p>
@@ -504,7 +504,7 @@
   <entry>
     <title>RISC-V</title>
     <url>/2022/11/17/RISC-V/</url>
-    <content><![CDATA[<h1 id="机器的特权状态"><a href="#机器的特权状态" class="headerlink" title="机器的特权状态"></a>机器的特权状态</h1><p>CSR (Control and Status Registers) : 64bits</p>
+    <content><![CDATA[<p>CSR (Control and Status Registers) : 64bits</p>
 <span id="more"></span>
 
 <table>
