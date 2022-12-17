@@ -17,19 +17,21 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Materials:  concurrency is not parallelism rethinking classical concurrency patterns go sync package go concurrency patterns go advanced concurrency patterns   Concurrency OverviewWhy concurrency?  I">
+    <meta name="description" content="Materials:  concurrency is not parallelism rethinking classical concurrency patterns go sync package go concurrency patterns go advanced concurrency patterns">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go Concurrency">
 <meta property="og:url" content="http://anyu10.github.io/2022/12/15/Go-Concurrency/index.html">
 <meta property="og:site_name" content="Anyu">
-<meta property="og:description" content="Materials:  concurrency is not parallelism rethinking classical concurrency patterns go sync package go concurrency patterns go advanced concurrency patterns   Concurrency OverviewWhy concurrency?  I">
+<meta property="og:description" content="Materials:  concurrency is not parallelism rethinking classical concurrency patterns go sync package go concurrency patterns go advanced concurrency patterns">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="d:\Blog\source_images\image-20221216234927956.png">
 <meta property="article:published_time" content="2022-12-15T08:09:36.000Z">
-<meta property="article:modified_time" content="2022-12-17T11:05:17.459Z">
+<meta property="article:modified_time" content="2022-12-17T13:37:53.127Z">
 <meta property="article:author" content="Anyu Elin">
 <meta property="article:tag" content="Go">
 <meta property="article:tag" content="Concurrency">
@@ -227,7 +229,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-12-17 19:05:17" itemprop="dateModified" datetime="2022-12-17T19:05:17+08:00">2022-12-17</time>
+      <time title="Modified: 2022-12-17 21:37:53" itemprop="dateModified" datetime="2022-12-17T21:37:53+08:00">2022-12-17</time>
     </span>
 
   
@@ -265,6 +267,8 @@
 <li><a target="_blank" rel="noopener" href="https://blogtitle.github.io/categories/concurrency/">go advanced concurrency patterns</a></li>
 </ul>
 </blockquote>
+<span id="more"></span>
+
 <h1 id="Concurrency-Overview"><a href="#Concurrency-Overview" class="headerlink" title="Concurrency Overview"></a>Concurrency Overview</h1><p>Why concurrency?</p>
 <ul>
 <li>I&#x2F;O concurrency (network capacity, disk capacity)</li>
@@ -640,10 +644,17 @@
 
 
 
+  <script src="/js/third-party/pace.js"></script>
 
   
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
 
 
 

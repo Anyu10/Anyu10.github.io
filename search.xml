@@ -45,6 +45,8 @@
 <li>Special purpose coding on distributed systems is hard.</li>
 <li>Hide the messy details of parallelization, fault-tolerance, data distribution and load balancing.</li>
 </ul>
+<span id="more"></span>
+
 <h1 id="Programming-Model"><a href="#Programming-Model" class="headerlink" title="Programming Model"></a>Programming Model</h1><h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>map and reduce functions are deterministic functions: always get the same output with same input.</p>
 <p>map: (k1, v1) –&gt; list(k2, v2)</p>
 <p>reduce: (k2, list(v2)) –&gt; list(v3)</p>
@@ -208,6 +210,8 @@
 <li><a href="https://blogtitle.github.io/categories/concurrency/">go advanced concurrency patterns</a></li>
 </ul>
 </blockquote>
+<span id="more"></span>
+
 <h1 id="Concurrency-Overview"><a href="#Concurrency-Overview" class="headerlink" title="Concurrency Overview"></a>Concurrency Overview</h1><p>Why concurrency?</p>
 <ul>
 <li>I&#x2F;O concurrency (network capacity, disk capacity)</li>
@@ -501,6 +505,8 @@
     <title>RISC-V</title>
     <url>/2022/11/17/RISC-V/</url>
     <content><![CDATA[<h1 id="机器的特权状态"><a href="#机器的特权状态" class="headerlink" title="机器的特权状态"></a>机器的特权状态</h1><p>CSR (Control and Status Registers) : 64bits</p>
+<span id="more"></span>
+
 <table>
 <thead>
 <tr>
