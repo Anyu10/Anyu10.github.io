@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="机器的特权状态CSR (Control and Status Registers) : 64bits    register function    mscratch Machine Scratch。保存机器模式的栈顶指针，这一点在离开机器模式进入低特权级模式（如监管模式）时非常重要，因为一旦在低特权级模式发生异常，将可能会回到机器模式处理，这时机器模式需要有自己的栈来保存M模式下的执行所调用的函">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RISC-V">
+<meta property="og:url" content="http://anyu10.github.io/2022/11/17/RISC-V/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="机器的特权状态CSR (Control and Status Registers) : 64bits    register function    mscratch Machine Scratch。保存机器模式的栈顶指针，这一点在离开机器模式进入低特权级模式（如监管模式）时非常重要，因为一旦在低特权级模式发生异常，将可能会回到机器模式处理，这时机器模式需要有自己的栈来保存M模式下的执行所调用的函">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-11-17T07:12:00.000Z">
+<meta property="article:modified_time" content="2022-12-16T16:00:09.050Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="RISC-V">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2022/11/17/RISC-V/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2022/11/17/RISC-V/","path":"2022/11/17/RISC-V/","title":"RISC-V"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RISC-V | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E7%9A%84%E7%89%B9%E6%9D%83%E7%8A%B6%E6%80%81"><span class="nav-number">1.</span> <span class="nav-text">机器的特权状态</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2022/11/17/RISC-V/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RISC-V | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RISC-V
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-11-17 15:12:00" itemprop="dateCreated datePublished" datetime="2022-11-17T15:12:00+08:00">2022-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-17 00:00:09" itemprop="dateModified" datetime="2022-12-17T00:00:09+08:00">2022-12-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="机器的特权状态"><a href="#机器的特权状态" class="headerlink" title="机器的特权状态"></a>机器的特权状态</h1><p>CSR (Control and Status Registers) : 64bits</p>
+<table>
+<thead>
+<tr>
+<th>register</th>
+<th>function</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mscratch</td>
+<td>Machine Scratch。保存机器模式的栈顶指针，这一点在离开机器模式进入低特权级模式（如监管模式）时非常重要，因为一旦在低特权级模式发生异常，将可能会回到机器模式处理，这时机器模式需要有自己的栈来保存M模式下的执行所调用的函数参数和返回地址。</td>
+</tr>
+<tr>
+<td>mstatus</td>
+<td>Machine Status。保存机器状态的寄存器。</td>
+</tr>
+<tr>
+<td>mtvec</td>
+<td>Machine Trap Vector。指向中断处理函数的入口地址。</td>
+</tr>
+<tr>
+<td>mepc</td>
+<td>Machine Exception PC。指向发生异常的那条指令的地址。</td>
+</tr>
+<tr>
+<td>mcause</td>
+<td>Machine Cause。发生中断的原因，如果发生的中断是异常，其最高位为0，低位为异常编号；如果发生的是其他类型的中断，则其最高位为1，低位为中断编号。</td>
+</tr>
+<tr>
+<td>mtval</td>
+<td>Machine Trap Value。异常发生时，附带的参数值。例如，当缺页异常发生时，mtval的值就是程序想要访问的虚地址。</td>
+</tr>
+<tr>
+<td>mie</td>
+<td>Machine Interrupt Enable。中断开启寄存器。</td>
+</tr>
+<tr>
+<td>mip</td>
+<td>Machine Interrupt Pending。中断等待寄存器。</td>
+</tr>
+<tr>
+<td>mideleg</td>
+<td>Machine Interrupt Delegation Registers。中断代理寄存器。</td>
+</tr>
+<tr>
+<td>medeleg</td>
+<td>Machine Exception Delegation Registers。异常代理寄存器。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sscratch</td>
+<td>Supervisor Scratch。保存监管模式的栈顶指针，这一点在离开机器模式进入低特权级模式（如用户模式）时非常重要，因为一旦在低特权级模式发生异常，将可能会回到监管模式处理（假设已通过异常授权），这时监管模式需要用自己的栈保存程序执行的返回地址等。</td>
+</tr>
+<tr>
+<td>sstatus</td>
+<td>Supervisor Status。保存监管状态的寄存器。</td>
+</tr>
+<tr>
+<td>stvec</td>
+<td>Supervisor Trap Vector。指向监管模式中断处理函数的入口地址。</td>
+</tr>
+<tr>
+<td>sepc</td>
+<td>Supervisor Exception PC。指向发生异常的那条指令的地址。</td>
+</tr>
+<tr>
+<td>scause</td>
+<td>Supervisor Cause。发生中断的原因，如果发生的中断是异常，其最高位为0，低位为异常编号；如果发生的是其他中断其最高位为1，低位为中断编号。</td>
+</tr>
+<tr>
+<td>stval</td>
+<td>Supervisor Trap Value。异常发生时，附带的参数值。例如，当缺页异常发生时，mtval的值就是程序想要访问的虚地址。</td>
+</tr>
+<tr>
+<td>sie</td>
+<td>Supervisor Interrupt Enable。中断开启寄存器。</td>
+</tr>
+<tr>
+<td>sip</td>
+<td>Supervisor Interrupt Pending。中断等待寄存器。</td>
+</tr>
+<tr>
+<td>sideleg</td>
+<td>Supervisor Interrupt Delegation Registers。中断代理寄存器。</td>
+</tr>
+<tr>
+<td>sedeleg</td>
+<td>Supervisor Exception Delegation Registers。异常代理寄存器。</td>
+</tr>
+</tbody></table>
+<p>CSR 读写指令</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>csrr rd, csr</td>
+<td>Control and Status Register Read，<strong>读</strong>CSR指令。 把csr寄存器中的值写入到rd寄存器中。</td>
+</tr>
+<tr>
+<td>csrw csr, rs1</td>
+<td>Control and Status Register Write，<strong>写</strong>CSR指令。 把rs1的值写到csr寄存器中。</td>
+</tr>
+<tr>
+<td>csrs csr, rs1</td>
+<td>Control and Status Register Set，<strong>设置</strong>CSR指令。 对于rs1中每一个为1的位，将csr寄存器中对应位置位。</td>
+</tr>
+<tr>
+<td>csrc csr, rs1</td>
+<td>Control and Status Register Clear，<strong>清除</strong>CSR指令。 对于rs1中每一个为1的位，将csr寄存器中对应位清零。</td>
+</tr>
+<tr>
+<td>csrrs rd, csr, rs1</td>
+<td>Control and Status Register Read and Set，<strong>读后置位</strong>CSR指令。 记控制寄存器中的值为t，把t和寄存器rs1按位或的结果写入csr寄存器，再把t写入rd寄存器。</td>
+</tr>
+<tr>
+<td>csrrc rd, csr, rs1</td>
+<td>Control and Status Register Read and Clear，<strong>读后清除</strong>CSR指令。 记控制寄存器中的值为t，把t和寄存器rs1中的值按位与的结果写入csr寄存器，再把t写入rd寄存器。</td>
+</tr>
+<tr>
+<td>csrrw rd, csr, rs1</td>
+<td>Control and Status Register Read and Write，<strong>读后写</strong>CSR指令。 记控制寄存器中的值为t，把寄存器rs1的值写入csr寄存器，再把t写入rd寄存器。</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RISC-V/" rel="tag"># RISC-V</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/15/Go-Concurrency/" rel="next" title="Go Concurrency">
+                  Go Concurrency <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

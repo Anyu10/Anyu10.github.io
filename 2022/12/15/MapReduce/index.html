@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="IntroductionMapReduce: a programming model and associated implementation for processing and generating large datasets.  Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MapReduce">
+<meta property="og:url" content="http://anyu10.github.io/2022/12/15/MapReduce/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="IntroductionMapReduce: a programming model and associated implementation for processing and generating large datasets.  Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Blog\source_images\image-20221217145110248.png">
+<meta property="article:published_time" content="2022-12-15T08:34:35.000Z">
+<meta property="article:modified_time" content="2022-12-17T10:51:10.192Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="Distributed System">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Blog\source_images\image-20221217145110248.png">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2022/12/15/MapReduce/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2022/12/15/MapReduce/","path":"2022/12/15/MapReduce/","title":"MapReduce"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MapReduce | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Programming-Model"><span class="nav-number">2.</span> <span class="nav-text">Programming Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Types"><span class="nav-number">2.1.</span> <span class="nav-text">Types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Examples"><span class="nav-number">2.2.</span> <span class="nav-text">Examples</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Implementation"><span class="nav-number">3.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Execution-Overview"><span class="nav-number">3.1.</span> <span class="nav-text">Execution Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Master-Data-Structures"><span class="nav-number">3.2.</span> <span class="nav-text">Master Data Structures</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fault-Tolerance"><span class="nav-number">3.3.</span> <span class="nav-text">Fault Tolerance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Worker-Failure"><span class="nav-number">3.3.1.</span> <span class="nav-text">Worker Failure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Master-Failure"><span class="nav-number">3.3.2.</span> <span class="nav-text">Master Failure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semantics"><span class="nav-number">3.3.3.</span> <span class="nav-text">Semantics</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Locality"><span class="nav-number">3.4.</span> <span class="nav-text">Locality</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Task-Granularity"><span class="nav-number">3.5.</span> <span class="nav-text">Task Granularity</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Backup-Tasks"><span class="nav-number">3.6.</span> <span class="nav-text">Backup Tasks</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Refinement"><span class="nav-number">4.</span> <span class="nav-text">Refinement</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Partition-Function"><span class="nav-number">4.1.</span> <span class="nav-text">Partition Function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ordering-Guarantees"><span class="nav-number">4.2.</span> <span class="nav-text">Ordering Guarantees</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Combiner-Functions"><span class="nav-number">4.3.</span> <span class="nav-text">Combiner Functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Others"><span class="nav-number">4.4.</span> <span class="nav-text">Others</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Input-and-Output-Formats"><span class="nav-number">4.4.1.</span> <span class="nav-text">Input and Output Formats</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Side-effects"><span class="nav-number">4.4.2.</span> <span class="nav-text">Side effects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Skipping-Bad-Records"><span class="nav-number">4.4.3.</span> <span class="nav-text">Skipping Bad Records</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Execution"><span class="nav-number">4.4.4.</span> <span class="nav-text">Local Execution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Status-Information"><span class="nav-number">4.4.5.</span> <span class="nav-text">Status Information</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Counters"><span class="nav-number">4.4.6.</span> <span class="nav-text">Counters</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2022/12/15/MapReduce/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MapReduce | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MapReduce
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-12-15 16:34:35" itemprop="dateCreated datePublished" datetime="2022-12-15T16:34:35+08:00">2022-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-12-17 18:51:10" itemprop="dateModified" datetime="2022-12-17T18:51:10+08:00">2022-12-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>MapReduce: a <strong>programming model</strong> and <strong>associated implementation</strong> for <strong>processing and generating large datasets</strong>.</p>
+<ul>
+<li>Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.</li>
+<li>Reduce: merges all intermediate values associated with the same intermediate key.</li>
+</ul>
+<p>runtime system responsibility:</p>
+<ul>
+<li>Partitioning the input data.</li>
+<li>Scheduling the program’s execution across a set of machines.</li>
+<li>Handling managed failures.</li>
+<li>Managing inter-machine communication.</li>
+</ul>
+<p>Motivation:</p>
+<ul>
+<li>Special purpose coding on distributed systems is hard.</li>
+<li>Hide the messy details of parallelization, fault-tolerance, data distribution and load balancing.</li>
+</ul>
+<h1 id="Programming-Model"><a href="#Programming-Model" class="headerlink" title="Programming Model"></a>Programming Model</h1><h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>map and reduce functions are deterministic functions: always get the same output with same input.</p>
+<p>map: (k1, v1) –&gt; list(k2, v2)</p>
+<p>reduce: (k2, list(v2)) –&gt; list(v3)</p>
+<p>Input keys and values are drawn from different domain than the output keys and values. But intermediate keys and values are from the same domain. </p>
+<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><ul>
+<li><p>Distributed Grep</p>
+</li>
+<li><p>Count of URL Access Frequency</p>
+</li>
+<li><p>Reverse Web-Link Graph: The map function outputs $&lt;target, source&gt;$ pairs for each link to a target URL found in a page named source. The reduce function concatenates the list of all source URLs associated with a given target URL and emits the pair $&lt;target, list(source)&gt;$</p>
+</li>
+<li><p>Term-Vector per Host</p>
+</li>
+<li><p>Inverted Index: The map function parses each document, and emits a sequence of $&lt;word, document ID&gt;$ pairs. The reduce function accepts all pairs for a given word, sorts the corresponding document IDs and emits a $&lt;word, list(document ID)&gt;$ pair. The set of all output pairs forms a simple inverted index. It is easy to augment this computation to keep track of word positions.</p>
+</li>
+<li><p>Distributed Sort: The map function extracts the key from each record, and emits a $&lt;key, record&gt;$ pair. The reduce function emits all pairs unchanged. This computation depends on the partitioning facilities described in Section 4.1 and the ordering properties described in Section 4.2. (TODO)</p>
+</li>
+</ul>
+<h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><p>Implementation environment:</p>
+<ul>
+<li>Commodity computers are used.</li>
+<li>Network (switched Ethernet) is the bottleneck.</li>
+<li>Cluster of computers, thus <strong>machine failures are common</strong>.</li>
+<li>Storage hardware is inexpensive; using a distributed file system (GFS) to manage data; replication is used.</li>
+<li>Users submit jobs to a scheduling system. Each <strong>job</strong> consists of <strong>a set of tasks</strong>, and is <strong>mapped by the scheduler</strong> to a set of available machines within a cluster.</li>
+</ul>
+<h2 id="Execution-Overview"><a href="#Execution-Overview" class="headerlink" title="Execution Overview"></a>Execution Overview</h2><p><img src="D:\Blog\source_images\image-20221217145110248.png" alt="image-20221217145110248"></p>
+<p>What happens when user call MapReduce:</p>
+<ol>
+<li>The MapReduce library first split input files into M pieces of typically 16 to 64 MB per pieces. It then starts up many copies of the user program on a cluster of machines.</li>
+<li>The copied program on master is special. The rest are workers that are assigned work by the master. There are M map tasks and R reduce tasks to assign. The master picks idle workers and assigns each one a map task or a reduce task.</li>
+<li>A worker who is assigned a map task reads the input split, and use user-defined map function to process the split. The <strong>intermediate keys and values are buffered in the memory</strong>.</li>
+<li><strong>Periodically, the buffered pairs are written to disk</strong>, partitioned into R regions by partition function i.e. $hash(key)%R$. The locations of these buffered pairs on the local disk are passed back to the master, who is responsible for forwarding these locations to the reduce workers.</li>
+<li>When a reducer worker is notified by master about the locations, it then uses remote procedure call (RPC) to remotely reads the intermediate keys and values from the map worker’s local disks.</li>
+<li>When a reduce worker has read all intermediate data, it sorts it by the intermediate keys so that all occurrences of the same key are grouped together. The <em><strong>sorting is needed because typically many different keys map to the same reduce task</strong></em>. If the amount of intermediate data is too large to fit in memory, an <strong>external sort</strong> (i.e. external merge sort) is used.</li>
+<li>The reduce worker iterate the sorted intermediate data, for each unique intermediate key encountered, it passed the key and the corresponding list of intermediate values to user’s reduce function. The output of Reduce function is appended to a final output file for this reduce partition.</li>
+<li>When all map tasks and reduce tasks had been done, the master wakeup the user program.</li>
+<li>After successful completion, the output is available in R output files. They can be used as input of another MapReduce call.</li>
+</ol>
+<h2 id="Master-Data-Structures"><a href="#Master-Data-Structures" class="headerlink" title="Master Data Structures"></a>Master Data Structures</h2><p>For each map task and reduce task, it stores:</p>
+<ul>
+<li>The state (idle, in-progress, or completed)</li>
+<li>The identity of the worker machine (for non-idle tasks).</li>
+</ul>
+<p>master is like a conduit:</p>
+<ul>
+<li>it propagate the location of R regions on map tasks to reduce tasks</li>
+<li>Therefore, for each completed map tasks, the master stores the locations and sizes of R regions.</li>
+<li>Updates to this location and size information are received as map tasks are completed. The information is pushed incrementally to workers that have in-progress reduce tasks</li>
+</ul>
+<h2 id="Fault-Tolerance"><a href="#Fault-Tolerance" class="headerlink" title="Fault Tolerance"></a>Fault Tolerance</h2><h3 id="Worker-Failure"><a href="#Worker-Failure" class="headerlink" title="Worker Failure"></a>Worker Failure</h3><p>How to determine failure of worker?</p>
+<ul>
+<li>The master pings every worker periodically. If no response is received from a worker in a certain amount of time, the master marks the worker as failed.</li>
+</ul>
+<p>Which tasks to rollback when workers failed?</p>
+<ul>
+<li>Any map tasks completed by the failed worker are reset back to their initial idle state, and therefore become eligible for scheduling on other workers. </li>
+<li>Similarly, any map task or reduce task in progress on a failed (map or reduce separately) worker is also reset to idle and becomes eligible for rescheduling.</li>
+</ul>
+<p> Why completed map tasks on failed worker should re-execute while completed reduce tasks don’t?</p>
+<ul>
+<li>Completed map tasks are re-executed on a failure because their <em>output is stored on the local disk(s)</em> of the failed machine and is therefore <strong>inaccessible</strong>. </li>
+<li>Completed reduce tasks do not need to be re-executed since <strong>their output is stored in a global file system</strong>.</li>
+</ul>
+<p>What happens if map tasks are re-executed?</p>
+<ul>
+<li>When a map task is executed first by worker A and then later executed by worker B (because A failed), all workers executing reduce tasks are notified of the re-execution. Any reduce task that has not already read the data from worker A will read the data from worker B.</li>
+</ul>
+<h3 id="Master-Failure"><a href="#Master-Failure" class="headerlink" title="Master Failure"></a>Master Failure</h3><p>Can be solved with periodic checkpoints of master data structure.</p>
+<p>But since there is only one master, it’s unlikely to fail.</p>
+<p>So when master fails, we can just abort the computation.</p>
+<h3 id="Semantics"><a href="#Semantics" class="headerlink" title="Semantics"></a>Semantics</h3><p>When user-supplied map and reduce functions are deterministic:</p>
+<ul>
+<li>MapReduce will produce the same output as non-faulting sequential execution of program.</li>
+<li>That property relies on <em><strong>atomic commit</strong></em> of map and reduce tasks.<ul>
+<li>For map tasks: when a map task completes, the worker sends a message to the master and includes the names of the R temporary files in the message. <em>If the master receives a completion message for an already completed map task, it ignores the message. Otherwise, it records the names of R files in a master data structure</em>.</li>
+<li>For reduce tasks: when a reduce task completes, the <em>reduce worker atomically renames its temporary output file to the final output file</em>. If the same reduce task is executed on multiple machines, multiple rename calls will be executed for the same final output file. We rely on the atomic rename operation provided by the underlying file system to guarantee that the final file system state contains just the data produced by one execution of the reduce task.</li>
+</ul>
+</li>
+</ul>
+<p>When user-supplied map and reduce functions are non-deterministic:</p>
+<ul>
+<li>MapReduce will provide weaker but still reasonable semantics.</li>
+<li>In the presence of non-deterministic operators, the output of a particular reduce task R1 is equivalent to the output for R1 produced by a sequential execution of the non-deterministic program. However, the output for a different reduce task R2 may correspond to the output for R2 produced by a different sequential execution of the non-deterministic program.</li>
+<li>Consider map task M and reduce tasks $R_1$ and $R_2$. Let $e(R_i)$ be the execution of $R_i$ that committed (there is exactly one such execution). The weaker semantics arise because $e(R_1)$ may have read the output produced by one execution of M and $e(R_2)$ may have read the output produced by a different execution of M.</li>
+</ul>
+<h2 id="Locality"><a href="#Locality" class="headerlink" title="Locality"></a>Locality</h2><p>Since network bandwidth is the bottleneck, one optimization is that running GFS and MapReduce on the same set of machines. And master schedule map tasks to read input locally as possible.</p>
+<h2 id="Task-Granularity"><a href="#Task-Granularity" class="headerlink" title="Task Granularity"></a>Task Granularity</h2><p>Ideally M and R should be much larger than number of workers</p>
+<ul>
+<li>Improves load balancing</li>
+<li>Speeds up recovery</li>
+</ul>
+<p>Practical bounds of M and R:</p>
+<ul>
+<li>master must take $O(M+R)$ to do scheduling, and take $O(M*R)$ piece of state.</li>
+<li>R is also constrained by users because the output of each reduce task ends up in a separate output file.</li>
+<li>R is often a small multiple of the number of worker machines we expect to use.</li>
+</ul>
+<h2 id="Backup-Tasks"><a href="#Backup-Tasks" class="headerlink" title="Backup Tasks"></a>Backup Tasks</h2><p>What is a straggler?</p>
+<ul>
+<li>straggler is the machine that takes an unusually long time to compute the tasks, it’s often the bottleneck.</li>
+</ul>
+<p> Backup mechanism to deal with straggler</p>
+<ul>
+<li>When a <strong>MapReduce operation is close to completion</strong>, the master <strong>schedules backup executions of the remaining in-progress tasks</strong>.</li>
+<li>The task is marked as completed whenever either the primary or the backup execution completes.</li>
+</ul>
+<h1 id="Refinement"><a href="#Refinement" class="headerlink" title="Refinement"></a>Refinement</h1><h2 id="Partition-Function"><a href="#Partition-Function" class="headerlink" title="Partition Function"></a>Partition Function</h2><p>Default partition function: $hash(key)%R$, this tends to generate well-balanced partitions.</p>
+<p>But sometimes input are skewed, we need some special partition functions.</p>
+<p>For example, when output keys are URLs, and we want all entries for a single host to end up in the same output file. We can then use $hash(Hostname(url))$.</p>
+<h2 id="Ordering-Guarantees"><a href="#Ordering-Guarantees" class="headerlink" title="Ordering Guarantees"></a>Ordering Guarantees</h2><p>Within a given partition, the intermediate key&#x2F;value pairs are processed in increasing key order (because it is sorted by reduce). </p>
+<p>This ordering makes it easy to <em><strong>generate a sorted output file per partition</strong></em>, which is useful when the output file format needs to support efficient <strong>random access lookups by key</strong> (hash + binary search, similar to hash join algorithm in database)</p>
+<h2 id="Combiner-Functions"><a href="#Combiner-Functions" class="headerlink" title="Combiner Functions"></a>Combiner Functions</h2><p>Combiner functions is like a reduce function but runs on map workers.</p>
+<p>It can reduce the network overhead by pre-processing (aggregating) the keys and values.</p>
+<p>For some kind of tasks, it’s very useful.</p>
+<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><h3 id="Input-and-Output-Formats"><a href="#Input-and-Output-Formats" class="headerlink" title="Input and Output Formats"></a>Input and Output Formats</h3><p>Text mode: treat each line as key&#x2F;value pair</p>
+<ul>
+<li>key: offset in the file</li>
+<li>value: content of the line</li>
+</ul>
+<p>Reader mode: user provide reader interface to split the range.</p>
+<h3 id="Side-effects"><a href="#Side-effects" class="headerlink" title="Side effects"></a>Side effects</h3><p>It is useful to generate auxiliary files in map or reduce tasks, MapReduce don’t provide two-phase commit. Therefore, tasks that produce multiple output files with cross-file consistency requirements should be deterministic.</p>
+<h3 id="Skipping-Bad-Records"><a href="#Skipping-Bad-Records" class="headerlink" title="Skipping Bad Records"></a>Skipping Bad Records</h3><p>Sometimes it is feasible to ignore some bad records caused by user program, for example doing a statistic analysis on a large dataset.</p>
+<p>MapReduce provide some mode to detect records that caused deterministic crashes and skip these records.</p>
+<h3 id="Local-Execution"><a href="#Local-Execution" class="headerlink" title="Local Execution"></a>Local Execution</h3><p>Debugging MapReduce is triky, so MapReduce provide tools of debugging, profiling, and small-scale testing, enabling sequentially execute all of the work for a MapReduce operation on the local machine.  </p>
+<h3 id="Status-Information"><a href="#Status-Information" class="headerlink" title="Status Information"></a>Status Information</h3><p>The master runs an internal HTTP server and exports a set of status pages for human consumption. </p>
+<h3 id="Counters"><a href="#Counters" class="headerlink" title="Counters"></a>Counters</h3><p>The MapReduce library provides a counter facility to count occurrences of various events. </p>
+<p>To use this facility, <em>user code creates a named counter object</em> and then <em>increments the counter appropriately in the Map and&#x2F;or Reduce function</em>. For example:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Counter *uppercase;</span><br><span class="line">uppercase = <span class="built_in">GetCounter</span>(<span class="string">&quot;uppercase&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">map</span>(String name, String contents) &#123;</span><br><span class="line">    <span class="keyword">for</span> (w : contents) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">isCapitalized</span>(w)) &#123;</span><br><span class="line">            uppercase-&gt;<span class="built_in">Increment</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">EmitIntermediate</span>(w, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The counter values from individual worker machines are periodically propagated to the master (<em>piggybacked</em> on the ping response). </p>
+<p>The master aggregates the counter values from successful map and reduce tasks and returns them to the user code when the MapReduce operation is completed. </p>
+<p>The current counter values are also dis- played on the master status page so that a human can watch the progress of the live computation. </p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Success of MapReduce</p>
+<ol>
+<li>Model is easy to use, it hides parallelism, load balance, locality, fault tolerance, etc.</li>
+<li>Model is expressive, can be used to solve many problems.</li>
+<li>It has scalability, fault tolerance, consistency.</li>
+</ol>
+<p>Some takeaways</p>
+<ol>
+<li>Restricting programming model makes it easy for parallelism and fault tolerance.</li>
+<li>Network bandwidth is scarce resource. (locality optimization).</li>
+<li>Redundant execution can be used to reduce the impact of slow machines.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Distributed-System/" rel="tag"># Distributed System</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/15/Go-Concurrency/" rel="prev" title="Go Concurrency">
+                  <i class="fa fa-chevron-left"></i> Go Concurrency
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/15/Current-Limit/" rel="next" title="Current Limit">
+                  Current Limit <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
