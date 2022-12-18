@@ -3,7 +3,37 @@
   <entry>
     <title>GFS</title>
     <url>/2022/12/17/GFS/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>Big storage abstraction is important in distributed systems.</p>
+<p>Why is it hard?</p>
+<ul>
+<li>Performance –&gt; Sharding</li>
+<li>Faults –&gt; Tolerance</li>
+<li>Tolerance –&gt; Replication</li>
+<li>Replication –&gt; Consistency</li>
+<li>Consistency –&gt; Low Performance</li>
+</ul>
+<span id="more"></span>
+
+<p>Why we need GFS?</p>
+<ul>
+<li>A strawman replication design:</li>
+</ul>
+<p><img src="D:\Blog\source_images\repl.drawio.png" alt="repl.drawio"></p>
+<ul>
+<li>User1 write 1 to two machines, User2 write 2 to two machines</li>
+<li>Due to the network, server1 see 2 first; server2 see 1 first.</li>
+<li>Consistency is destroyed!</li>
+</ul>
+<p>How about GFS?</p>
+<ul>
+<li>Big and fast.</li>
+<li>For global purpose.</li>
+<li>Sharding, every file will be automatically sharded by GFS.</li>
+<li>Automatic failure recovery.</li>
+<li>GFS is designed for a single datacenter.</li>
+<li>GFS is designed for big sequential access.</li>
+</ul>
+]]></content>
       <tags>
         <tag>Distributed System</tag>
       </tags>
@@ -179,7 +209,7 @@
 
 <p>The counter values from individual worker machines are periodically propagated to the master (<em>piggybacked</em> on the ping response). </p>
 <p>The master aggregates the counter values from successful map and reduce tasks and returns them to the user code when the MapReduce operation is completed. </p>
-<p>The current counter values are also dis- played on the master status page so that a human can watch the progress of the live computation. </p>
+<p>The current counter values are also displayed on the master status page so that a human can watch the progress of the live computation. </p>
 <h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Success of MapReduce</p>
 <ol>
 <li>Model is easy to use, it hides parallelism, load balance, locality, fault tolerance, etc.</li>
