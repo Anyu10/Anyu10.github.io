@@ -33,6 +33,52 @@
 <li>GFS is designed for a single datacenter.</li>
 <li>GFS is designed for big sequential access.</li>
 </ul>
+<p>GFS structure:</p>
+<ul>
+<li>Master Data: two tables that matter<ul>
+<li>file name –&gt; array of chunk handles</li>
+<li>handle –&gt; list of chunk servers, version number, primary, lease expiration</li>
+<li>Log and Checkpoint of the 2 above tables –&gt; disk</li>
+</ul>
+</li>
+</ul>
+<p>GFS read operation:</p>
+<ol>
+<li>Client sends file and offset to Master.</li>
+<li>Master sends back chunk handles and list of servers back to Client.<ul>
+<li>Client cache the map.</li>
+</ul>
+</li>
+<li>Client talk to one of the chunk servers (maybe one closest to the Client)<ul>
+<li>chunk server runs Linux filesystem, chunk is stored by file whose name is chunk handle.</li>
+</ul>
+</li>
+<li>Chunk server sends back the chunk files to Client.</li>
+</ol>
+<p>GFS write(append) operation:</p>
+<ul>
+<li><p>No Primary</p>
+<ol>
+<li>Find up-to-date replicas (according to the version numbers in the master).</li>
+<li>Pick a primary and a secondary.</li>
+<li>Increase the version number.</li>
+<li>Sends the primary and secondary with the updated version number and messages and <em>lease</em>.</li>
+<li>Master write the version number to the disk.</li>
+</ol>
+</li>
+<li><p>Primary</p>
+<ol>
+<li>Client sends message to Primary.</li>
+<li>Primary sends message to Secondary.</li>
+<li>If all Secondary replies ok, Primary sends ok to Client.</li>
+<li>Else Primary sends not ok to Client.</li>
+</ol>
+</li>
+</ul>
+<p>why we need lease?</p>
+<ul>
+<li>to avoid “split brain” problem caused by network partition</li>
+</ul>
 ]]></content>
       <tags>
         <tag>Distributed System</tag>
