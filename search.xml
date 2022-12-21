@@ -26,14 +26,306 @@
 </ul>
 <p>How about GFS?</p>
 <ul>
-<li>Big and fast.</li>
-<li>For global purpose.</li>
-<li>Sharding, every file will be automatically sharded by GFS.</li>
-<li>Automatic failure recovery.</li>
-<li>GFS is designed for a single datacenter.</li>
-<li>GFS is designed for big sequential access.</li>
+<li>Performance: Sharding, every file will be automatically sharded by GFS.</li>
+<li>Performance: it has high aggregate performance to a large number of clients. </li>
+<li>Fault Tolerance: Automatic failure recovery.</li>
+<li>Designed for a single datacenter.</li>
+<li>Designed for big sequential access.</li>
+<li>Designed for data-intensive applications.</li>
 </ul>
-<p>GFS structure:</p>
+<p>What problem does GFS solve?</p>
+<ul>
+<li>Component failures are norm rather than exception<ul>
+<li>Constant monitoring, error detection, fault tolerance, and automatic recovery are needed.</li>
+</ul>
+</li>
+<li>Files are huge, so it’s unwieldy to manage billions of KB-sized files.<ul>
+<li>Design choices of I&#x2F;O operation and block sizes have to be revisited.</li>
+</ul>
+</li>
+<li>Appending and sequential reading are more common than write operation.<ul>
+<li>Appending become the focus of optimization and atomicity guarantee instead of caching data blocks in the client (like what normal filesystems do).</li>
+</ul>
+</li>
+<li>Co-designing the applications and the file system API, relaxing GFS’s consistency model, and designing an atomic append operation.</li>
+</ul>
+<h1 id="Design"><a href="#Design" class="headerlink" title="Design"></a>Design</h1><h2 id="Assumption"><a href="#Assumption" class="headerlink" title="Assumption"></a>Assumption</h2><ul>
+<li>System is built from inexpensive components that <em>usually fails</em> –&gt; so it needs monitor and detect, tolerate and recovery from component failure.</li>
+<li>System stores mostly large files. <em>Large files operations</em> should be efficient.</li>
+<li>Two kinds of reads: <strong>large streaming read</strong> and <strong>small random reads</strong>.<ul>
+<li>Performance-conscious applications often batch and sort small reads to advance steadily through the file rather than go back and forth.</li>
+</ul>
+</li>
+<li>Two kinds of writes: <strong>large, sequential writes that append data to files</strong> (normal and need to be optimized) and <strong>small writes at random positions</strong> (rare and need not to be efficient).</li>
+<li>Should support well-defined semantic of <em>appending files concurrently</em> –&gt; Atomicity with minimal synchronization overhead is needed.</li>
+<li><strong>High sustained bandwidth</strong> is more important than low latency.</li>
+</ul>
+<h2 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h2><p>Files are <em>organized hierarchically</em> in directories and <em>identified by pathnames</em>.</p>
+<p>support usual operations like <em>create, delete, open, close, read, write</em>.</p>
+<p>GFS also has <em>snapshot</em> and <em>record append</em> operations</p>
+<ul>
+<li><strong>Snapshot</strong> creates a copy of a file or a directory tree at low cost. </li>
+<li><strong>Record append</strong> –&gt; atomic append, allows multiple clients to append data to the same file concurrently.</li>
+<li>Useful for implementing <strong>multi-way merging</strong> and <strong>producer-consumer queues</strong>.</li>
+</ul>
+<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><h3 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h3><p><img src="D:\Blog\source_images\image-20221221170828501.png" alt="image-20221221170828501"></p>
+<p>GFS Clusters:</p>
+<ul>
+<li><p>single <em>master</em></p>
+</li>
+<li><p>multiple <em>chunkserver</em></p>
+</li>
+<li><p>multiple client (client and chunkserver can be run on same machine)</p>
+</li>
+<li><p>Each of these is typically a commodity Linux machine running a user-level server process.</p>
+</li>
+</ul>
+<p>File Storage:</p>
+<ul>
+<li>Files are divided into <strong>fix-sized</strong> chunks.</li>
+<li>Each <strong>chunks</strong> identified by an immutable and globally unique 64 bit chunk handle.</li>
+<li><strong>Chunk handle</strong> is assigned by the master at the time of chunk creation.</li>
+<li>Chunkservers store chunks on local disks as Linux files and read or write chunk data specified by a chunk handle and byte range.</li>
+<li>Each chunk is replicated on multiple chunkservers.</li>
+</ul>
+<p>Single Master:</p>
+<ul>
+<li>Maintains all filesystem metadata.<ul>
+<li>Namespace.</li>
+<li>Access control information.</li>
+<li>Mapping from file to chunks.</li>
+<li>Current location of chunks.</li>
+</ul>
+</li>
+<li>Control system-wide activities.<ul>
+<li>Chunk lease management.</li>
+<li>Garbage collection of orphaned chunks.</li>
+<li>Chunk migration between chunkservers.</li>
+</ul>
+</li>
+<li>Periodically communicate with chunkservers in <em>HeartBeat</em> messages to <em>give it instructions</em> and <em>collect its state</em>.</li>
+</ul>
+<p>Client:</p>
+<ul>
+<li>implement the filesystem API.</li>
+<li>Communicate with master for metadata and chunkserver for data.</li>
+<li>Neither client nor chunkserver cache the data.<ul>
+<li>For Client, most app stream through the file, it’s too large to be cached.</li>
+<li>it also eliminate cache coherence issues. (<strong>client cache metadata instead</strong>)</li>
+<li>For Chunkserver, Linux’s buffer cache is enough.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Single-Master"><a href="#Single-Master" class="headerlink" title="Single Master"></a>Single Master</h3><p>Benefit: simplify the design and enable master to make sophisticated chunk replacement and replication decisions by using global knowledge.</p>
+<p>But we need to minimize the read and write on master so that it doesn’t become the bottleneck.</p>
+<p>So Client only ask master for metadata, and caches this information for a limited time and interacts with the chunkservers directly for many subsequent operations.</p>
+<hr>
+<p>Simple read operation:</p>
+<ol>
+<li>Client translates file name and byte offset into chunk index within the file.</li>
+<li>Client sends request to master containing chunk index and file name.</li>
+<li>Master replies with the corresponding chunk handle and location of replicas.</li>
+<li>Client caches the information using the fila name and chunk index as the key.</li>
+<li>Client then sends the request to one of the replicas (mostly the closest one), the request specifies the chunk range and chunk handle<ul>
+<li>In fact, the client typically asks for multiple chunks in the same request and the master can also include the informa- tion for chunks immediately following those requested</li>
+</ul>
+</li>
+</ol>
+<h3 id="Chunk-Size"><a href="#Chunk-Size" class="headerlink" title="Chunk Size"></a>Chunk Size</h3><p>Chunk Size, 64MB, is much larger than file system block sizes.</p>
+<p>Each chunk is stored as plain Linux file and extended only as needed. This kind of lazy allocation avoids space wasting due to internal fragmentation.</p>
+<p>Advantages of large chunk size:</p>
+<ul>
+<li>Reduce client’s needs to interact with master.</li>
+<li>Since on a large chunk, a client is more likely to perform many operations on a given chunk.</li>
+<li>Reduces the size of the metadata stored on the master. Thus we can keep the metadata in memory.</li>
+</ul>
+<p>Disadvantages of large chunk size:</p>
+<ul>
+<li>Small files consist a small number of chunks. The chunkservers storing those chunks may become hot spots if many clients are accessing the same file</li>
+<li>In practice, hot spot is not a major problem. But hot spots did develop when GFS was first used by a batch-queue system.<ul>
+<li>One solution: making the batch-queue system stagger application start times</li>
+<li>A potential long-term solution: allow clients to read data from other clients in such situations.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><p>All metadata is kept in memory, there are three kind of metadata:</p>
+<ol>
+<li>The file and chunk namespace.</li>
+<li>The mapping from files to chunks.</li>
+<li>location of each chunks’ replicas.</li>
+</ol>
+<p>First two kinds of metadata (namespaces and file-to-chunk mapping) is logged on local disk and replicated by a remote machine. The master doesn’t store chunk location information, instead, it ask each chunkserver about its chunks at master’s startup and whenever chunkserver joins the cluster.</p>
+<hr>
+<p>Why we want data structure in-memory?</p>
+<ul>
+<li>Since metadata is stored in memory, master can easily periodically scan the entire state <strong>in the background</strong>. This periodic scanning is used to implement <strong>chunk garbage collecting</strong>, <strong>re-replication in the presence of chunkserver failures</strong>, <strong>chunk migration between chunkservers for balance-loading and disk space usage</strong>.</li>
+</ul>
+<p>Why we don’t need to keep chunk location persistent in disk?</p>
+<ul>
+<li>The master can keep chunk location up-to-date thereafter because it controls all chunk placement and monitors chunkserver status <strong>with regular HeartBeat messages</strong>. This also eliminate the problem of <em>keeping the master and chunkservers in sync</em> as chunkservers <em>join and leave the cluster, change names, fail, restart, and so on</em>.</li>
+</ul>
+<p>What is operation log?</p>
+<ul>
+<li>It contains historical record of critical metadata changes.<ul>
+<li>It is the only persistent record of metadata.</li>
+<li>It serves as local timeline that defines the order of concurrent operations.</li>
+<li>Files, chunks and their versions are identified by local time.</li>
+</ul>
+</li>
+<li>Operation log must be stored reliably and we should not make changes visible to clients until metadata changes are made persistent.</li>
+<li>We replicate it on multiple remote machines and respond to a client operation only after flushing the corresponding log record to disk both locally and remotely.</li>
+<li>The master batches several log records together before flushing thereby reducing the impact of flushing and replication on overall system throughput.</li>
+</ul>
+<h3 id="Consistency-Model"><a href="#Consistency-Model" class="headerlink" title="Consistency Model"></a>Consistency Model</h3><p>GFS has a relaxed consistency model</p>
+<p>What is guarantees by GFS?</p>
+<ul>
+<li><p><strong>File namespaces mutations are atomic</strong>, it’s handled by master using a namespace locking. And the global total order is defined by master’s operation log file.</p>
+</li>
+<li><p>File region state after mutation</p>
+<ul>
+<li>A file region is consistent if all clients will always see the same data, regardless of which replicas they read from.</li>
+<li>A region is defined after a file data mutation if it is consistent and clients will see what the mutation writes in its entirety. </li>
+<li>When a mutation succeeds without interference from concurrent writers, the affected region is defined.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>write</th>
+<th>record append</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Serial success</td>
+<td>defined</td>
+<td>defined, interspersed with inconsistent</td>
+</tr>
+<tr>
+<td>Concurrent success</td>
+<td>consistent but undefined</td>
+<td>defined, interspersed with inconsistent</td>
+</tr>
+<tr>
+<td>Failure</td>
+<td>inconsistent</td>
+<td>inconsistent</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>Atomic append –&gt; data appended <em>at least once</em>, but at an offset of GFS’s choosing.</p>
+<ul>
+<li>The offset is returned to the client and marks the beginning of a defined region that contains the record.</li>
+<li>GFS may insert padding or record duplicates in between.</li>
+</ul>
+</li>
+<li><p>After a sequence of successful mutations, the mutated file region is guaranteed to be defined.</p>
+<ul>
+<li>By applying mutations to a chunk in same order on all replicas.</li>
+<li>By using chunk version to detect stale replica.</li>
+<li>Stale chunk will be garbage collected.</li>
+</ul>
+</li>
+<li><p>Client cache the chunk locations, they may read from stale replicas.</p>
+<ul>
+<li>This window is limited by lease time</li>
+<li>stale replica usually return premature end rather than outdated data since most files are append-only.</li>
+</ul>
+</li>
+</ul>
+<p>Implication of Applications</p>
+<ul>
+<li>append-only rather than writes</li>
+<li>checkpointing</li>
+<li>self-validating, e.g. record checksums</li>
+<li>self-identifying, e.g. record identifier</li>
+</ul>
+<h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><h2 id="Lease-and-Mutation-Order"><a href="#Lease-and-Mutation-Order" class="headerlink" title="Lease and Mutation Order"></a>Lease and Mutation Order</h2><p>We use lease to maintain a consistent mutation order across replicas. The master grant a chunk lease to one of the replicas, called <em>primary</em>. A <em>primary</em> picks a mutation ordering for all replicas.</p>
+<p>Lease mechanism is designed to <strong>minimize management overhead of master</strong>. It has timeout of 60s. </p>
+<p><img src="D:\Blog\source_images\image-20221221223610132.png" alt="image-20221221223610132"></p>
+<p>Write operation:</p>
+<ol>
+<li>Client asks Master who is the primary and other replica locations. If there is no primary, master then  grants one</li>
+<li>Master replies the information, and client cache the data for future mutations. It needs to request master again only when primary becomes unreachable.</li>
+<li>Client pushes data to all replicas. Chunkserver stores the data in local LRU buffer cache until the data is used or aged out.</li>
+<li>Once the replicas have acknowledged the data, Client sends write request to primary. The primary assigns consecutive serial numbers to mutations.</li>
+<li>The primary forward the write request to all replicas.</li>
+<li>The secondary reply to primary when completed.</li>
+<li>The primary replies to the client. <ul>
+<li>If error happens at the secondary, primary sends error message to client; Then the client request is considered failed, and the modified region is left in an <strong>inconsistent state</strong>.</li>
+<li>If it had failed at the primary, it would not have been assigned a serial number and forwarded.</li>
+<li>Client code handles such errors by retrying the failed mutation.</li>
+</ul>
+</li>
+</ol>
+<p>If a write by the application is large or straddles a chunk boundary, GFS client code breaks it down into multiple write operations. Final result is consistent but maybe undefined because of interleave of other write operations.</p>
+<h2 id="Data-Flow"><a href="#Data-Flow" class="headerlink" title="Data Flow"></a>Data Flow</h2><p>The control flow and data flow are decoupled, data is <strong>pushed linearly</strong> along a <strong>carefully picked chain</strong> of chunkservers <strong>in a pipelined fashion</strong> to fully <strong>utilize network bandwidth</strong> (so full outbound bandwidth is used to transfer data as fast as possible).</p>
+<p>To <strong>avoid high-latency links</strong>, each machine forward data to “closest” machine in network that has not received the data.</p>
+<h2 id="Atomic-Append"><a href="#Atomic-Append" class="headerlink" title="Atomic Append"></a>Atomic Append</h2><p>Difference between traditional write and record append?</p>
+<ul>
+<li>Traditional write: Client specify data and offset –&gt; the concurrent write is not serializable.</li>
+<li>In record append (atomic append), Client only specify the data, GFS determine the offset and appends data to the file at least once atomically. And GFS returns the offset to the client.</li>
+</ul>
+<p>Why we need atomic append?</p>
+<ul>
+<li>Without atomic append, Clients would need more complicated and expensive synchronization, like through a lock manager.</li>
+</ul>
+<p>How does atomic append do?</p>
+<ul>
+<li><p>Record append is mutation that follows the control flow above with only a little extra logic at the primary. </p>
+<ul>
+<li><p>The primary checks to see if appending the record to the current chunk would cause the chunk to exceed the maximum size (64 MB). If so, it pads the chunk to the maximum size, tells secondaries to do the same, and replies to the client indicating that the operation should be retried on the next chunk.</p>
+</li>
+<li><p>Record append is restricted to be at most one-fourth of the maximum chunk size to keep worstcase fragmentation at an acceptable level.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>How to deal with the inconsistency caused by atomic append?</p>
+<ul>
+<li>If a record append fails at any replica, the client retries the operation. </li>
+<li>As a result, replicas of the same chunk may contain different data possibly including duplicates of the same record in whole or in part. GFS does not guarantee that all replicas are bytewise identical.</li>
+<li>Record is written <em><strong>at least once</strong></em>!</li>
+<li>Application is responsible for dealing with the inconsistency.</li>
+</ul>
+<h2 id="Snapshot"><a href="#Snapshot" class="headerlink" title="Snapshot"></a>Snapshot</h2><p>How to implement snapshot using a <strong>copy-on-write</strong> technique?</p>
+<ol>
+<li>Master receive a snapshot request and then revoke leases.</li>
+<li>Master log the request to disk. Then create new files but pointing to same chunks as source files.</li>
+<li>When Client want to write to chunk C in new files, It sends request to master to find lease holder, The Master noticed that the reference to C is greater than 1, It then asks each chunkserver that has a current replica of C to create a new chunk called C’. <ul>
+<li>By creating the new chunk on the same chunkservers as the original, we ensure that the data can be copied locally, not over the network.</li>
+</ul>
+</li>
+</ol>
+<h1 id="Master-Operation"><a href="#Master-Operation" class="headerlink" title="Master Operation"></a>Master Operation</h1><p>Master manage namespace operations, manage chunk replicas throughout the system, make placement decisions, create new chunks, coordinate system-wide activities, balance load.</p>
+<h2 id="Namespace-Management-and-Locking"><a href="#Namespace-Management-and-Locking" class="headerlink" title="Namespace Management and Locking"></a>Namespace Management and Locking</h2><p>Unlike traditional filesystems, GFS logically represent its namespace as lookup table mapping pathname to metadata. </p>
+<p>Prefix compression –&gt; makes it suitable in memory. </p>
+<p>Each node in lookup table has a read-write lock. </p>
+<p>How to lock?</p>
+<ul>
+<li>Since the namespace can have many nodes, read-write lock objects are allocated lazily and deleted once they are not in use.</li>
+<li>locks are acquired in a consistent total order to prevent deadlock: they are first ordered by level in the namespace tree and lexicographically within the same level.</li>
+</ul>
+<h2 id="Replica-Placement-Physically"><a href="#Replica-Placement-Physically" class="headerlink" title="Replica Placement (Physically)"></a>Replica Placement (Physically)</h2><p>Purpose of chunk replica placement policy:</p>
+<ul>
+<li>maximize data reliability and availability</li>
+<li>maximize network bandwidth utilization</li>
+</ul>
+<p>Method: Spread chunk replicas across racks. This ensures that some replicas of a chunk will survive and remain available even if an entire rack is damaged or offline (such as network partitioning).</p>
+<h2 id="Replicas-Management"><a href="#Replicas-Management" class="headerlink" title="Replicas Management"></a>Replicas Management</h2><p>Chunk replicas are created for three reasons: </p>
+<ul>
+<li>chunk creation</li>
+<li>re-replication</li>
+<li>rebalancing.</li>
+</ul>
+<p>Where to place initial empty replicas when creating a chunk?</p>
+<ul>
+<li>We want to place new replicas on chunkserver whose spare disk space is more than average.</li>
+<li>We want to limit recent creation on chunkserver (to avoid heavy write on this chunkserver)</li>
+<li>We want to spread chunk replicas across racks.</li>
+</ul>
+<p>The master re-replicates a chunk as soon as the number of available replicas falls below a user-specified goal. Similar to creating a chunk replica.</p>
+<p>The master rebalances replicas periodically: it examines the current replica distribution and moves replicas for better disk space and load balancing.</p>
+<h2 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h2><h2 id="Stale-Replica-Detection"><a href="#Stale-Replica-Detection" class="headerlink" title="Stale Replica Detection"></a>Stale Replica Detection</h2><h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>GFS structure:</p>
 <ul>
 <li>Master Data: two tables that matter<ul>
 <li>file name –&gt; array of chunk handles</li>
