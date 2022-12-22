@@ -33,7 +33,7 @@
 <meta property="og:image" content="d:\Blog\source_images\image-20221221170828501.png">
 <meta property="og:image" content="d:\Blog\source_images\image-20221221223610132.png">
 <meta property="article:published_time" content="2022-12-17T10:54:23.000Z">
-<meta property="article:modified_time" content="2022-12-21T16:25:11.888Z">
+<meta property="article:modified_time" content="2022-12-22T11:25:04.030Z">
 <meta property="article:author" content="Anyu Elin">
 <meta property="article:tag" content="Distributed System">
 <meta name="twitter:card" content="summary">
@@ -148,7 +148,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Design"><span class="nav-number">2.</span> <span class="nav-text">Design</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Assumption"><span class="nav-number">2.1.</span> <span class="nav-text">Assumption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interface"><span class="nav-number">2.2.</span> <span class="nav-text">Interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture"><span class="nav-number">2.3.</span> <span class="nav-text">Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview"><span class="nav-number">2.3.1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Single-Master"><span class="nav-number">2.3.2.</span> <span class="nav-text">Single Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chunk-Size"><span class="nav-number">2.3.3.</span> <span class="nav-text">Chunk Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Metadata"><span class="nav-number">2.3.4.</span> <span class="nav-text">Metadata</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consistency-Model"><span class="nav-number">2.3.5.</span> <span class="nav-text">Consistency Model</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Implementation"><span class="nav-number">3.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Lease-and-Mutation-Order"><span class="nav-number">3.1.</span> <span class="nav-text">Lease and Mutation Order</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Flow"><span class="nav-number">3.2.</span> <span class="nav-text">Data Flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Atomic-Append"><span class="nav-number">3.3.</span> <span class="nav-text">Atomic Append</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Snapshot"><span class="nav-number">3.4.</span> <span class="nav-text">Snapshot</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Master-Operation"><span class="nav-number">4.</span> <span class="nav-text">Master Operation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Namespace-Management-and-Locking"><span class="nav-number">4.1.</span> <span class="nav-text">Namespace Management and Locking</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replica-Placement-Physically"><span class="nav-number">4.2.</span> <span class="nav-text">Replica Placement (Physically)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replicas-Management"><span class="nav-number">4.3.</span> <span class="nav-text">Replicas Management</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Garbage-Collection"><span class="nav-number">4.4.</span> <span class="nav-text">Garbage Collection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stale-Replica-Detection"><span class="nav-number">4.5.</span> <span class="nav-text">Stale Replica Detection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Design"><span class="nav-number">2.</span> <span class="nav-text">Design</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Assumption"><span class="nav-number">2.1.</span> <span class="nav-text">Assumption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interface"><span class="nav-number">2.2.</span> <span class="nav-text">Interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Architecture"><span class="nav-number">2.3.</span> <span class="nav-text">Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Overview"><span class="nav-number">2.3.1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Single-Master"><span class="nav-number">2.3.2.</span> <span class="nav-text">Single Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chunk-Size"><span class="nav-number">2.3.3.</span> <span class="nav-text">Chunk Size</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Metadata"><span class="nav-number">2.3.4.</span> <span class="nav-text">Metadata</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consistency-Model"><span class="nav-number">2.3.5.</span> <span class="nav-text">Consistency Model</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Implementation"><span class="nav-number">3.</span> <span class="nav-text">Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Lease-and-Mutation-Order"><span class="nav-number">3.1.</span> <span class="nav-text">Lease and Mutation Order</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Flow"><span class="nav-number">3.2.</span> <span class="nav-text">Data Flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Atomic-Append"><span class="nav-number">3.3.</span> <span class="nav-text">Atomic Append</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Snapshot"><span class="nav-number">3.4.</span> <span class="nav-text">Snapshot</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Master-Operation"><span class="nav-number">4.</span> <span class="nav-text">Master Operation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Namespace-Management-and-Locking"><span class="nav-number">4.1.</span> <span class="nav-text">Namespace Management and Locking</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replica-Placement-Physically"><span class="nav-number">4.2.</span> <span class="nav-text">Replica Placement (Physically)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replicas-Management"><span class="nav-number">4.3.</span> <span class="nav-text">Replicas Management</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Garbage-Collection"><span class="nav-number">4.4.</span> <span class="nav-text">Garbage Collection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stale-Replica-Detection"><span class="nav-number">4.5.</span> <span class="nav-text">Stale Replica Detection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Fault-Tolerance"><span class="nav-number">5.</span> <span class="nav-text">Fault Tolerance</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Availability"><span class="nav-number">5.1.</span> <span class="nav-text">Availability</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Integrity"><span class="nav-number">5.2.</span> <span class="nav-text">Data Integrity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -232,7 +232,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-12-22 00:25:11" itemprop="dateModified" datetime="2022-12-22T00:25:11+08:00">2022-12-22</time>
+      <time title="Modified: 2022-12-22 19:25:04" itemprop="dateModified" datetime="2022-12-22T19:25:04+08:00">2022-12-22</time>
     </span>
 
   
@@ -242,14 +242,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>2.7k</span>
+      <span>3k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>10 mins.</span>
+      <span>11 mins.</span>
     </span>
 </div>
 
@@ -582,7 +582,55 @@
 </ul>
 <p>The master re-replicates a chunk as soon as the number of available replicas falls below a user-specified goal. Similar to creating a chunk replica.</p>
 <p>The master rebalances replicas periodically: it examines the current replica distribution and moves replicas for better disk space and load balancing.</p>
-<h2 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h2><h2 id="Stale-Replica-Detection"><a href="#Stale-Replica-Detection" class="headerlink" title="Stale Replica Detection"></a>Stale Replica Detection</h2><h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>GFS structure:</p>
+<h2 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h2><p>After a file is deleted, GFS does not immediately reclaim the available physical storage. It does so only lazily during regular garbage collection at both the file and chunk levels</p>
+<p>How GFS do garbage collection?</p>
+<ul>
+<li><p>For Master</p>
+<ul>
+<li><p>When a file is deleted, it is logged by master immediately. But master rename it to a hidden name with  deletion timestamp.</p>
+</li>
+<li><p>During the master’s regular scan of the file system namespace, it removes any such hidden files if they have existed for more than three days.</p>
+</li>
+</ul>
+</li>
+<li><p>For Chunkserver</p>
+<ul>
+<li>In a similar regular scan of the chunk namespace, the master identifies orphaned chunks and erases the metadata for those chunks. </li>
+<li>In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. </li>
+<li>Then the chunkserver is free to delete its replicas of such chunks.</li>
+</ul>
+</li>
+</ul>
+<p>Benefit:</p>
+<ol>
+<li>Simple and reliable for distributed system.</li>
+<li>It merge storage reclamation into regular background activities.</li>
+<li>The delay in reclaiming storage provides a safety net against accidental, irreversible deletion.</li>
+</ol>
+<p>Main disadvantage: frequently creation and deletion will cause the space tight.</p>
+<p>Solution: expediting storage reclamation if a deleted file is explicitly deleted again.</p>
+<h2 id="Stale-Replica-Detection"><a href="#Stale-Replica-Detection" class="headerlink" title="Stale Replica Detection"></a>Stale Replica Detection</h2><p>Master increase the chunk version number when it grant a new lease on a chunk. When a replica is not available at this time, its chunk version will not advanced. So when it restart and report its chunk version number to Master, Master will detect that it is a stale replica. </p>
+<p>The master removes stale replicas in its regular garbage collection </p>
+<h1 id="Fault-Tolerance"><a href="#Fault-Tolerance" class="headerlink" title="Fault Tolerance"></a>Fault Tolerance</h1><p>Two problems caused by <strong>component failure</strong>:</p>
+<ul>
+<li>unavailability</li>
+<li>corrupted data</li>
+</ul>
+<h2 id="Availability"><a href="#Availability" class="headerlink" title="Availability"></a>Availability</h2><p>Two strategies for high availability:</p>
+<ul>
+<li>Fast Recovery<ul>
+<li>Restore state and restart no matter how they terminated.</li>
+</ul>
+</li>
+<li>Replication<ul>
+<li>Chunk Replication</li>
+<li>Master Replication</li>
+</ul>
+</li>
+</ul>
+<h2 id="Data-Integrity"><a href="#Data-Integrity" class="headerlink" title="Data Integrity"></a>Data Integrity</h2><p>Each chunkserver uses checksumming to detect corruption of stored data</p>
+<p>Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.</p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>GFS structure:</p>
 <ul>
 <li>Master Data: two tables that matter<ul>
 <li>file name –&gt; array of chunk handles</li>
@@ -681,14 +729,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>Word count total: </span>
-    <span title="Word count total">9k</span>
+    <span title="Word count total">10k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>Reading time total &asymp;</span>
-    <span title="Reading time total">33 mins.</span>
+    <span title="Reading time total">35 mins.</span>
   </span>
 </div>
 
