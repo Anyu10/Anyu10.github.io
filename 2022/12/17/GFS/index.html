@@ -33,7 +33,7 @@
 <meta property="og:image" content="d:\Blog\source_images\image-20221221170828501.png">
 <meta property="og:image" content="d:\Blog\source_images\image-20221221223610132.png">
 <meta property="article:published_time" content="2022-12-17T10:54:23.000Z">
-<meta property="article:modified_time" content="2022-12-22T11:25:04.030Z">
+<meta property="article:modified_time" content="2022-12-22T13:58:34.450Z">
 <meta property="article:author" content="Anyu Elin">
 <meta property="article:tag" content="Distributed System">
 <meta name="twitter:card" content="summary">
@@ -232,7 +232,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-12-22 19:25:04" itemprop="dateModified" datetime="2022-12-22T19:25:04+08:00">2022-12-22</time>
+      <time title="Modified: 2022-12-22 21:58:34" itemprop="dateModified" datetime="2022-12-22T21:58:34+08:00">2022-12-22</time>
     </span>
 
   
@@ -242,7 +242,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>3k</span>
+      <span>3.2k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -628,8 +628,26 @@
 </ul>
 </li>
 </ul>
-<h2 id="Data-Integrity"><a href="#Data-Integrity" class="headerlink" title="Data Integrity"></a>Data Integrity</h2><p>Each chunkserver uses checksumming to detect corruption of stored data</p>
+<h2 id="Data-Integrity"><a href="#Data-Integrity" class="headerlink" title="Data Integrity"></a>Data Integrity</h2><p>Why we need checksum in chunkserver to detect corruption of stored data?</p>
+<ul>
+<li>Disks and machines failures are common, causing data corruption.</li>
+<li>But it’s impractical to compare replicas to detect corruption. Besides, the semantic of record append doesn’t guarantee identical replicas.</li>
+<li>Therefore, each chunkserver must independently verify the integrity of its own copy by maintaining checksums.</li>
+</ul>
+<p>What happens when reading corrupted data?</p>
+<ul>
+<li>For Reads, chunkserver verify checksum of data block before returning any data to requester.</li>
+<li>If it doesn’t match the checksum, it returns a error to requester and report a mismatch to the master.</li>
+<li>Master re-replicate the chunk.</li>
+<li>Then master instruct deletion of the corrupted replica.</li>
+</ul>
+<p>How to calculate checksum when writing data?</p>
+<ul>
+<li>For appending, There is no need to read the data to checksum first. Because we can checksum later when reading this data.</li>
+<li>For random writing, we must read the data and checksum first.</li>
+</ul>
 <p>Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.</p>
+<p>During idle periods, chunkservers can scan and verify the contents of inactive chunks.</p>
 <h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>GFS structure:</p>
 <ul>
 <li>Master Data: two tables that matter<ul>
