@@ -1,6 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Go-Style</title>
+    <url>/2023/01/19/Go-Style/</url>
+    <content><![CDATA[<h1 id="高质量编码"><a href="#高质量编码" class="headerlink" title="高质量编码"></a>高质量编码</h1><p>什么是高质量？</p>
+<ul>
+<li>考虑到edge case</li>
+<li>异常状况处理，稳定性</li>
+<li>易读易维护，易于重构</li>
+</ul>
+<span id="more"></span>
+
+<p>编程原则？</p>
+<ul>
+<li>简单性 - 消除多余的复杂性，否则代码难以维护</li>
+<li>可读性 - 保证代码的可维护性</li>
+<li>生产力 - 团队的整体工作效率</li>
+</ul>
+<h1 id="编码规范"><a href="#编码规范" class="headerlink" title="编码规范"></a>编码规范</h1><h2 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h2><ul>
+<li><p>gofmt</p>
+</li>
+<li><p>goimports</p>
+</li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p><strong>公共符号必须要使用注释</strong></p>
+<ul>
+<li>代码作用</li>
+<li>代码如何做的</li>
+<li>代码实现的原因</li>
+<li>什么情况会出错</li>
+</ul>
+<h2 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h2><p>Variable：</p>
+<ul>
+<li>简洁胜于冗长</li>
+<li>缩略词全大写，但位于变量开头的时候全小写<ul>
+<li>例如ServeHTTP instead of ServeHttp</li>
+<li>xmlHTTPRequest 或 XMLHTTPRequest</li>
+</ul>
+</li>
+<li>变量距离使用的距离越远，则需要携带越多的上下文信息<ul>
+<li>全局变量要在名字中体现出更多的上下文信息，使得可以辨别其含义</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Bad</span></span><br><span class="line"><span class="keyword">for</span> index := <span class="number">0</span>; index &lt; n; index++ &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Good</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, t time.Time)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Good, deadline has more semantics</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, deadline time.Time)</span><br></pre></td></tr></table></figure>
+
+<p>Function:</p>
+<ul>
+<li>函数名不需要携带包信息，因为包名和函数名总是成对出现的</li>
+<li>函数名应该尽量简短</li>
+<li>当包名和函数的返回类型一样时，可以省略类型信息</li>
+<li>当包名和函数的返回类型不一样时，可以在函数名中加入类型信息</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> http</span><br><span class="line"></span><br><span class="line"><span class="comment">// Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">(l net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Bad, http.ServeHTTP when invoking, which is verbose</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeHTTP</span><span class="params">(l net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br></pre></td></tr></table></figure>
+
+<p>Package:</p>
+<ul>
+<li>小写字母组成，不包含大写字母和下划线</li>
+<li>简短并包含上下文信息</li>
+<li>不与标准库同名</li>
+</ul>
+<p>其他规则：</p>
+<ul>
+<li>不使用常用变量作为包名，例如bufio而不是buf</li>
+<li>使用单数而不使用复数，例如encoding而不是encodings</li>
+<li>谨慎使用缩写</li>
+</ul>
+<h2 id="控制流程"><a href="#控制流程" class="headerlink" title="控制流程"></a>控制流程</h2><p>避免嵌套，保证正常流程清晰</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Bad</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Good, 分支中包含多个return语句，可以去除冗余的分支</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>尽量保持正常代码路径为最小缩进</p>
+<ul>
+<li>优先处理错误和特殊情况，尽早返回或继续循环以减少嵌套</li>
+<li>线性原理，逻辑尽量走直线，避免复杂的嵌套分支</li>
+<li>正常流程代码沿屏幕往下流动</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    err := DoSomething()</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">        err = DoAnotherThing()</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>	<span class="comment">// normal case</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := DoSomething(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := DoAnotherThing(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="错误与异常处理"><a href="#错误与异常处理" class="headerlink" title="错误与异常处理"></a>错误与异常处理</h2><p>简单错误：</p>
+<ul>
+<li>指仅出现一次的错误，且<strong>其他地方不需要捕获该错误</strong></li>
+<li>优先使用 <code>errors.New</code> 创建匿名变量来表示简单错误</li>
+<li>如果有格式化需求可以使用 <code>fmt.Errorf</code></li>
+</ul>
+<p>错误的Wrap和Unwrap</p>
+<ul>
+<li>在 <code>fmt.Errorf</code> 中使用 <code>%w</code> 关键字来将一个错误 wrap 至其错误链中</li>
+<li>错误的 wrap 实际上提供了一个 error 嵌套另一个 error 的功能，从而生成 error 的跟踪链条，以方便判断错误</li>
+</ul>
+<p>错误判定</p>
+<ul>
+<li>判断一个错误链是否包含一个特定的错误，使用 <code>errors.Is</code> 的方法</li>
+<li>获取特定种类的错误，使用 <code>errors.As</code> 方法</li>
+</ul>
+<p>Panic：</p>
+<ul>
+<li>不建议在业务代码中使用 panic</li>
+<li>建议使用 error 代替 panic</li>
+<li>程序启动阶段发生不可逆转的作用的时候，可以在 init 或 main 中使用 panic， 尽早暴露错误</li>
+</ul>
+<p>Recovery：</p>
+<ul>
+<li>通常在recovery中打印出panic时的调用堆栈 <code>debug.Stack()</code></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *treeFS)</span></span> Open(name <span class="type">string</span>) (f fs.File, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> e := <span class="built_in">recover</span>(); e != <span class="literal">nil</span> &#123;</span><br><span class="line">            f = <span class="literal">nil</span></span><br><span class="line">            err = fmt.Errorf(<span class="string">&quot;git fs panics: %v\n%s&quot;</span>, e, debug.Stack())</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>小结：</p>
+<ul>
+<li>error 应提供上下文信息链，方便定位</li>
+<li>panic用于定位真正异常的情况</li>
+</ul>
+<h1 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h1><h2 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h2><p>Slice预分配内存</p>
+<ul>
+<li>尽可能使用 <code>make()</code> 初始化切片时提供容量信息</li>
+</ul>
+<p>Slice大内存未释放</p>
+<ul>
+<li>在已有的切片上创建切片，不会创建新的底层数组，且原来的切片存在引用，不会被释放</li>
+<li>可以使用 copy 代替 re-slice</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetLastBySlice</span><span class="params">(origin []<span class="type">int</span>)</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> origin[<span class="built_in">len</span>(origin)<span class="number">-2</span>:]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetLastBySlice</span><span class="params">(origin []<span class="type">int</span>)</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">    res := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="built_in">copy</span>(res, origin[<span class="built_in">len</span>(origin)<span class="number">-2</span>:])</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>Map预分配内存</p>
+<ul>
+<li>不断向 map 添加元素会触发map扩容</li>
+<li>提前分配空间可以避免 re-hash 和扩容</li>
+</ul>
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p>字符串处理：</p>
+<ul>
+<li>strings.Builder &gt; bytes.Buffer &gt; +</li>
+<li>strings.Builder 和 bytes.Buffer 均使用了 []byte 类型作为底层存储结构</li>
+<li>strings.Builder 直接将底层的 []byte 结构转化为了字符串类型返回，而 bytes.Buffer 在转换字符串的时候重新申请了一片空间因此 strings.Builder 比 bytes.Buffer 略快</li>
+<li><strong>已知字符串长度的时候，可以通过 <code>Grow</code> 预分配空间更进一步提升性能</strong></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preStrBuilder</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> buidler strings.Builder</span><br><span class="line">    builder.Grow(n * <span class="built_in">len</span>(str))	<span class="comment">// similar to bytes.Buffer.Grow</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(str); i++ &#123;</span><br><span class="line">        builder.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> builder.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Empty-Struct"><a href="#Empty-Struct" class="headerlink" title="Empty Struct"></a>Empty Struct</h2><p>使用空结构体节省内存</p>
+<ul>
+<li><code>struct&#123;&#125;&#123;&#125;</code> 不占内存空间</li>
+<li>可以作为占位符使用，并且具有一定的语义</li>
+</ul>
+<h2 id="Atomic"><a href="#Atomic" class="headerlink" title="Atomic"></a>Atomic</h2><p>使用 atomic 包</p>
+<ul>
+<li>锁通过系统调用实现，成本较高</li>
+<li>atomic操作由硬件实现，性能较好</li>
+<li>非数值操作可以使用 <code>atomic.Value</code>, 能承载一个 <code>interface&#123;&#125;</code></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Go</tag>
+        <tag>Style</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go-Profile</title>
+    <url>/2023/01/19/Go-Profile/</url>
+    <content><![CDATA[<h1 id="性能调优准则"><a href="#性能调优准则" class="headerlink" title="性能调优准则"></a>性能调优准则</h1><ul>
+<li>要依靠<strong>数据</strong>而不是猜测</li>
+<li>要定位到<strong>最大瓶颈</strong>，而不是细枝末节</li>
+<li>不要过早优化</li>
+<li>不要过度优化</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="性能分析工具pprof"><a href="#性能分析工具pprof" class="headerlink" title="性能分析工具pprof"></a>性能分析工具pprof</h1><h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><p><img src="D:\Blog\source_images\image-20230119214436210.png" alt="image-20230119214436210"></p>
+<h2 id="CPU性能分析"><a href="#CPU性能分析" class="headerlink" title="CPU性能分析"></a>CPU性能分析</h2><p>使用命令 <code>go tool pprof &quot;localhost:6060/debug/pprof/profile?seconds=10&quot;</code> 采集10s的数据，并进入可交互的终端</p>
+<ul>
+<li><code>top[N]</code>: 查看占用资源最多的函数<ul>
+<li>flat: 当前函数<strong>本身</strong>的执行耗时 </li>
+<li>flat%: 执行耗时占的百分比</li>
+<li>sum%: 该函数及其之上的函数占的总百分比</li>
+<li>cum: 当前函数<strong>及其调用函数</strong>的总执行耗时</li>
+<li>cum%: 总执行耗时的百分比</li>
+<li>flat &#x3D;&#x3D; cum –&gt; 函数中没有调用其他函数</li>
+<li>flat &#x3D;&#x3D; 0 –&gt; 函数中只有其他函数的调用</li>
+</ul>
+</li>
+<li><code>list [regexp]</code>: 根据正则表达式查找代码行</li>
+<li><code>web</code>: 调用关系可视化</li>
+</ul>
+<h2 id="堆分析"><a href="#堆分析" class="headerlink" title="堆分析"></a>堆分析</h2><p>使用 <code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/heap&quot;</code> 命令，在localhost:8080地址展示各种视图和工具进行分析</p>
+<h2 id="其他分析"><a href="#其他分析" class="headerlink" title="其他分析"></a>其他分析</h2><p>协程分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/goroutine&quot;</code></p>
+<p>锁分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/mutex&quot;</code></p>
+<p>阻塞分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/block&quot;</code></p>
+<h2 id="剖析"><a href="#剖析" class="headerlink" title="剖析"></a>剖析</h2><p>通过 <code>go test</code> 命令可以指定生成测试程序的 profile，这些profile可以用来分析 cpu, block, mem 等性能</p>
+<p>例如</p>
+<ul>
+<li>CPU分析<ul>
+<li><code>go test -cpuprofile=cpu.log module/package</code> </li>
+<li><code>go tool pprof -http=:8080 cpu.log</code></li>
+</ul>
+</li>
+<li>block分析<ul>
+<li><code>go test -blockprofile=block.log module/package</code></li>
+<li><code>go tool pprof -http=:8080 block.log</code></li>
+</ul>
+</li>
+<li>mem分析<ul>
+<li><code>go test -memprofile=block.log module/package</code></li>
+<li><code>go tool pprof -http=:8080 mem.log</code></li>
+</ul>
+</li>
+</ul>
+<h1 id="pprof原理和采样过程"><a href="#pprof原理和采样过程" class="headerlink" title="pprof原理和采样过程"></a>pprof原理和采样过程</h1><h2 id="CPU采样"><a href="#CPU采样" class="headerlink" title="CPU采样"></a>CPU采样</h2><ul>
+<li>操作系统定时器：启动一个操作系统的定时器，每10ms发送一个SIGPROF信息给进程</li>
+<li>进程堆栈：进程<strong>每次收到SIGPROF信号都记录调用堆栈</strong></li>
+<li>写缓冲：每100ms读取记录的调用堆栈并写入到输出流</li>
+</ul>
+<h2 id="Heap采样"><a href="#Heap采样" class="headerlink" title="Heap采样"></a>Heap采样</h2><ul>
+<li>采样程序通过<strong>内存分配器</strong>在堆上分配和释放的内存，<strong>记录分配&#x2F;释放的大小和数量</strong></li>
+<li>采样率：<strong>每512KB采样一次</strong>，可在运行开头修改，1表示每次分配均记录</li>
+<li>采样时间：程序开始运行时到采样时</li>
+<li>采样指标：alloc_space, alloc_objects, inuse_space, inuse_objects</li>
+<li>inuse&#x3D;alloc-free</li>
+</ul>
+<h2 id="Goroutine-amp-ThreadCreate-采样"><a href="#Goroutine-amp-ThreadCreate-采样" class="headerlink" title="Goroutine &amp; ThreadCreate 采样"></a>Goroutine &amp; ThreadCreate 采样</h2><ul>
+<li>Goroutine<ul>
+<li>记录所有用户发起的且在运行中的goroutine(<strong>即入口非runtime开头的goroutine</strong>)runtime.main的调用栈信息</li>
+</ul>
+</li>
+<li>ThreadCreate<ul>
+<li>记录程序创建的所有系统线程的信息</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph LR</span><br><span class="line">direction LR</span><br><span class="line">id1(stop the world) --&gt; id2(遍历allg切片) --&gt; id3(输出创建g的堆栈) --&gt; id4(start the world)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Block-amp-Mutex-采样"><a href="#Block-amp-Mutex-采样" class="headerlink" title="Block &amp; Mutex 采样"></a>Block &amp; Mutex 采样</h2><ul>
+<li>Block采样<ul>
+<li>采样阻塞操作的次数和耗时</li>
+<li>采样率：阻塞耗时超过阈值才会被记录，也可以设置采样率，1表示每次都记录</li>
+</ul>
+</li>
+<li>锁竞争<ul>
+<li>采样争抢锁的次数和耗时</li>
+<li>采样率：只记录固定比例的锁操作，也可以设置采样率，1表示每次都记录</li>
+</ul>
+</li>
+</ul>
+<h1 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h1><h2 id="业务服务优化"><a href="#业务服务优化" class="headerlink" title="业务服务优化"></a>业务服务优化</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>服务：能<strong>单独部署</strong>，承载<strong>一定功能</strong>的程序</p>
+<p>依赖：Service A的功能实现依赖Service B的响应结果，则Service A依赖Service B</p>
+<p>调用链路：支持一个接口的相关服务集合及其相互之间的依赖关系</p>
+<p>基础库：公共的工具包，中间件</p>
+<h3 id="单体Service优化流程"><a href="#单体Service优化流程" class="headerlink" title="单体Service优化流程"></a>单体Service优化流程</h3><ol>
+<li>建立服务性能的<strong>评估手段</strong><ul>
+<li>Benchmark</li>
+<li>Others</li>
+</ul>
+</li>
+<li>分析性能数据，定义<strong>性能瓶颈</strong></li>
+<li>优化代码，消除瓶颈</li>
+<li>验证优化效果</li>
+</ol>
+<h4 id="评估手段"><a href="#评估手段" class="headerlink" title="评估手段"></a>评估手段</h4><ul>
+<li>不同负载性能表现有差异</li>
+<li>不同请求参数覆盖的逻辑不同，请求流量不同</li>
+<li>压测范围<ul>
+<li>单机压测</li>
+<li>集群压测</li>
+</ul>
+</li>
+<li>性能数据采集<ul>
+<li>单机性能数据</li>
+<li>集群性能数据</li>
+</ul>
+</li>
+</ul>
+<h4 id="性能瓶颈"><a href="#性能瓶颈" class="headerlink" title="性能瓶颈"></a>性能瓶颈</h4><ul>
+<li>使用库不规范</li>
+<li>高并发场景优化不足，例如异步log</li>
+</ul>
+<h4 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h4><ul>
+<li>正确性<ul>
+<li><strong>确保正确性</strong></li>
+<li>响应数据diff</li>
+</ul>
+</li>
+<li>重复压测验证</li>
+<li>上线后评估优化效果<ul>
+<li>关注监控</li>
+<li>收集性能数据</li>
+<li>逐步放量</li>
+</ul>
+</li>
+</ul>
+<h3 id="服务链路性能优化"><a href="#服务链路性能优化" class="headerlink" title="服务链路性能优化"></a>服务链路性能优化</h3><p>分析链路</p>
+<h2 id="基础库优化"><a href="#基础库优化" class="headerlink" title="基础库优化"></a>基础库优化</h2><ol>
+<li>分析基础库核心逻辑和性能瓶颈<ul>
+<li>设计完善的改造方案</li>
+<li>数据按需获取</li>
+<li>序列化反序列化优化</li>
+</ul>
+</li>
+<li>内部压测验证</li>
+<li>推广业务服务落地验证</li>
+</ol>
+<h2 id="Go语言优化"><a href="#Go语言优化" class="headerlink" title="Go语言优化"></a>Go语言优化</h2><p>编译器 &amp; 运行时优化</p>
+<ul>
+<li>优化<strong>内存分配策略</strong></li>
+<li>优化代码<strong>编译流程</strong>，生成更高效的程序</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>Go</tag>
+        <tag>Profile</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>GFS</title>
     <url>/2022/12/17/GFS/</url>
     <content><![CDATA[<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>Big storage abstraction is important in distributed systems.</p>
@@ -443,11 +749,192 @@
       </tags>
   </entry>
   <entry>
+    <title>Go Network</title>
+    <url>/2022/12/16/Go-Network/</url>
+    <content><![CDATA[]]></content>
+      <tags>
+        <tag>Network</tag>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Current Limit</title>
     <url>/2022/12/15/Current-Limit/</url>
     <content><![CDATA[]]></content>
       <tags>
         <tag>Network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MapReduce</title>
+    <url>/2022/12/15/MapReduce/</url>
+    <content><![CDATA[<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>MapReduce: a <strong>programming model</strong> and <strong>associated implementation</strong> for <strong>processing and generating large datasets</strong>.</p>
+<ul>
+<li>Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.</li>
+<li>Reduce: merges all intermediate values associated with the same intermediate key.</li>
+</ul>
+<span id="more"></span>
+
+<p>runtime system responsibility:</p>
+<ul>
+<li>Partitioning the input data.</li>
+<li>Scheduling the program’s execution across a set of machines.</li>
+<li>Handling managed failures.</li>
+<li>Managing inter-machine communication.</li>
+</ul>
+<p>Motivation:</p>
+<ul>
+<li>Special purpose coding on distributed systems is hard.</li>
+<li>Hide the messy details of parallelization, fault-tolerance, data distribution and load balancing.</li>
+</ul>
+<h1 id="Programming-Model"><a href="#Programming-Model" class="headerlink" title="Programming Model"></a>Programming Model</h1><h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>map and reduce functions are deterministic functions: always get the same output with same input.</p>
+<p>map: (k1, v1) –&gt; list(k2, v2)</p>
+<p>reduce: (k2, list(v2)) –&gt; list(v3)</p>
+<p>Input keys and values are drawn from different domain than the output keys and values. But intermediate keys and values are from the same domain. </p>
+<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><ul>
+<li><p>Distributed Grep</p>
+</li>
+<li><p>Count of URL Access Frequency</p>
+</li>
+<li><p>Reverse Web-Link Graph: The map function outputs $&lt;target, source&gt;$ pairs for each link to a target URL found in a page named source. The reduce function concatenates the list of all source URLs associated with a given target URL and emits the pair $&lt;target, list(source)&gt;$</p>
+</li>
+<li><p>Term-Vector per Host</p>
+</li>
+<li><p>Inverted Index: The map function parses each document, and emits a sequence of $&lt;word, document ID&gt;$ pairs. The reduce function accepts all pairs for a given word, sorts the corresponding document IDs and emits a $&lt;word, list(document ID)&gt;$ pair. The set of all output pairs forms a simple inverted index. It is easy to augment this computation to keep track of word positions.</p>
+</li>
+<li><p>Distributed Sort: The map function extracts the key from each record, and emits a $&lt;key, record&gt;$ pair. The reduce function emits all pairs unchanged. This computation depends on the partitioning functions and the R files’ ordering properties.</p>
+</li>
+</ul>
+<h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><p>Implementation environment:</p>
+<ul>
+<li>Commodity computers are used.</li>
+<li>Network (switched Ethernet) is the bottleneck.</li>
+<li>Cluster of computers, thus <strong>machine failures are common</strong>.</li>
+<li>Storage hardware is inexpensive; using a distributed file system (GFS) to manage data; replication is used.</li>
+<li>Users submit jobs to a scheduling system. Each <strong>job</strong> consists of <strong>a set of tasks</strong>, and is <strong>mapped by the scheduler</strong> to a set of available machines within a cluster.</li>
+</ul>
+<h2 id="Execution-Overview"><a href="#Execution-Overview" class="headerlink" title="Execution Overview"></a>Execution Overview</h2><p><img src="D:\Blog\source_images\image-20221217145110248.png" alt="image-20221217145110248"></p>
+<p>What happens when user call MapReduce:</p>
+<ol>
+<li>The MapReduce library first split input files into M pieces of typically 16 to 64 MB per pieces. It then starts up many copies of the user program on a cluster of machines.</li>
+<li>The copied program on master is special. The rest are workers that are assigned work by the master. There are M map tasks and R reduce tasks to assign. The master picks idle workers and assigns each one a map task or a reduce task.</li>
+<li>A worker who is assigned a map task reads the input split, and use user-defined map function to process the split. The <strong>intermediate keys and values are buffered in the memory</strong>.</li>
+<li><strong>Periodically, the buffered pairs are written to disk</strong>, partitioned into R regions by partition function i.e. $hash(key)%R$. The locations of these buffered pairs on the local disk are passed back to the master, who is responsible for forwarding these locations to the reduce workers.</li>
+<li>When a reducer worker is notified by master about the locations, it then uses remote procedure call (RPC) to remotely reads the intermediate keys and values from the map worker’s local disks.</li>
+<li>When a reduce worker has read all intermediate data, it sorts it by the intermediate keys so that all occurrences of the same key are grouped together. The <em><strong>sorting is needed because typically many different keys map to the same reduce task</strong></em>. If the amount of intermediate data is too large to fit in memory, an <strong>external sort</strong> (i.e. external merge sort) is used.</li>
+<li>The reduce worker iterate the sorted intermediate data, for each unique intermediate key encountered, it passed the key and the corresponding list of intermediate values to user’s reduce function. The output of Reduce function is appended to a final output file for this reduce partition.</li>
+<li>When all map tasks and reduce tasks had been done, the master wakeup the user program.</li>
+<li>After successful completion, the output is available in R output files. They can be used as input of another MapReduce call.</li>
+</ol>
+<h2 id="Master-Data-Structures"><a href="#Master-Data-Structures" class="headerlink" title="Master Data Structures"></a>Master Data Structures</h2><p>For each map task and reduce task, it stores:</p>
+<ul>
+<li>The state (idle, in-progress, or completed)</li>
+<li>The identity of the worker machine (for non-idle tasks).</li>
+</ul>
+<p>master is like a conduit:</p>
+<ul>
+<li>it propagate the location of R regions on map tasks to reduce tasks</li>
+<li>Therefore, for each completed map tasks, the master stores the locations and sizes of R regions.</li>
+<li>Updates to this location and size information are received as map tasks are completed. The information is pushed incrementally to workers that have in-progress reduce tasks</li>
+</ul>
+<h2 id="Fault-Tolerance"><a href="#Fault-Tolerance" class="headerlink" title="Fault Tolerance"></a>Fault Tolerance</h2><h3 id="Worker-Failure"><a href="#Worker-Failure" class="headerlink" title="Worker Failure"></a>Worker Failure</h3><p>How to determine failure of worker?</p>
+<ul>
+<li>The master pings every worker periodically. If no response is received from a worker in a certain amount of time, the master marks the worker as failed.</li>
+</ul>
+<p>Which tasks to rollback when workers failed?</p>
+<ul>
+<li>Any map tasks completed by the failed worker are reset back to their initial idle state, and therefore become eligible for scheduling on other workers. </li>
+<li>Similarly, any map task or reduce task in progress on a failed (map or reduce separately) worker is also reset to idle and becomes eligible for rescheduling.</li>
+</ul>
+<p> Why completed map tasks on failed worker should re-execute while completed reduce tasks don’t?</p>
+<ul>
+<li>Completed map tasks are re-executed on a failure because their <em>output is stored on the local disk(s)</em> of the failed machine and is therefore <strong>inaccessible</strong>. </li>
+<li>Completed reduce tasks do not need to be re-executed since <strong>their output is stored in a global file system</strong>.</li>
+</ul>
+<p>What happens if map tasks are re-executed?</p>
+<ul>
+<li>When a map task is executed first by worker A and then later executed by worker B (because A failed), all workers executing reduce tasks are notified of the re-execution. Any reduce task that has not already read the data from worker A will read the data from worker B.</li>
+</ul>
+<h3 id="Master-Failure"><a href="#Master-Failure" class="headerlink" title="Master Failure"></a>Master Failure</h3><p>Can be solved with periodic checkpoints of master data structure.</p>
+<p>But since there is only one master, it’s unlikely to fail.</p>
+<p>So when master fails, we can just abort the computation.</p>
+<h3 id="Semantics"><a href="#Semantics" class="headerlink" title="Semantics"></a>Semantics</h3><p>When user-supplied map and reduce functions are deterministic:</p>
+<ul>
+<li>MapReduce will produce the same output as non-faulting sequential execution of program.</li>
+<li>That property relies on <em><strong>atomic commit</strong></em> of map and reduce tasks.<ul>
+<li>For map tasks: when a map task completes, the worker sends a message to the master and includes the names of the R temporary files in the message. <em>If the master receives a completion message for an already completed map task, it ignores the message. Otherwise, it records the names of R files in a master data structure</em>.</li>
+<li>For reduce tasks: when a reduce task completes, the <em>reduce worker atomically renames its temporary output file to the final output file</em>. If the same reduce task is executed on multiple machines, multiple rename calls will be executed for the same final output file. We rely on the atomic rename operation provided by the underlying file system to guarantee that the final file system state contains just the data produced by one execution of the reduce task.</li>
+</ul>
+</li>
+</ul>
+<p>When user-supplied map and reduce functions are non-deterministic:</p>
+<ul>
+<li>MapReduce will provide weaker but still reasonable semantics.</li>
+<li>In the presence of non-deterministic operators, the output of a particular reduce task R1 is equivalent to the output for R1 produced by a sequential execution of the non-deterministic program. However, the output for a different reduce task R2 may correspond to the output for R2 produced by a different sequential execution of the non-deterministic program.</li>
+<li>Consider map task M and reduce tasks $R_1$ and $R_2$. Let $e(R_i)$ be the execution of $R_i$ that committed (there is exactly one such execution). The weaker semantics arise because $e(R_1)$ may have read the output produced by one execution of M and $e(R_2)$ may have read the output produced by a different execution of M.</li>
+</ul>
+<h2 id="Locality"><a href="#Locality" class="headerlink" title="Locality"></a>Locality</h2><p>Since network bandwidth is the bottleneck, one optimization is that running GFS and MapReduce on the same set of machines. And master schedule map tasks to read input locally as possible.</p>
+<h2 id="Task-Granularity"><a href="#Task-Granularity" class="headerlink" title="Task Granularity"></a>Task Granularity</h2><p>Ideally M and R should be much larger than number of workers</p>
+<ul>
+<li>Improves load balancing</li>
+<li>Speeds up recovery</li>
+</ul>
+<p>Practical bounds of M and R:</p>
+<ul>
+<li>master must take $O(M+R)$ to do scheduling, and take $O(M*R)$ piece of state.</li>
+<li>R is also constrained by users because the output of each reduce task ends up in a separate output file.</li>
+<li>R is often a small multiple of the number of worker machines we expect to use.</li>
+</ul>
+<h2 id="Backup-Tasks"><a href="#Backup-Tasks" class="headerlink" title="Backup Tasks"></a>Backup Tasks</h2><p>What is a straggler?</p>
+<ul>
+<li>straggler is the machine that takes an unusually long time to compute the tasks, it’s often the bottleneck.</li>
+</ul>
+<p> Backup mechanism to deal with straggler</p>
+<ul>
+<li>When a <strong>MapReduce operation is close to completion</strong>, the master <strong>schedules backup executions of the remaining in-progress tasks</strong>.</li>
+<li>The task is marked as completed whenever either the primary or the backup execution completes.</li>
+</ul>
+<h1 id="Refinement"><a href="#Refinement" class="headerlink" title="Refinement"></a>Refinement</h1><h2 id="Partition-Function"><a href="#Partition-Function" class="headerlink" title="Partition Function"></a>Partition Function</h2><p>Default partition function: $hash(key)%R$, this tends to generate well-balanced partitions.</p>
+<p>But sometimes input are skewed, we need some special partition functions.</p>
+<p>For example, when output keys are URLs, and we want all entries for a single host to end up in the same output file. We can then use $hash(Hostname(url))$.</p>
+<h2 id="Ordering-Guarantees"><a href="#Ordering-Guarantees" class="headerlink" title="Ordering Guarantees"></a>Ordering Guarantees</h2><p>Within a given partition, the intermediate key&#x2F;value pairs are processed in increasing key order (because it is sorted by reduce). </p>
+<p>This ordering makes it easy to <em><strong>generate a sorted output file per partition</strong></em>, which is useful when the output file format needs to support efficient <strong>random access lookups by key</strong> (hash + binary search, similar to hash join algorithm in database)</p>
+<h2 id="Combiner-Functions"><a href="#Combiner-Functions" class="headerlink" title="Combiner Functions"></a>Combiner Functions</h2><p>Combiner functions is like a reduce function but runs on map workers.</p>
+<p>It can reduce the network overhead by pre-processing (aggregating) the keys and values.</p>
+<p>For some kind of tasks, it’s very useful.</p>
+<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><h3 id="Input-and-Output-Formats"><a href="#Input-and-Output-Formats" class="headerlink" title="Input and Output Formats"></a>Input and Output Formats</h3><p>Text mode: treat each line as key&#x2F;value pair</p>
+<ul>
+<li>key: offset in the file</li>
+<li>value: content of the line</li>
+</ul>
+<p>Reader mode: user provide reader interface to split the range.</p>
+<h3 id="Side-effects"><a href="#Side-effects" class="headerlink" title="Side effects"></a>Side effects</h3><p>It is useful to generate auxiliary files in map or reduce tasks, MapReduce don’t provide two-phase commit. Therefore, tasks that produce multiple output files with cross-file consistency requirements should be deterministic.</p>
+<h3 id="Skipping-Bad-Records"><a href="#Skipping-Bad-Records" class="headerlink" title="Skipping Bad Records"></a>Skipping Bad Records</h3><p>Sometimes it is feasible to ignore some bad records caused by user program, for example doing a statistic analysis on a large dataset.</p>
+<p>MapReduce provide some mode to detect records that caused deterministic crashes and skip these records.</p>
+<h3 id="Local-Execution"><a href="#Local-Execution" class="headerlink" title="Local Execution"></a>Local Execution</h3><p>Debugging MapReduce is triky, so MapReduce provide tools of debugging, profiling, and small-scale testing, enabling sequentially execute all of the work for a MapReduce operation on the local machine.  </p>
+<h3 id="Status-Information"><a href="#Status-Information" class="headerlink" title="Status Information"></a>Status Information</h3><p>The master runs an internal HTTP server and exports a set of status pages for human consumption. </p>
+<h3 id="Counters"><a href="#Counters" class="headerlink" title="Counters"></a>Counters</h3><p>The MapReduce library provides a counter facility to count occurrences of various events. </p>
+<p>To use this facility, <em>user code creates a named counter object</em> and then <em>increments the counter appropriately in the Map and&#x2F;or Reduce function</em>. For example:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Counter *uppercase;</span><br><span class="line">uppercase = <span class="built_in">GetCounter</span>(<span class="string">&quot;uppercase&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">map</span>(String name, String contents) &#123;</span><br><span class="line">    <span class="keyword">for</span> (w : contents) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">isCapitalized</span>(w)) &#123;</span><br><span class="line">            uppercase-&gt;<span class="built_in">Increment</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">EmitIntermediate</span>(w, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The counter values from individual worker machines are periodically propagated to the master (<em>piggybacked</em> on the ping response). </p>
+<p>The master aggregates the counter values from successful map and reduce tasks and returns them to the user code when the MapReduce operation is completed. </p>
+<p>The current counter values are also displayed on the master status page so that a human can watch the progress of the live computation. </p>
+<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Success of MapReduce</p>
+<ol>
+<li>Model is easy to use, it hides parallelism, load balance, locality, fault tolerance, etc.</li>
+<li>Model is expressive, can be used to solve many problems.</li>
+<li>It has scalability, fault tolerance, consistency.</li>
+</ol>
+<p>Some takeaways</p>
+<ol>
+<li>Restricting programming model makes it easy for parallelism and fault tolerance.</li>
+<li>Network bandwidth is scarce resource. (locality optimization).</li>
+<li>Redundant execution can be used to reduce the impact of slow machines.</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Distributed System</tag>
       </tags>
   </entry>
   <entry>
@@ -752,187 +1239,6 @@
       <tags>
         <tag>Go</tag>
         <tag>Concurrency</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MapReduce</title>
-    <url>/2022/12/15/MapReduce/</url>
-    <content><![CDATA[<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>MapReduce: a <strong>programming model</strong> and <strong>associated implementation</strong> for <strong>processing and generating large datasets</strong>.</p>
-<ul>
-<li>Map: process key&#x2F;value pair to generate intermediate key&#x2F;value pairs.</li>
-<li>Reduce: merges all intermediate values associated with the same intermediate key.</li>
-</ul>
-<span id="more"></span>
-
-<p>runtime system responsibility:</p>
-<ul>
-<li>Partitioning the input data.</li>
-<li>Scheduling the program’s execution across a set of machines.</li>
-<li>Handling managed failures.</li>
-<li>Managing inter-machine communication.</li>
-</ul>
-<p>Motivation:</p>
-<ul>
-<li>Special purpose coding on distributed systems is hard.</li>
-<li>Hide the messy details of parallelization, fault-tolerance, data distribution and load balancing.</li>
-</ul>
-<h1 id="Programming-Model"><a href="#Programming-Model" class="headerlink" title="Programming Model"></a>Programming Model</h1><h2 id="Types"><a href="#Types" class="headerlink" title="Types"></a>Types</h2><p>map and reduce functions are deterministic functions: always get the same output with same input.</p>
-<p>map: (k1, v1) –&gt; list(k2, v2)</p>
-<p>reduce: (k2, list(v2)) –&gt; list(v3)</p>
-<p>Input keys and values are drawn from different domain than the output keys and values. But intermediate keys and values are from the same domain. </p>
-<h2 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h2><ul>
-<li><p>Distributed Grep</p>
-</li>
-<li><p>Count of URL Access Frequency</p>
-</li>
-<li><p>Reverse Web-Link Graph: The map function outputs $&lt;target, source&gt;$ pairs for each link to a target URL found in a page named source. The reduce function concatenates the list of all source URLs associated with a given target URL and emits the pair $&lt;target, list(source)&gt;$</p>
-</li>
-<li><p>Term-Vector per Host</p>
-</li>
-<li><p>Inverted Index: The map function parses each document, and emits a sequence of $&lt;word, document ID&gt;$ pairs. The reduce function accepts all pairs for a given word, sorts the corresponding document IDs and emits a $&lt;word, list(document ID)&gt;$ pair. The set of all output pairs forms a simple inverted index. It is easy to augment this computation to keep track of word positions.</p>
-</li>
-<li><p>Distributed Sort: The map function extracts the key from each record, and emits a $&lt;key, record&gt;$ pair. The reduce function emits all pairs unchanged. This computation depends on the partitioning functions and the R files’ ordering properties.</p>
-</li>
-</ul>
-<h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><p>Implementation environment:</p>
-<ul>
-<li>Commodity computers are used.</li>
-<li>Network (switched Ethernet) is the bottleneck.</li>
-<li>Cluster of computers, thus <strong>machine failures are common</strong>.</li>
-<li>Storage hardware is inexpensive; using a distributed file system (GFS) to manage data; replication is used.</li>
-<li>Users submit jobs to a scheduling system. Each <strong>job</strong> consists of <strong>a set of tasks</strong>, and is <strong>mapped by the scheduler</strong> to a set of available machines within a cluster.</li>
-</ul>
-<h2 id="Execution-Overview"><a href="#Execution-Overview" class="headerlink" title="Execution Overview"></a>Execution Overview</h2><p><img src="D:\Blog\source_images\image-20221217145110248.png" alt="image-20221217145110248"></p>
-<p>What happens when user call MapReduce:</p>
-<ol>
-<li>The MapReduce library first split input files into M pieces of typically 16 to 64 MB per pieces. It then starts up many copies of the user program on a cluster of machines.</li>
-<li>The copied program on master is special. The rest are workers that are assigned work by the master. There are M map tasks and R reduce tasks to assign. The master picks idle workers and assigns each one a map task or a reduce task.</li>
-<li>A worker who is assigned a map task reads the input split, and use user-defined map function to process the split. The <strong>intermediate keys and values are buffered in the memory</strong>.</li>
-<li><strong>Periodically, the buffered pairs are written to disk</strong>, partitioned into R regions by partition function i.e. $hash(key)%R$. The locations of these buffered pairs on the local disk are passed back to the master, who is responsible for forwarding these locations to the reduce workers.</li>
-<li>When a reducer worker is notified by master about the locations, it then uses remote procedure call (RPC) to remotely reads the intermediate keys and values from the map worker’s local disks.</li>
-<li>When a reduce worker has read all intermediate data, it sorts it by the intermediate keys so that all occurrences of the same key are grouped together. The <em><strong>sorting is needed because typically many different keys map to the same reduce task</strong></em>. If the amount of intermediate data is too large to fit in memory, an <strong>external sort</strong> (i.e. external merge sort) is used.</li>
-<li>The reduce worker iterate the sorted intermediate data, for each unique intermediate key encountered, it passed the key and the corresponding list of intermediate values to user’s reduce function. The output of Reduce function is appended to a final output file for this reduce partition.</li>
-<li>When all map tasks and reduce tasks had been done, the master wakeup the user program.</li>
-<li>After successful completion, the output is available in R output files. They can be used as input of another MapReduce call.</li>
-</ol>
-<h2 id="Master-Data-Structures"><a href="#Master-Data-Structures" class="headerlink" title="Master Data Structures"></a>Master Data Structures</h2><p>For each map task and reduce task, it stores:</p>
-<ul>
-<li>The state (idle, in-progress, or completed)</li>
-<li>The identity of the worker machine (for non-idle tasks).</li>
-</ul>
-<p>master is like a conduit:</p>
-<ul>
-<li>it propagate the location of R regions on map tasks to reduce tasks</li>
-<li>Therefore, for each completed map tasks, the master stores the locations and sizes of R regions.</li>
-<li>Updates to this location and size information are received as map tasks are completed. The information is pushed incrementally to workers that have in-progress reduce tasks</li>
-</ul>
-<h2 id="Fault-Tolerance"><a href="#Fault-Tolerance" class="headerlink" title="Fault Tolerance"></a>Fault Tolerance</h2><h3 id="Worker-Failure"><a href="#Worker-Failure" class="headerlink" title="Worker Failure"></a>Worker Failure</h3><p>How to determine failure of worker?</p>
-<ul>
-<li>The master pings every worker periodically. If no response is received from a worker in a certain amount of time, the master marks the worker as failed.</li>
-</ul>
-<p>Which tasks to rollback when workers failed?</p>
-<ul>
-<li>Any map tasks completed by the failed worker are reset back to their initial idle state, and therefore become eligible for scheduling on other workers. </li>
-<li>Similarly, any map task or reduce task in progress on a failed (map or reduce separately) worker is also reset to idle and becomes eligible for rescheduling.</li>
-</ul>
-<p> Why completed map tasks on failed worker should re-execute while completed reduce tasks don’t?</p>
-<ul>
-<li>Completed map tasks are re-executed on a failure because their <em>output is stored on the local disk(s)</em> of the failed machine and is therefore <strong>inaccessible</strong>. </li>
-<li>Completed reduce tasks do not need to be re-executed since <strong>their output is stored in a global file system</strong>.</li>
-</ul>
-<p>What happens if map tasks are re-executed?</p>
-<ul>
-<li>When a map task is executed first by worker A and then later executed by worker B (because A failed), all workers executing reduce tasks are notified of the re-execution. Any reduce task that has not already read the data from worker A will read the data from worker B.</li>
-</ul>
-<h3 id="Master-Failure"><a href="#Master-Failure" class="headerlink" title="Master Failure"></a>Master Failure</h3><p>Can be solved with periodic checkpoints of master data structure.</p>
-<p>But since there is only one master, it’s unlikely to fail.</p>
-<p>So when master fails, we can just abort the computation.</p>
-<h3 id="Semantics"><a href="#Semantics" class="headerlink" title="Semantics"></a>Semantics</h3><p>When user-supplied map and reduce functions are deterministic:</p>
-<ul>
-<li>MapReduce will produce the same output as non-faulting sequential execution of program.</li>
-<li>That property relies on <em><strong>atomic commit</strong></em> of map and reduce tasks.<ul>
-<li>For map tasks: when a map task completes, the worker sends a message to the master and includes the names of the R temporary files in the message. <em>If the master receives a completion message for an already completed map task, it ignores the message. Otherwise, it records the names of R files in a master data structure</em>.</li>
-<li>For reduce tasks: when a reduce task completes, the <em>reduce worker atomically renames its temporary output file to the final output file</em>. If the same reduce task is executed on multiple machines, multiple rename calls will be executed for the same final output file. We rely on the atomic rename operation provided by the underlying file system to guarantee that the final file system state contains just the data produced by one execution of the reduce task.</li>
-</ul>
-</li>
-</ul>
-<p>When user-supplied map and reduce functions are non-deterministic:</p>
-<ul>
-<li>MapReduce will provide weaker but still reasonable semantics.</li>
-<li>In the presence of non-deterministic operators, the output of a particular reduce task R1 is equivalent to the output for R1 produced by a sequential execution of the non-deterministic program. However, the output for a different reduce task R2 may correspond to the output for R2 produced by a different sequential execution of the non-deterministic program.</li>
-<li>Consider map task M and reduce tasks $R_1$ and $R_2$. Let $e(R_i)$ be the execution of $R_i$ that committed (there is exactly one such execution). The weaker semantics arise because $e(R_1)$ may have read the output produced by one execution of M and $e(R_2)$ may have read the output produced by a different execution of M.</li>
-</ul>
-<h2 id="Locality"><a href="#Locality" class="headerlink" title="Locality"></a>Locality</h2><p>Since network bandwidth is the bottleneck, one optimization is that running GFS and MapReduce on the same set of machines. And master schedule map tasks to read input locally as possible.</p>
-<h2 id="Task-Granularity"><a href="#Task-Granularity" class="headerlink" title="Task Granularity"></a>Task Granularity</h2><p>Ideally M and R should be much larger than number of workers</p>
-<ul>
-<li>Improves load balancing</li>
-<li>Speeds up recovery</li>
-</ul>
-<p>Practical bounds of M and R:</p>
-<ul>
-<li>master must take $O(M+R)$ to do scheduling, and take $O(M*R)$ piece of state.</li>
-<li>R is also constrained by users because the output of each reduce task ends up in a separate output file.</li>
-<li>R is often a small multiple of the number of worker machines we expect to use.</li>
-</ul>
-<h2 id="Backup-Tasks"><a href="#Backup-Tasks" class="headerlink" title="Backup Tasks"></a>Backup Tasks</h2><p>What is a straggler?</p>
-<ul>
-<li>straggler is the machine that takes an unusually long time to compute the tasks, it’s often the bottleneck.</li>
-</ul>
-<p> Backup mechanism to deal with straggler</p>
-<ul>
-<li>When a <strong>MapReduce operation is close to completion</strong>, the master <strong>schedules backup executions of the remaining in-progress tasks</strong>.</li>
-<li>The task is marked as completed whenever either the primary or the backup execution completes.</li>
-</ul>
-<h1 id="Refinement"><a href="#Refinement" class="headerlink" title="Refinement"></a>Refinement</h1><h2 id="Partition-Function"><a href="#Partition-Function" class="headerlink" title="Partition Function"></a>Partition Function</h2><p>Default partition function: $hash(key)%R$, this tends to generate well-balanced partitions.</p>
-<p>But sometimes input are skewed, we need some special partition functions.</p>
-<p>For example, when output keys are URLs, and we want all entries for a single host to end up in the same output file. We can then use $hash(Hostname(url))$.</p>
-<h2 id="Ordering-Guarantees"><a href="#Ordering-Guarantees" class="headerlink" title="Ordering Guarantees"></a>Ordering Guarantees</h2><p>Within a given partition, the intermediate key&#x2F;value pairs are processed in increasing key order (because it is sorted by reduce). </p>
-<p>This ordering makes it easy to <em><strong>generate a sorted output file per partition</strong></em>, which is useful when the output file format needs to support efficient <strong>random access lookups by key</strong> (hash + binary search, similar to hash join algorithm in database)</p>
-<h2 id="Combiner-Functions"><a href="#Combiner-Functions" class="headerlink" title="Combiner Functions"></a>Combiner Functions</h2><p>Combiner functions is like a reduce function but runs on map workers.</p>
-<p>It can reduce the network overhead by pre-processing (aggregating) the keys and values.</p>
-<p>For some kind of tasks, it’s very useful.</p>
-<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><h3 id="Input-and-Output-Formats"><a href="#Input-and-Output-Formats" class="headerlink" title="Input and Output Formats"></a>Input and Output Formats</h3><p>Text mode: treat each line as key&#x2F;value pair</p>
-<ul>
-<li>key: offset in the file</li>
-<li>value: content of the line</li>
-</ul>
-<p>Reader mode: user provide reader interface to split the range.</p>
-<h3 id="Side-effects"><a href="#Side-effects" class="headerlink" title="Side effects"></a>Side effects</h3><p>It is useful to generate auxiliary files in map or reduce tasks, MapReduce don’t provide two-phase commit. Therefore, tasks that produce multiple output files with cross-file consistency requirements should be deterministic.</p>
-<h3 id="Skipping-Bad-Records"><a href="#Skipping-Bad-Records" class="headerlink" title="Skipping Bad Records"></a>Skipping Bad Records</h3><p>Sometimes it is feasible to ignore some bad records caused by user program, for example doing a statistic analysis on a large dataset.</p>
-<p>MapReduce provide some mode to detect records that caused deterministic crashes and skip these records.</p>
-<h3 id="Local-Execution"><a href="#Local-Execution" class="headerlink" title="Local Execution"></a>Local Execution</h3><p>Debugging MapReduce is triky, so MapReduce provide tools of debugging, profiling, and small-scale testing, enabling sequentially execute all of the work for a MapReduce operation on the local machine.  </p>
-<h3 id="Status-Information"><a href="#Status-Information" class="headerlink" title="Status Information"></a>Status Information</h3><p>The master runs an internal HTTP server and exports a set of status pages for human consumption. </p>
-<h3 id="Counters"><a href="#Counters" class="headerlink" title="Counters"></a>Counters</h3><p>The MapReduce library provides a counter facility to count occurrences of various events. </p>
-<p>To use this facility, <em>user code creates a named counter object</em> and then <em>increments the counter appropriately in the Map and&#x2F;or Reduce function</em>. For example:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Counter *uppercase;</span><br><span class="line">uppercase = <span class="built_in">GetCounter</span>(<span class="string">&quot;uppercase&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">map</span>(String name, String contents) &#123;</span><br><span class="line">    <span class="keyword">for</span> (w : contents) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">isCapitalized</span>(w)) &#123;</span><br><span class="line">            uppercase-&gt;<span class="built_in">Increment</span>()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">EmitIntermediate</span>(w, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>The counter values from individual worker machines are periodically propagated to the master (<em>piggybacked</em> on the ping response). </p>
-<p>The master aggregates the counter values from successful map and reduce tasks and returns them to the user code when the MapReduce operation is completed. </p>
-<p>The current counter values are also displayed on the master status page so that a human can watch the progress of the live computation. </p>
-<h1 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h1><p>Success of MapReduce</p>
-<ol>
-<li>Model is easy to use, it hides parallelism, load balance, locality, fault tolerance, etc.</li>
-<li>Model is expressive, can be used to solve many problems.</li>
-<li>It has scalability, fault tolerance, consistency.</li>
-</ol>
-<p>Some takeaways</p>
-<ol>
-<li>Restricting programming model makes it easy for parallelism and fault tolerance.</li>
-<li>Network bandwidth is scarce resource. (locality optimization).</li>
-<li>Redundant execution can be used to reduce the impact of slow machines.</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>Distributed System</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go Network</title>
-    <url>/2022/12/16/Go-Network/</url>
-    <content><![CDATA[]]></content>
-      <tags>
-        <tag>Network</tag>
-        <tag>Go</tag>
       </tags>
   </entry>
   <entry>

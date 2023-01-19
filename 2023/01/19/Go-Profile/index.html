@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="性能调优准则 要依靠数据而不是猜测 要定位到最大瓶颈，而不是细枝末节 不要过早优化 不要过度优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go-Profile">
+<meta property="og:url" content="http://anyu10.github.io/2023/01/19/Go-Profile/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="性能调优准则 要依靠数据而不是猜测 要定位到最大瓶颈，而不是细枝末节 不要过早优化 不要过度优化">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Blog\source_images\image-20230119214436210.png">
+<meta property="article:published_time" content="2023-01-19T07:15:58.000Z">
+<meta property="article:modified_time" content="2023-01-19T16:10:40.416Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="Go">
+<meta property="article:tag" content="Profile">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Blog\source_images\image-20230119214436210.png">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2023/01/19/Go-Profile/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/01/19/Go-Profile/","path":"2023/01/19/Go-Profile/","title":"Go-Profile"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Go-Profile | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%87%86%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">性能调优准则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7pprof"><span class="nav-number">2.</span> <span class="nav-text">性能分析工具pprof</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.</span> <span class="nav-text">功能简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">CPU性能分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E5%88%86%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">堆分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%88%86%E6%9E%90"><span class="nav-number">2.4.</span> <span class="nav-text">其他分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%96%E6%9E%90"><span class="nav-number">2.5.</span> <span class="nav-text">剖析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pprof%E5%8E%9F%E7%90%86%E5%92%8C%E9%87%87%E6%A0%B7%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">pprof原理和采样过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E9%87%87%E6%A0%B7"><span class="nav-number">3.1.</span> <span class="nav-text">CPU采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Heap%E9%87%87%E6%A0%B7"><span class="nav-number">3.2.</span> <span class="nav-text">Heap采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Goroutine-amp-ThreadCreate-%E9%87%87%E6%A0%B7"><span class="nav-number">3.3.</span> <span class="nav-text">Goroutine &amp; ThreadCreate 采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block-amp-Mutex-%E9%87%87%E6%A0%B7"><span class="nav-number">3.4.</span> <span class="nav-text">Block &amp; Mutex 采样</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98"><span class="nav-number">4.</span> <span class="nav-text">性能调优</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E4%BC%98%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">业务服务优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">4.1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%BD%93Service%E4%BC%98%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="nav-number">4.1.2.</span> <span class="nav-text">单体Service优化流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%84%E4%BC%B0%E6%89%8B%E6%AE%B5"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">评估手段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">性能瓶颈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C"><span class="nav-number">4.1.2.3.</span> <span class="nav-text">验证结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E9%93%BE%E8%B7%AF%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">4.1.3.</span> <span class="nav-text">服务链路性能优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%BA%93%E4%BC%98%E5%8C%96"><span class="nav-number">4.2.</span> <span class="nav-text">基础库优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Go%E8%AF%AD%E8%A8%80%E4%BC%98%E5%8C%96"><span class="nav-number">4.3.</span> <span class="nav-text">Go语言优化</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Anyu Elin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/01/19/Go-Profile/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Go-Profile | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go-Profile
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-01-19 15:15:58" itemprop="dateCreated datePublished" datetime="2023-01-19T15:15:58+08:00">2023-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-20 00:10:40" itemprop="dateModified" datetime="2023-01-20T00:10:40+08:00">2023-01-20</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="性能调优准则"><a href="#性能调优准则" class="headerlink" title="性能调优准则"></a>性能调优准则</h1><ul>
+<li>要依靠<strong>数据</strong>而不是猜测</li>
+<li>要定位到<strong>最大瓶颈</strong>，而不是细枝末节</li>
+<li>不要过早优化</li>
+<li>不要过度优化</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="性能分析工具pprof"><a href="#性能分析工具pprof" class="headerlink" title="性能分析工具pprof"></a>性能分析工具pprof</h1><h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><p><img src="D:\Blog\source_images\image-20230119214436210.png" alt="image-20230119214436210"></p>
+<h2 id="CPU性能分析"><a href="#CPU性能分析" class="headerlink" title="CPU性能分析"></a>CPU性能分析</h2><p>使用命令 <code>go tool pprof &quot;localhost:6060/debug/pprof/profile?seconds=10&quot;</code> 采集10s的数据，并进入可交互的终端</p>
+<ul>
+<li><code>top[N]</code>: 查看占用资源最多的函数<ul>
+<li>flat: 当前函数<strong>本身</strong>的执行耗时 </li>
+<li>flat%: 执行耗时占的百分比</li>
+<li>sum%: 该函数及其之上的函数占的总百分比</li>
+<li>cum: 当前函数<strong>及其调用函数</strong>的总执行耗时</li>
+<li>cum%: 总执行耗时的百分比</li>
+<li>flat &#x3D;&#x3D; cum –&gt; 函数中没有调用其他函数</li>
+<li>flat &#x3D;&#x3D; 0 –&gt; 函数中只有其他函数的调用</li>
+</ul>
+</li>
+<li><code>list [regexp]</code>: 根据正则表达式查找代码行</li>
+<li><code>web</code>: 调用关系可视化</li>
+</ul>
+<h2 id="堆分析"><a href="#堆分析" class="headerlink" title="堆分析"></a>堆分析</h2><p>使用 <code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/heap&quot;</code> 命令，在localhost:8080地址展示各种视图和工具进行分析</p>
+<h2 id="其他分析"><a href="#其他分析" class="headerlink" title="其他分析"></a>其他分析</h2><p>协程分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/goroutine&quot;</code></p>
+<p>锁分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/mutex&quot;</code></p>
+<p>阻塞分析：<code>go tool pprof -http=:8080 &quot;http://localhost:6060/debug/pprof/block&quot;</code></p>
+<h2 id="剖析"><a href="#剖析" class="headerlink" title="剖析"></a>剖析</h2><p>通过 <code>go test</code> 命令可以指定生成测试程序的 profile，这些profile可以用来分析 cpu, block, mem 等性能</p>
+<p>例如</p>
+<ul>
+<li>CPU分析<ul>
+<li><code>go test -cpuprofile=cpu.log module/package</code> </li>
+<li><code>go tool pprof -http=:8080 cpu.log</code></li>
+</ul>
+</li>
+<li>block分析<ul>
+<li><code>go test -blockprofile=block.log module/package</code></li>
+<li><code>go tool pprof -http=:8080 block.log</code></li>
+</ul>
+</li>
+<li>mem分析<ul>
+<li><code>go test -memprofile=block.log module/package</code></li>
+<li><code>go tool pprof -http=:8080 mem.log</code></li>
+</ul>
+</li>
+</ul>
+<h1 id="pprof原理和采样过程"><a href="#pprof原理和采样过程" class="headerlink" title="pprof原理和采样过程"></a>pprof原理和采样过程</h1><h2 id="CPU采样"><a href="#CPU采样" class="headerlink" title="CPU采样"></a>CPU采样</h2><ul>
+<li>操作系统定时器：启动一个操作系统的定时器，每10ms发送一个SIGPROF信息给进程</li>
+<li>进程堆栈：进程<strong>每次收到SIGPROF信号都记录调用堆栈</strong></li>
+<li>写缓冲：每100ms读取记录的调用堆栈并写入到输出流</li>
+</ul>
+<h2 id="Heap采样"><a href="#Heap采样" class="headerlink" title="Heap采样"></a>Heap采样</h2><ul>
+<li>采样程序通过<strong>内存分配器</strong>在堆上分配和释放的内存，<strong>记录分配&#x2F;释放的大小和数量</strong></li>
+<li>采样率：<strong>每512KB采样一次</strong>，可在运行开头修改，1表示每次分配均记录</li>
+<li>采样时间：程序开始运行时到采样时</li>
+<li>采样指标：alloc_space, alloc_objects, inuse_space, inuse_objects</li>
+<li>inuse&#x3D;alloc-free</li>
+</ul>
+<h2 id="Goroutine-amp-ThreadCreate-采样"><a href="#Goroutine-amp-ThreadCreate-采样" class="headerlink" title="Goroutine &amp; ThreadCreate 采样"></a>Goroutine &amp; ThreadCreate 采样</h2><ul>
+<li>Goroutine<ul>
+<li>记录所有用户发起的且在运行中的goroutine(<strong>即入口非runtime开头的goroutine</strong>)runtime.main的调用栈信息</li>
+</ul>
+</li>
+<li>ThreadCreate<ul>
+<li>记录程序创建的所有系统线程的信息</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">direction LR</span><br><span class="line">id1(stop the world) --&gt; id2(遍历allg切片) --&gt; id3(输出创建g的堆栈) --&gt; id4(start the world)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Block-amp-Mutex-采样"><a href="#Block-amp-Mutex-采样" class="headerlink" title="Block &amp; Mutex 采样"></a>Block &amp; Mutex 采样</h2><ul>
+<li>Block采样<ul>
+<li>采样阻塞操作的次数和耗时</li>
+<li>采样率：阻塞耗时超过阈值才会被记录，也可以设置采样率，1表示每次都记录</li>
+</ul>
+</li>
+<li>锁竞争<ul>
+<li>采样争抢锁的次数和耗时</li>
+<li>采样率：只记录固定比例的锁操作，也可以设置采样率，1表示每次都记录</li>
+</ul>
+</li>
+</ul>
+<h1 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h1><h2 id="业务服务优化"><a href="#业务服务优化" class="headerlink" title="业务服务优化"></a>业务服务优化</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>服务：能<strong>单独部署</strong>，承载<strong>一定功能</strong>的程序</p>
+<p>依赖：Service A的功能实现依赖Service B的响应结果，则Service A依赖Service B</p>
+<p>调用链路：支持一个接口的相关服务集合及其相互之间的依赖关系</p>
+<p>基础库：公共的工具包，中间件</p>
+<h3 id="单体Service优化流程"><a href="#单体Service优化流程" class="headerlink" title="单体Service优化流程"></a>单体Service优化流程</h3><ol>
+<li>建立服务性能的<strong>评估手段</strong><ul>
+<li>Benchmark</li>
+<li>Others</li>
+</ul>
+</li>
+<li>分析性能数据，定义<strong>性能瓶颈</strong></li>
+<li>优化代码，消除瓶颈</li>
+<li>验证优化效果</li>
+</ol>
+<h4 id="评估手段"><a href="#评估手段" class="headerlink" title="评估手段"></a>评估手段</h4><ul>
+<li>不同负载性能表现有差异</li>
+<li>不同请求参数覆盖的逻辑不同，请求流量不同</li>
+<li>压测范围<ul>
+<li>单机压测</li>
+<li>集群压测</li>
+</ul>
+</li>
+<li>性能数据采集<ul>
+<li>单机性能数据</li>
+<li>集群性能数据</li>
+</ul>
+</li>
+</ul>
+<h4 id="性能瓶颈"><a href="#性能瓶颈" class="headerlink" title="性能瓶颈"></a>性能瓶颈</h4><ul>
+<li>使用库不规范</li>
+<li>高并发场景优化不足，例如异步log</li>
+</ul>
+<h4 id="验证结果"><a href="#验证结果" class="headerlink" title="验证结果"></a>验证结果</h4><ul>
+<li>正确性<ul>
+<li><strong>确保正确性</strong></li>
+<li>响应数据diff</li>
+</ul>
+</li>
+<li>重复压测验证</li>
+<li>上线后评估优化效果<ul>
+<li>关注监控</li>
+<li>收集性能数据</li>
+<li>逐步放量</li>
+</ul>
+</li>
+</ul>
+<h3 id="服务链路性能优化"><a href="#服务链路性能优化" class="headerlink" title="服务链路性能优化"></a>服务链路性能优化</h3><p>分析链路</p>
+<h2 id="基础库优化"><a href="#基础库优化" class="headerlink" title="基础库优化"></a>基础库优化</h2><ol>
+<li>分析基础库核心逻辑和性能瓶颈<ul>
+<li>设计完善的改造方案</li>
+<li>数据按需获取</li>
+<li>序列化反序列化优化</li>
+</ul>
+</li>
+<li>内部压测验证</li>
+<li>推广业务服务落地验证</li>
+</ol>
+<h2 id="Go语言优化"><a href="#Go语言优化" class="headerlink" title="Go语言优化"></a>Go语言优化</h2><p>编译器 &amp; 运行时优化</p>
+<ul>
+<li>优化<strong>内存分配策略</strong></li>
+<li>优化代码<strong>编译流程</strong>，生成更高效的程序</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Go/" rel="tag"><i class="fa fa-tag"></i> Go</a>
+              <a href="/tags/Profile/" rel="tag"><i class="fa fa-tag"></i> Profile</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/17/GFS/" rel="prev" title="GFS">
+                  <i class="fa fa-chevron-left"></i> GFS
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/19/Go-Style/" rel="next" title="Go-Style">
+                  Go-Style <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>Word count total: </span>
+    <span title="Word count total">12k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>Reading time total &asymp;</span>
+    <span title="Reading time total">44 mins.</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
