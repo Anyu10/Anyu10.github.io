@@ -311,7 +311,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-01-24 22:52:30" itemprop="dateModified" datetime="2023-01-24T22:52:30+08:00">2023-01-24</time>
+      <time title="Modified: 2023-01-28 16:54:45" itemprop="dateModified" datetime="2023-01-28T16:54:45+08:00">2023-01-28</time>
     </span>
 
   
@@ -321,7 +321,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>320</span>
+      <span>321</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -349,61 +349,14 @@
 <li>分布式通知与协调</li>
 <li>主备选举</li>
 </ul>
-<h2 id="etcd-架构"><a href="#etcd-架构" class="headerlink" title="etcd 架构"></a>etcd 架构</h2><p><img src="D:\Blog\source_images\image-20230123211311435.png" alt="image-20230123211311435"></p>
-<h2 id="etcd-集群部署"><a href="#etcd-集群部署" class="headerlink" title="etcd 集群部署"></a>etcd 集群部署</h2><h3 id="单节点伪集群部署"><a href="#单节点伪集群部署" class="headerlink" title="单节点伪集群部署"></a>单节点伪集群部署</h3><p>etcd参数说明：</p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>–name</td>
-<td>etcd节点名</td>
-</tr>
-<tr>
-<td>–initial-cluster</td>
-<td>etcd启动时，通过这个配置找到别的etcd节点的地址列表。格式“name&#x3D;<a href="http://ip:port,...”">http://ip:port,...”</a></td>
-</tr>
-<tr>
-<td>–initial-cluster-state</td>
-<td>初始化集群的时候，存在“new”和“existing”两种状态。new表示新建的集群，existing表示加入已存在的集群</td>
-</tr>
-<tr>
-<td>–listen-client-urls</td>
-<td>监听客户端请求的地址列表。格式“<a href="http://ip:port,...”">http://ip:port,...”</a></td>
-</tr>
-<tr>
-<td>–advertise-client-urls</td>
-<td>从多个listen-client-urls中选出一个建议的监听地址</td>
-</tr>
-<tr>
-<td>-listen-peer-urls</td>
-<td>服务端节点之间通信的监听地址。格式“<a href="http://ip:port”">http://ip:port”</a></td>
-</tr>
-<tr>
-<td>–initial-listen-peer-urls</td>
-<td>建议服务端之间通讯使用的地址列表</td>
-</tr>
-</tbody></table>
-<h3 id="多节点集群部署"><a href="#多节点集群部署" class="headerlink" title="多节点集群部署"></a>多节点集群部署</h3><ul>
-<li><p>静态配置</p>
-<ul>
-<li>节点数量已知</li>
-<li>节点的ip地址已知</li>
-</ul>
-</li>
-<li><p>etcd动态发现</p>
-<ul>
-<li>使用<code>curl https://discovery.etcd.io/new?size=3</code>获取三个节点的动态集群</li>
-<li>使用<code>--discovery $&#123;DISCOVERY&#125;</code>添加集群节点</li>
-<li>不需要指定<code>--initial-cluster</code></li>
-</ul>
-</li>
-</ul>
-<p><code>etcdctl --endpoints=$ENDPOINTS member list</code> 可以列出一个集群中所有的节点信息</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/23/etcd/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -457,9 +410,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2023-01-22 21:44:54 / Modified: 22:34:01" itemprop="dateCreated datePublished" datetime="2023-01-22T21:44:54+08:00">2023-01-22</time>
+      <time title="Created: 2023-01-22 21:44:54" itemprop="dateCreated datePublished" datetime="2023-01-22T21:44:54+08:00">2023-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-28 16:55:18" itemprop="dateModified" datetime="2023-01-28T16:55:18+08:00">2023-01-28</time>
     </span>
 
   
@@ -469,7 +428,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>425</span>
+      <span>426</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -495,30 +454,14 @@
 <li>代码耦合在一起，可维护性差</li>
 </ul>
 <p>解决方案：微服务</p>
-<h2 id="微服务架构"><a href="#微服务架构" class="headerlink" title="微服务架构"></a>微服务架构</h2><h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="D:\Blog\source_images\image-20230122220029728.png" alt="image-20230122220029728"></p>
-<p>微服务架构解决了单体架构的一些致命问题，但是又引入了新的问题：</p>
-<ul>
-<li>代码冗余，一些公共代码存在于多个服务集群中</li>
-<li>服务与服务之间存在调用关系</li>
-</ul>
-<h3 id="代码冗余问题"><a href="#代码冗余问题" class="headerlink" title="代码冗余问题"></a>代码冗余问题</h3><p>服务未拆分以前，公共功能有统一的实现，如认证、限流、授权等，服务拆分以后，每个服务可能都需要实现一遍</p>
-<p>解决方案：</p>
-<ul>
-<li>使用网关，保证对外的出口一致性，网关根据不同的请求，将其转发到不同的服务(路由)<ul>
-<li>由于出口的一致性，可以在网关上实现一些公共功能</li>
-</ul>
-</li>
-<li>可以将公共功能抽取出来，形成一个新的服务，如统一认证中心</li>
-</ul>
-<h3 id="服务之间的调用"><a href="#服务之间的调用" class="headerlink" title="服务之间的调用"></a>服务之间的调用</h3><p>使用RPC进行调用，但是存在一个问题：如何直到调用哪台机器上的服务，调用方可能需要维护被调用方的地址，等。因此需要引入<strong>服务治理</strong></p>
-<p><img src="D:\Blog\source_images\image-20230122223050971.png" alt="image-20230122223050971"></p>
-<p><code>服务注册</code>，服务方将服务注册到注册中心</p>
-<p><code>服务发现</code>，向注册中心请求服务的地址</p>
-<blockquote>
-<p>服务与服务之间的调用会发生一些问题，为了避免连锁的雪崩反应，引入<code>服务容错</code></p>
-<p>为了追踪调用经过的服务，需要引入<code>链路追踪</code></p>
-</blockquote>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/22/gRPC/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -580,7 +523,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-01-21 23:35:13" itemprop="dateModified" datetime="2023-01-21T23:35:13+08:00">2023-01-21</time>
+      <time title="Modified: 2023-01-28 16:55:30" itemprop="dateModified" datetime="2023-01-28T16:55:30+08:00">2023-01-28</time>
     </span>
 
   
@@ -614,669 +557,14 @@
 <li>Field numbers through 19000 to 19999 is reserved for implementation</li>
 <li>Largest field number is $2^{29}-1$, or $536,870,911$</li>
 </ul>
-<h3 id="Field-Rules"><a href="#Field-Rules" class="headerlink" title="Field Rules"></a>Field Rules</h3><ul>
-<li><code>singular</code>: a well-formed message can have zero or one of this field<ul>
-<li>Whether or not it’s parsed from the wire cannot be determined</li>
-<li>When set to default value, it will not be included when serializing</li>
-</ul>
-</li>
-<li><code>optional</code>: the same as <code>singular</code>, except it check whether the value was explicitly set.<ul>
-<li>If the field is set, and contains a value that was explicitly set or parsed from the wire. It will be serialized to the wire.</li>
-<li>If the field is unset, it will return the default value, and will not be serialized to the wire.</li>
-</ul>
-</li>
-<li><code>repeated</code>: this field type can be repeated zero or more times in a well-formed message.</li>
-<li><code>map</code>: this is a paired key&#x2F;value field type.</li>
-</ul>
-<h3 id="Scalar-Value-Types"><a href="#Scalar-Value-Types" class="headerlink" title="Scalar Value Types"></a>Scalar Value Types</h3><table>
-<thead>
-<tr>
-<th align="left">.proto Type</th>
-<th align="left">Notes</th>
-<th align="left">C++ Type</th>
-<th align="left">Java&#x2F;Kotlin Type</th>
-<th align="left">Python Type</th>
-<th align="left">Go Type</th>
-<th align="left">Ruby Type</th>
-<th align="left">C# Type</th>
-<th align="left">PHP Type</th>
-<th align="left">Dart Type</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">double</td>
-<td align="left"></td>
-<td align="left">double</td>
-<td align="left">double</td>
-<td align="left">float</td>
-<td align="left">float64</td>
-<td align="left">Float</td>
-<td align="left">double</td>
-<td align="left">float</td>
-<td align="left">double</td>
-</tr>
-<tr>
-<td align="left">float</td>
-<td align="left"></td>
-<td align="left">float</td>
-<td align="left">float</td>
-<td align="left">float</td>
-<td align="left">float32</td>
-<td align="left">Float</td>
-<td align="left">float</td>
-<td align="left">float</td>
-<td align="left">double</td>
-</tr>
-<tr>
-<td align="left">int32</td>
-<td align="left">Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
-<td align="left">int32</td>
-<td align="left">int</td>
-<td align="left">int</td>
-<td align="left">int32</td>
-<td align="left">Fixnum or Bignum (as required)</td>
-<td align="left">int</td>
-<td align="left">integer</td>
-<td align="left">int</td>
-</tr>
-<tr>
-<td align="left">int64</td>
-<td align="left">Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
-<td align="left">int64</td>
-<td align="left">long</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">int64</td>
-<td align="left">Bignum</td>
-<td align="left">long</td>
-<td align="left">integer&#x2F;string</td>
-<td align="left">Int64</td>
-</tr>
-<tr>
-<td align="left">uint32</td>
-<td align="left">Uses variable-length encoding.</td>
-<td align="left">uint32</td>
-<td align="left">int</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">uint32</td>
-<td align="left">Fixnum or Bignum (as required)</td>
-<td align="left">uint</td>
-<td align="left">integer</td>
-<td align="left">int</td>
-</tr>
-<tr>
-<td align="left">uint64</td>
-<td align="left">Uses variable-length encoding.</td>
-<td align="left">uint64</td>
-<td align="left">long</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">uint64</td>
-<td align="left">Bignum</td>
-<td align="left">ulong</td>
-<td align="left">integer&#x2F;string</td>
-<td align="left">Int64</td>
-</tr>
-<tr>
-<td align="left">sint32</td>
-<td align="left">Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
-<td align="left">int32</td>
-<td align="left">int</td>
-<td align="left">int</td>
-<td align="left">int32</td>
-<td align="left">Fixnum or Bignum (as required)</td>
-<td align="left">int</td>
-<td align="left">integer</td>
-<td align="left">int</td>
-</tr>
-<tr>
-<td align="left">sint64</td>
-<td align="left">Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
-<td align="left">int64</td>
-<td align="left">long</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">int64</td>
-<td align="left">Bignum</td>
-<td align="left">long</td>
-<td align="left">integer&#x2F;string</td>
-<td align="left">Int64</td>
-</tr>
-<tr>
-<td align="left">fixed32</td>
-<td align="left">Always four bytes. More efficient than uint32 if values are often greater than 228.</td>
-<td align="left">uint32</td>
-<td align="left">int</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">uint32</td>
-<td align="left">Fixnum or Bignum (as required)</td>
-<td align="left">uint</td>
-<td align="left">integer</td>
-<td align="left">int</td>
-</tr>
-<tr>
-<td align="left">fixed64</td>
-<td align="left">Always eight bytes. More efficient than uint64 if values are often greater than 256.</td>
-<td align="left">uint64</td>
-<td align="left">long</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">uint64</td>
-<td align="left">Bignum</td>
-<td align="left">ulong</td>
-<td align="left">integer&#x2F;string</td>
-<td align="left">Int64</td>
-</tr>
-<tr>
-<td align="left">sfixed32</td>
-<td align="left">Always four bytes.</td>
-<td align="left">int32</td>
-<td align="left">int</td>
-<td align="left">int</td>
-<td align="left">int32</td>
-<td align="left">Fixnum or Bignum (as required)</td>
-<td align="left">int</td>
-<td align="left">integer</td>
-<td align="left">int</td>
-</tr>
-<tr>
-<td align="left">sfixed64</td>
-<td align="left">Always eight bytes.</td>
-<td align="left">int64</td>
-<td align="left">long</td>
-<td align="left">int&#x2F;long</td>
-<td align="left">int64</td>
-<td align="left">Bignum</td>
-<td align="left">long</td>
-<td align="left">integer&#x2F;string</td>
-<td align="left">Int64</td>
-</tr>
-<tr>
-<td align="left">bool</td>
-<td align="left"></td>
-<td align="left">bool</td>
-<td align="left">boolean</td>
-<td align="left">bool</td>
-<td align="left">bool</td>
-<td align="left">TrueClass&#x2F;FalseClass</td>
-<td align="left">bool</td>
-<td align="left">boolean</td>
-<td align="left">bool</td>
-</tr>
-<tr>
-<td align="left">string</td>
-<td align="left">A string must always contain UTF-8 encoded or 7-bit ASCII text, and cannot be longer than 232.</td>
-<td align="left">string</td>
-<td align="left">String</td>
-<td align="left">str&#x2F;unicode</td>
-<td align="left">string</td>
-<td align="left">String (UTF-8)</td>
-<td align="left">string</td>
-<td align="left">string</td>
-<td align="left">String</td>
-</tr>
-<tr>
-<td align="left">bytes</td>
-<td align="left">May contain any arbitrary sequence of bytes no longer than 232.</td>
-<td align="left">string</td>
-<td align="left">ByteString</td>
-<td align="left">str (Python 2) bytes (Python 3)</td>
-<td align="left">[]byte</td>
-<td align="left">String (ASCII-8BIT)</td>
-<td align="left">ByteString</td>
-<td align="left">string</td>
-<td align="left"></td>
-</tr>
-</tbody></table>
-<h3 id="Default-Values"><a href="#Default-Values" class="headerlink" title="Default Values"></a>Default Values</h3><p>The default value for repeated fields is empty</p>
-<p>Default value for message type is dependent on languages</p>
-<p>For scalar message fields, once a message is parsed there’s <strong>no way of telling whether a field was explicitly set to the default value</strong></p>
-<h3 id="Enumerations"><a href="#Enumerations" class="headerlink" title="Enumerations"></a>Enumerations</h3><p>enum’s first constant must map to zero</p>
-<p><code>option allow_alias = true;</code> can be used to define alias</p>
-<h3 id="Importing-Definitions"><a href="#Importing-Definitions" class="headerlink" title="Importing Definitions"></a>Importing Definitions</h3><p><code>import public &quot;xx.proto&quot;</code> will allow proto files which import this proto file to use the definitions in xx.proto. </p>
-<h2 id="Updating-a-Message-Type"><a href="#Updating-a-Message-Type" class="headerlink" title="Updating a Message Type"></a>Updating a Message Type</h2><p>Changing, adding, or removing fields:</p>
-<ul>
-<li><strong>Don’t change the field numbers</strong> for any existing fields.</li>
-<li>When <strong>adding new fields</strong><ul>
-<li>old message format can be parsed by new code (but new code should take care of default value)</li>
-<li>new message format can be parsed by old code (old code just ignore the new fields)</li>
-</ul>
-</li>
-<li>Fields can be removed when the fields are no longer used<ul>
-<li>the field name and tag should be reserved</li>
-<li>or add OBSELETE_ prefix to the field name</li>
-</ul>
-</li>
-</ul>
-<p>Compatible types:</p>
-<ul>
-<li><code>int32</code>, <code>uint32</code>, <code>int64</code>, <code>uint64</code>, and <code>bool</code> are all compatible</li>
-<li><code>sint32</code> and <code>sint64</code> are compatible with each other</li>
-<li><code>string</code> and <code>bytes</code> are compatible as long as the bytes are valid UTF-8</li>
-<li><code>Embedded messages</code> are compatible with <code>bytes</code> if <strong>the bytes contain an encoded version of the message</strong></li>
-<li><code>fixed32</code> is compatible with <code>sfixed32</code>, and <code>fixed64</code> with <code>sfixed64</code></li>
-<li>For <code>string</code>, <code>bytes</code>, and <code>message fields</code>, <code>singular</code> fields are compatible with <code>repeated</code> fields<ul>
-<li>For serialized repeated data as input, clients who expect singular field will take the last input.</li>
-<li>not safe for numeric types, such as <code>int</code>, <code>bool</code>, and <code>enum</code>. Because repeated fields of numeric types can be serialized in the <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/encoding#packed">packed</a> format, which will not be parsed correctly when a singular field is expected.</li>
-</ul>
-</li>
-</ul>
-<p>Binary compatible but possibly API incompatible types:</p>
-<ul>
-<li><code>enum</code> is compatible with <code>int32</code>, <code>uint32</code>, <code>int64</code>, and <code>uint64</code> in terms of wire format<ul>
-<li>But client code may treat them differently when the message is deserialized</li>
-</ul>
-</li>
-<li>Changing a single <code>optional</code> field or extension into a member of a <strong>new</strong> <code>oneof</code> is binary compatible<ul>
-<li>For Go, the API will change in incompatible ways</li>
-</ul>
-</li>
-</ul>
-<h2 id="Unknown-Fields"><a href="#Unknown-Fields" class="headerlink" title="Unknown Fields"></a>Unknown Fields</h2><ul>
-<li>Before versions 3.5, unknown fields are <strong>discarded</strong></li>
-<li>In versions 3.5 and later, unknown fields are <strong>retained</strong> and included in the serialized output.</li>
-</ul>
-<h2 id="Any"><a href="#Any" class="headerlink" title="Any"></a>Any</h2><p><code>Any</code> message type:</p>
-<ul>
-<li>allow using messages as embedded types without having their .proto definition</li>
-<li>contains <code>bytes</code> and a <code>URL</code> which is unique identifier to that message’s type</li>
-<li>to use <code>Any</code>, <code>&quot;google/protobuf/any.proto&quot;</code> should be imported</li>
-<li>default type URL for a given message type is <code>type.googleapis.com/_packagename_._messagename_</code></li>
-</ul>
-<h2 id="Oneof"><a href="#Oneof" class="headerlink" title="Oneof"></a>Oneof</h2><h3 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h3><p>When at most one field will be set at the same time, use oneof to enforce this behavior and save memory.</p>
-<ul>
-<li>Oneof fields are like regular fields</li>
-<li>All the fields in a oneof share memory</li>
-<li>At most one field in oneof can be set at the same time</li>
-<li>if <em>multiple values are set, the last set value as determined by the order in the proto will overwrite all previous ones</em>.</li>
-<li>Oneof fields can be any type except <code>map</code> and <code>repeated</code> fields</li>
-<li>If you set a oneof field to the default value (such as setting an int32 oneof field to 0), the “case” of that oneof field will be set, and the value will be serialized on the wire.</li>
-</ul>
-<h3 id="Compatibility-Issue"><a href="#Compatibility-Issue" class="headerlink" title="Compatibility Issue"></a>Compatibility Issue</h3><p>Adding or Removing Fields:</p>
-<ul>
-<li>removing a field from a oneof is considered a <strong>backward incompatible</strong> change. <ul>
-<li>new version binary cannot process old version message</li>
-<li>the information that may be lost is whether the oneof was really set or not</li>
-</ul>
-</li>
-<li>adding a field to a oneof is considered a <strong>forward incompatible</strong> change<ul>
-<li>old version binary cannot process new version message, just reverse of removing a field</li>
-</ul>
-</li>
-</ul>
-<p>Moving Fields:</p>
-<ul>
-<li>Moving fields out of a oneof:<ul>
-<li>move a single field into a new oneof –&gt; safe</li>
-<li>move multiple fields into a new oneof<ul>
-<li>considered backward incompatible</li>
-<li>but it can be safe when it is known that only one of the fields will be set</li>
-</ul>
-</li>
-<li>move fields into a oneof<ul>
-<li>same as “move multiple fields into a new oneof”</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>Deleting a Oneof Fields and Add It Back</p>
-<ul>
-<li>similar to Removing Fields, but this situation there are 3 versions</li>
-</ul>
-<p>Splitting or Merging a Oneof</p>
-<ul>
-<li>similar to Moving Existing Fields into Oneof, backward incompatible.</li>
-</ul>
-<h2 id="Maps"><a href="#Maps" class="headerlink" title="Maps"></a>Maps</h2><h3 id="Features-1"><a href="#Features-1" class="headerlink" title="Features"></a>Features</h3><p><code>map&lt;key_type, value_type&gt; map_field = N;</code> will create a map field.</p>
-<ul>
-<li><code>key_type</code> can be <strong>integral type or string type</strong> (any scalar types except <strong>floating point</strong> and **bytes **type)</li>
-<li><code>value_type</code> can be any type except another map type</li>
-<li>map fields cannot be repeated</li>
-<li>When parsing from wire, the last seen is used when there are duplicate keys</li>
-</ul>
-<h3 id="Backward-Compatibility"><a href="#Backward-Compatibility" class="headerlink" title="Backward Compatibility"></a>Backward Compatibility</h3><p>The map syntax is equivalent to the following on the wire</p>
-<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">message </span><span class="title class_">MapFieldEntry</span> &#123;</span><br><span class="line">  key_type key = <span class="number">1</span>;</span><br><span class="line">  value_type value = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">repeated</span> MapFieldEntry map_field = N;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Defining-a-Service"><a href="#Defining-a-Service" class="headerlink" title="Defining a Service"></a>Defining a Service</h2><figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">service </span><span class="title class_">SearchService</span> &#123;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> Search(SearchRequest) <span class="keyword">returns</span> (SearchResponse)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="JSON-Mapping"><a href="#JSON-Mapping" class="headerlink" title="JSON Mapping"></a>JSON Mapping</h2><p>When parsing JSON-encoded data into a protocol buffer</p>
-<ul>
-<li>if a value is missing or if its value is <code>null</code>, it will be corresponding <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/proto3#default">default value</a>.</li>
-</ul>
-<p>When generating JSON-encoded output from a protocol buffer</p>
-<ul>
-<li>if a protobuf field has a default value will be omitted</li>
-<li>A field that is defined with the <code>optional</code> keyword supports field presence.</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">proto3</th>
-<th align="left">JSON</th>
-<th align="left">JSON example</th>
-<th align="left">Notes</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">message</td>
-<td align="left">object</td>
-<td align="left"><code>&#123;&quot;fooBar&quot;: v, &quot;g&quot;: null, …&#125;</code></td>
-<td align="left">Generates JSON objects. Message field names are mapped to lowerCamelCase and become JSON object keys. If the <code>json_name</code> field option is specified, the specified value will be used as the key instead. Parsers accept both the lowerCamelCase name (or the one specified by the <code>json_name</code> option) and the original proto field name. <code>null</code> is an accepted value for all field types and treated as the default value of the corresponding field type.</td>
-</tr>
-<tr>
-<td align="left">enum</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;FOO_BAR&quot;</code></td>
-<td align="left">The name of the enum value as specified in proto is used. Parsers accept both enum names and integer values.</td>
-</tr>
-<tr>
-<td align="left">map&lt;K,V&gt;</td>
-<td align="left">object</td>
-<td align="left"><code>&#123;&quot;k&quot;: v, …&#125;</code></td>
-<td align="left">All keys are converted to strings.</td>
-</tr>
-<tr>
-<td align="left">repeated V</td>
-<td align="left">array</td>
-<td align="left"><code>[v, …]</code></td>
-<td align="left"><code>null</code> is accepted as the empty list <code>[]</code>.</td>
-</tr>
-<tr>
-<td align="left">bool</td>
-<td align="left">true, false</td>
-<td align="left"><code>true, false</code></td>
-<td align="left"></td>
-</tr>
-<tr>
-<td align="left">string</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;Hello World!&quot;</code></td>
-<td align="left"></td>
-</tr>
-<tr>
-<td align="left">bytes</td>
-<td align="left">base64 string</td>
-<td align="left"><code>&quot;YWJjMTIzIT8kKiYoKSctPUB+&quot;</code></td>
-<td align="left">JSON value will be the data encoded as a string using standard base64 encoding with paddings. Either standard or URL-safe base64 encoding with&#x2F;without paddings are accepted.</td>
-</tr>
-<tr>
-<td align="left">int32, fixed32, uint32</td>
-<td align="left">number</td>
-<td align="left"><code>1, -10, 0</code></td>
-<td align="left">JSON value will be a decimal number. Either numbers or strings are accepted.</td>
-</tr>
-<tr>
-<td align="left">int64, fixed64, uint64</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;1&quot;, &quot;-10&quot;</code></td>
-<td align="left">JSON value will be a decimal string. Either numbers or strings are accepted.</td>
-</tr>
-<tr>
-<td align="left">float, double</td>
-<td align="left">number</td>
-<td align="left"><code>1.1, -10.0, 0, &quot;NaN&quot;, &quot;Infinity&quot;</code></td>
-<td align="left">JSON value will be a number or one of the special string values “NaN”, “Infinity”, and “-Infinity”. Either numbers or strings are accepted. Exponent notation is also accepted. -0 is considered equivalent to 0.</td>
-</tr>
-<tr>
-<td align="left">Any</td>
-<td align="left"><code>object</code></td>
-<td align="left"><code>&#123;&quot;@type&quot;: &quot;url&quot;, &quot;f&quot;: v, … &#125;</code></td>
-<td align="left">If the <code>Any</code> contains a value that has a special JSON mapping, it will be converted as follows: <code>&#123;&quot;@type&quot;: xxx, &quot;value&quot;: yyy&#125;</code>. Otherwise, the value will be converted into a JSON object, and the <code>&quot;@type&quot;</code> field will be inserted to indicate the actual data type.</td>
-</tr>
-<tr>
-<td align="left">Timestamp</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;1972-01-01T10:00:20.021Z&quot;</code></td>
-<td align="left">Uses RFC 3339, where generated output will always be Z-normalized and uses 0, 3, 6 or 9 fractional digits. Offsets other than “Z” are also accepted.</td>
-</tr>
-<tr>
-<td align="left">Duration</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;1.000340012s&quot;, &quot;1s&quot;</code></td>
-<td align="left">Generated output always contains 0, 3, 6, or 9 fractional digits, depending on required precision, followed by the suffix “s”. Accepted are any fractional digits (also none) as long as they fit into nano-seconds precision and the suffix “s” is required.</td>
-</tr>
-<tr>
-<td align="left">Struct</td>
-<td align="left"><code>object</code></td>
-<td align="left"><code>&#123; … &#125;</code></td>
-<td align="left">Any JSON object. See <code>struct.proto</code>.</td>
-</tr>
-<tr>
-<td align="left">Wrapper types</td>
-<td align="left">various types</td>
-<td align="left"><code>2, &quot;2&quot;, &quot;foo&quot;, true, &quot;true&quot;, null, 0, …</code></td>
-<td align="left">Wrappers use the same representation in JSON as the wrapped primitive type, except that <code>null</code> is allowed and preserved during data conversion and transfer.</td>
-</tr>
-<tr>
-<td align="left">FieldMask</td>
-<td align="left">string</td>
-<td align="left"><code>&quot;f.fooBar,h&quot;</code></td>
-<td align="left">See <code>field_mask.proto</code>.</td>
-</tr>
-<tr>
-<td align="left">ListValue</td>
-<td align="left">array</td>
-<td align="left"><code>[foo, bar, …]</code></td>
-<td align="left"></td>
-</tr>
-<tr>
-<td align="left">Value</td>
-<td align="left">value</td>
-<td align="left"></td>
-<td align="left">Any JSON value. Check <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Value">google.protobuf.Value</a> for details.</td>
-</tr>
-<tr>
-<td align="left">NullValue</td>
-<td align="left">null</td>
-<td align="left"></td>
-<td align="left">JSON null</td>
-</tr>
-<tr>
-<td align="left">Empty</td>
-<td align="left">object</td>
-<td align="left"><code>&#123;&#125;</code></td>
-<td align="left">An empty JSON object</td>
-</tr>
-</tbody></table>
-<h1 id="Encoding"><a href="#Encoding" class="headerlink" title="Encoding"></a>Encoding</h1><h2 id="Principles"><a href="#Principles" class="headerlink" title="Principles"></a>Principles</h2><table>
-<thead>
-<tr>
-<th align="left">ID</th>
-<th align="left">Name</th>
-<th align="left">Used For</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">VARINT</td>
-<td align="left">int32, int64, uint32, uint64, sint32, sint64, bool, enum</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">I64</td>
-<td align="left">fixed64, sfixed64, double</td>
-</tr>
-<tr>
-<td align="left">2</td>
-<td align="left">LEN</td>
-<td align="left">string, bytes, embedded messages, packed repeated fields</td>
-</tr>
-<tr>
-<td align="left">3</td>
-<td align="left">SGROUP</td>
-<td align="left">group start (deprecated)</td>
-</tr>
-<tr>
-<td align="left">4</td>
-<td align="left">EGROUP</td>
-<td align="left">group end (deprecated)</td>
-</tr>
-<tr>
-<td align="left">5</td>
-<td align="left">I32</td>
-<td align="left">fixed32, sfixed32, float</td>
-</tr>
-</tbody></table>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">message    := (tag value)*</span><br><span class="line"></span><br><span class="line">tag        := (field &lt;&lt; 3) bit-or wire_type;</span><br><span class="line">                encoded as varint</span><br><span class="line">value      := varint      for wire_type == VARINT,</span><br><span class="line">              i32         for wire_type == I32,</span><br><span class="line">              i64         for wire_type == I64,</span><br><span class="line">              len-prefix  for wire_type == LEN,</span><br><span class="line">              &lt;empty&gt;     for wire_type == SGROUP or EGROUP</span><br><span class="line"></span><br><span class="line">varint     := int32 | int64 | uint32 | uint64 | bool | enum | sint32 | sint64;</span><br><span class="line">                encoded as varints (sintN are ZigZag-encoded first)</span><br><span class="line">i32        := sfixed32 | fixed32 | float;</span><br><span class="line">                encoded as 4-byte little-endian;</span><br><span class="line">                memcpy of the equivalent C types (u?int32_t, float)</span><br><span class="line">i64        := sfixed64 | fixed64 | double;</span><br><span class="line">                encoded as 8-byte little-endian;</span><br><span class="line">                memcpy of the equivalent C types (u?int32_t, float)</span><br><span class="line"></span><br><span class="line">len-prefix := size (message | string | bytes | packed);</span><br><span class="line">                size encoded as varint</span><br><span class="line">string     := valid UTF-8 string (e.g. ASCII);</span><br><span class="line">                max 2GB of bytes</span><br><span class="line">bytes      := any sequence of 8-bit bytes;</span><br><span class="line">                max 2GB of bytes</span><br><span class="line">packed     := varint* | i32* | i64*,</span><br><span class="line">                consecutive values of the type specified in `.proto`</span><br></pre></td></tr></table></figure>
-
-<h1 id="Techniques"><a href="#Techniques" class="headerlink" title="Techniques"></a>Techniques</h1><h2 id="Steaming-Multiple-Messages"><a href="#Steaming-Multiple-Messages" class="headerlink" title="Steaming Multiple Messages"></a>Steaming Multiple Messages</h2><p>Similar to HTTP &amp; TCP, </p>
-<ul>
-<li>use bytes to transfer data</li>
-<li>define the format of data</li>
-<li>extract information from the data according to the format.</li>
-</ul>
-<h2 id="Large-Data-Sets"><a href="#Large-Data-Sets" class="headerlink" title="Large Data Sets"></a>Large Data Sets</h2><p>divide large data structure to smaller ones</p>
-<h2 id="Self-Describing-Messages"><a href="#Self-Describing-Messages" class="headerlink" title="Self-Describing Messages"></a>Self-Describing Messages</h2><p>use <code>import &quot;google/protobuf/descriptor.proto&quot;</code></p>
-<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/any.proto&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;google/protobuf/descriptor.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">SelfDescribingMessage</span> &#123;</span><br><span class="line">  <span class="comment">// Set of FileDescriptorProtos which describe the type and its dependencies.</span></span><br><span class="line">  google.protobuf.FileDescriptorSet descriptor_set = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// The message and its type, encoded as an Any message.</span></span><br><span class="line">  google.protobuf.Any message = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="Fields-Presence"><a href="#Fields-Presence" class="headerlink" title="Fields Presence"></a>Fields Presence</h1><h2 id="Presence-Disciplines"><a href="#Presence-Disciplines" class="headerlink" title="Presence Disciplines"></a>Presence Disciplines</h2><p>Presence defines the <strong>semantics of translating</strong> between API representations and serialized representation</p>
-<ul>
-<li>The <em>no presence</em> discipline <strong>relies upon the field value</strong> to make decisions at (de)serialization time</li>
-<li>The <em>explicit presence</em> discipline <strong>relies upon the explicit tracking state</strong></li>
-</ul>
-<h2 id="Presence-in-Wire-Format"><a href="#Presence-in-Wire-Format" class="headerlink" title="Presence in Wire Format"></a>Presence in Wire Format</h2><p>When serializing</p>
-<ul>
-<li>fields with <em>no presence</em> are not serialized if they contain their default value</li>
-<li>fields with <em>presence</em> are serialized although they contain their default value</li>
-</ul>
-<p>When deserializing</p>
-<ul>
-<li>duplicate field values may be handled in different ways depending on the field definition<ul>
-<li>Duplicate <code>repeated</code> fields are typically appended</li>
-<li>Duplicate <code>optional</code> fields follows ‘the last one wins’ rules</li>
-</ul>
-</li>
-<li>For enum fields, <em><strong>out-of-range values may be stored as unknown fields in the API</strong></em>, <strong>even though the wire-format tag was recognized</strong>.</li>
-</ul>
-<h2 id="Presence-in-Proto-3"><a href="#Presence-in-Proto-3" class="headerlink" title="Presence in Proto 3"></a>Presence in Proto 3</h2><table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Field type</td>
-<td><code>optional</code></td>
-<td>Explicit Presence</td>
-</tr>
-<tr>
-<td>Singular numeric (integer or floating point)</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>Singular enum</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>Singular string or bytes</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>Singular numeric (integer or floating point)</td>
-<td>Yes</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Singular enum</td>
-<td>Yes</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Singular string or bytes</td>
-<td>Yes</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Singular message</td>
-<td>Yes</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Singular message</td>
-<td>No</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Repeated</td>
-<td>N&#x2F;A</td>
-<td></td>
-</tr>
-<tr>
-<td>Oneofs</td>
-<td>N&#x2F;A</td>
-<td>✔️</td>
-</tr>
-<tr>
-<td>Maps</td>
-<td>N&#x2F;A</td>
-<td></td>
-</tr>
-</tbody></table>
-<h2 id="Semantics-of-Presence"><a href="#Semantics-of-Presence" class="headerlink" title="Semantics of Presence"></a>Semantics of Presence</h2><h3 id="Merging"><a href="#Merging" class="headerlink" title="Merging"></a>Merging</h3><p>If field presence is not tracked, then an update patch alone cannot represent an update to the default value, because only non-default values are merged-from.</p>
-<p>Updating to set a default value in this case requires some external mechanism, such as <code>FieldMask</code>.</p>
-<h3 id="Compatibility"><a href="#Compatibility" class="headerlink" title="Compatibility"></a>Compatibility</h3><p>binary compatible, but logically, there may be problems.</p>
-<p>i.e. round trip between optional fields and non-optional fields</p>
-<h1 id="Styles"><a href="#Styles" class="headerlink" title="Styles"></a>Styles</h1><ul>
-<li><p><strong>Don’t</strong> Go from Repeated to Scalar</p>
-</li>
-<li><p><strong>Do</strong> Include an Unspecified Value in an Enum</p>
-</li>
-<li><p><strong>Do</strong> Use Well-Known Types and Common Types</p>
-<ul>
-<li><p>Well-Known Types:</p>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/duration.proto">duration</a> is a signed, fixed-length span of time (for example, 42s).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto">timestamp</a> is a point in time independent of any time zone or calendar (for example, 2017-01-15T01:30:15.01Z).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/field_mask.proto">field_mask</a> is a set of symbolic field paths (for example, f.b.d).</p>
-</li>
-</ul>
-</li>
-<li><p>Common Types:</p>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/interval.proto">interval</a> is a time interval independent of time zone or calendar (for example, 2017-01-15T01:30:15.01Z - 2017-01-16T02:30:15.01Z).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/date.proto">date</a> is a whole calendar date (for example, 2005-09-19).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/dayofweek.proto">dayofweek</a> is a day of week (for example, Monday).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/timeofday.proto">timeofday</a> is a time of day (for example, 10:42:23).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/latlng.proto">latlng</a> is a latitude&#x2F;longitude pair (for example, 37.386051 latitude and -122.083855 longitude).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/money.proto">money</a> is an amount of money with its currency type (for example, 42 USD).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto">postal_address</a> is a postal address (for example, 1600 Amphitheatre Parkway Mountain View, CA 94043 USA).</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/color.proto">color</a> is a color in the RGBA color space.</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/googleapis/googleapis/blob/master/google/type/month.proto">month</a> is a month of year (for example, April).</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>For extendible:</p>
-<ul>
-<li>Use different messages for storage and wire</li>
-<li>Don’t Include Primitive Types in a Top-level Request or Response Proto</li>
-<li>Never Use Booleans for Something That Has Two States Now, but Might Have More Later<ul>
-<li>If you are using boolean for a field, make sure that the field is indeed describing just two possible states (for all time, not just now and the near future). </li>
-<li>Often, the flexibility of an enum, int, or message turns out to be worth it.</li>
-</ul>
-</li>
-<li>Rarely Use an Integer Field for an ID<ul>
-<li>int64 is not as big as it used to be</li>
-<li>can start with an internal message type</li>
-</ul>
-</li>
-<li><em>Rarely</em> Define a Pagination API Without a Continuation Token</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/20/Protocol-Buffer/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1330,9 +618,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2023-01-20 17:10:28 / Modified: 19:49:16" itemprop="dateCreated datePublished" datetime="2023-01-20T17:10:28+08:00">2023-01-20</time>
+      <time title="Created: 2023-01-20 17:10:28" itemprop="dateCreated datePublished" datetime="2023-01-20T17:10:28+08:00">2023-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-28 16:54:56" itemprop="dateModified" datetime="2023-01-28T16:54:56+08:00">2023-01-28</time>
     </span>
 
   
@@ -1342,7 +636,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>673</span>
+      <span>674</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -1361,81 +655,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="编译器和静态分析"><a href="#编译器和静态分析" class="headerlink" title="编译器和静态分析"></a>编译器和静态分析</h1><h2 id="编译器的结构"><a href="#编译器的结构" class="headerlink" title="编译器的结构"></a>编译器的结构</h2><p><img src="D:\Blog\source_images\image-20230120191244188.png" alt="img"></p>
-<ul>
-<li>分析部分 (front end)<ul>
-<li>词法分析 –&gt; 词素(lexeme)</li>
-<li>语法分析 –&gt; 抽象语法树(AST, Abstract Syntax Tree)</li>
-<li>语义分析，收集类型信息，进行语义检查 –&gt; decorated AST</li>
-<li>中间代码生成 –&gt; Intermediate Representation(IR) <ul>
-<li>IR 是<strong>机器无关</strong>的</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>综合部分 (back end)<ul>
-<li>代码优化(<strong>机器无关</strong>) –&gt; optimized IR</li>
-<li>代码生成 –&gt; 目标代码</li>
-</ul>
-</li>
-</ul>
-<h2 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h2><p>静态分析通常用于<strong>后端代码优化</strong></p>
-<p>不执行程序代码，推导程序的行为，分析程序的性质，根据这些性质优化代码</p>
-<ul>
-<li>控制流分析 (Control Flow): 程序执行的流程</li>
-<li>数据流分析 (Data Flow): 数据在控制流上的传递</li>
-</ul>
-<p>分析方式：</p>
-<ul>
-<li>过程内分析 (Intra-procedural analysis): 仅在函数内分析</li>
-<li>过程间分析 (Inter-procedural analysis): 考虑函数调用时的参数传递和返回值的控制流和数据流<ul>
-<li>过程间分析比较复杂，需要综合数据流和控制流</li>
-</ul>
-</li>
-</ul>
-<h1 id="Go-编译器优化"><a href="#Go-编译器优化" class="headerlink" title="Go 编译器优化"></a>Go 编译器优化</h1><p>Go 编译器为了追求编译的速度，编译器的优化较少</p>
-<p>一些优化方向：</p>
-<ul>
-<li>函数内联</li>
-<li>逃逸分析</li>
-<li>默认栈大小调整</li>
-<li>循环展开</li>
-<li>边界检查消除</li>
-</ul>
-<h2 id="函数内联-Function-Inlining"><a href="#函数内联-Function-Inlining" class="headerlink" title="函数内联 (Function Inlining)"></a>函数内联 (Function Inlining)</h2><p>内联：将callee的副本替换到caller的位置，同时<strong>重写代码以反映参数的传递</strong></p>
-<p>优点：</p>
-<ul>
-<li>消除调用开销，例如传参，保存寄存器等</li>
-<li><strong>将过程间分析转化为过程内分析</strong>，帮助其他优化，例如<strong>逃逸分析</strong></li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>函数体变大，对 instruction cache (icache) 不友好</li>
-<li>编译生成的 go 镜像变大</li>
-</ul>
-<p>函数内联大多数情况下是正优化</p>
-<p>内联策略：调用和被调用函数的规模</p>
-<h2 id="内联优化"><a href="#内联优化" class="headerlink" title="内联优化"></a>内联优化</h2><p>Go函数内联受到的限制多：interface，defer等语言特性限制了内联，内联策略非常保守</p>
-<p>优化：调整函数内联的策略</p>
-<h2 id="逃逸分析-Escape-Analysis"><a href="#逃逸分析-Escape-Analysis" class="headerlink" title="逃逸分析 (Escape Analysis)"></a>逃逸分析 (Escape Analysis)</h2><p>分析代码中指针的动态作用域：指针在何处能被访问</p>
-<p>大致思路：</p>
-<ul>
-<li>从对象被分配处出发，沿着控制流观察对象的数据流：</li>
-<li>若发现指针 p 在当前作用域 s 的时候：<ul>
-<li>作为参数传递给别的函数</li>
-<li>传递给全局变量</li>
-<li>传递给其他goroutine</li>
-<li>传递给已逃逸的指针指向的对象</li>
-</ul>
-</li>
-<li>则指针 p 逃逸出了 s，反之没有逃逸出 s</li>
-</ul>
-<h2 id="逃逸优化"><a href="#逃逸优化" class="headerlink" title="逃逸优化"></a>逃逸优化</h2><p><strong>函数内联拓展了函数的边界，更多对象不逃逸</strong></p>
-<p>未逃逸的对象可以栈上分配</p>
-<ul>
-<li>栈的分配和回收速度很快：移动sp</li>
-<li>减少在heap上的分配，减轻GC的负担</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/01/20/Go-Compiler/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1589,7 +816,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-01-28 14:13:22" itemprop="dateModified" datetime="2023-01-28T14:13:22+08:00">2023-01-28</time>
+      <time title="Modified: 2023-01-28 16:53:21" itemprop="dateModified" datetime="2023-01-28T16:53:21+08:00">2023-01-28</time>
     </span>
 
   
@@ -1599,14 +826,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>3.4k</span>
+      <span>3.6k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>12 mins.</span>
+      <span>13 mins.</span>
     </span>
 </div>
 
@@ -1979,7 +1206,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>Reading time total &asymp;</span>
-    <span title="Reading time total">1:12</span>
+    <span title="Reading time total">1:13</span>
   </span>
 </div>
 

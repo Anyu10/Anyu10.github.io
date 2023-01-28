@@ -22,16 +22,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="编译器和静态分析编译器的结构  分析部分 (front end) 词法分析 –&gt; 词素(lexeme) 语法分析 –&gt; 抽象语法树(AST, Abstract Syntax Tree) 语义分析，收集类型信息，进行语义检查 –&gt; decorated AST 中间代码生成 –&gt; Intermediate Representation(IR)  IR 是机器无关的     综合">
+    <meta name="description" content="编译器和静态分析编译器的结构">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go Compiler">
 <meta property="og:url" content="http://anyu10.github.io/2023/01/20/Go-Compiler/index.html">
 <meta property="og:site_name" content="Anyu">
-<meta property="og:description" content="编译器和静态分析编译器的结构  分析部分 (front end) 词法分析 –&gt; 词素(lexeme) 语法分析 –&gt; 抽象语法树(AST, Abstract Syntax Tree) 语义分析，收集类型信息，进行语义检查 –&gt; decorated AST 中间代码生成 –&gt; Intermediate Representation(IR)  IR 是机器无关的     综合">
+<meta property="og:description" content="编译器和静态分析编译器的结构">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="d:\Blog\source_images\image-20230120191244188.png">
 <meta property="article:published_time" content="2023-01-20T09:10:28.000Z">
-<meta property="article:modified_time" content="2023-01-20T11:49:16.537Z">
+<meta property="article:modified_time" content="2023-01-28T08:54:56.120Z">
 <meta property="article:author" content="Anyu Elin">
 <meta property="article:tag" content="Go">
 <meta property="article:tag" content="Compiler">
@@ -223,9 +223,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2023-01-20 17:10:28 / Modified: 19:49:16" itemprop="dateCreated datePublished" datetime="2023-01-20T17:10:28+08:00">2023-01-20</time>
+      <time title="Created: 2023-01-20 17:10:28" itemprop="dateCreated datePublished" datetime="2023-01-20T17:10:28+08:00">2023-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-01-28 16:54:56" itemprop="dateModified" datetime="2023-01-28T16:54:56+08:00">2023-01-28</time>
     </span>
 
   
@@ -235,7 +241,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>673</span>
+      <span>674</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -254,6 +260,8 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="编译器和静态分析"><a href="#编译器和静态分析" class="headerlink" title="编译器和静态分析"></a>编译器和静态分析</h1><h2 id="编译器的结构"><a href="#编译器的结构" class="headerlink" title="编译器的结构"></a>编译器的结构</h2><p><img src="D:\Blog\source_images\image-20230120191244188.png" alt="img"></p>
+<span id="more"></span>
+
 <ul>
 <li>分析部分 (front end)<ul>
 <li>词法分析 –&gt; 词素(lexeme)</li>
@@ -392,7 +400,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>Reading time total &asymp;</span>
-    <span title="Reading time total">1:12</span>
+    <span title="Reading time total">1:13</span>
   </span>
 </div>
 
