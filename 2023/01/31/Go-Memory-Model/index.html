@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Memory ModelOne example: 1234567891011121314var a intvar done boolfunc setup() &amp;#123;    a &#x3D; 42    done &#x3D; true&amp;#125;func main() &amp;#123;    go setup()    for !done &amp;#123;    &amp;#125;    fmt.Println(a)&amp;#12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Memory Model">
+<meta property="og:url" content="http://anyu10.github.io/2023/01/31/Go-Memory-Model/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="Memory ModelOne example: 1234567891011121314var a intvar done boolfunc setup() &amp;#123;    a &#x3D; 42    done &#x3D; true&amp;#125;func main() &amp;#123;    go setup()    for !done &amp;#123;    &amp;#125;    fmt.Println(a)&amp;#12">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-01-30T18:41:04.000Z">
+<meta property="article:modified_time" content="2023-02-02T16:26:45.765Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="Go">
+<meta property="article:tag" content="Concurrency">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2023/01/31/Go-Memory-Model/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/01/31/Go-Memory-Model/","path":"2023/01/31/Go-Memory-Model/","title":"Go Memory Model"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Go Memory Model | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Memory-Model"><span class="nav-number">1.</span> <span class="nav-text">Memory Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Within-a-Single-Goroutine"><span class="nav-number">1.1.</span> <span class="nav-text">Within a Single Goroutine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Happens-Before"><span class="nav-number">1.2.</span> <span class="nav-text">Happens Before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-creates-happens-before"><span class="nav-number">1.3.</span> <span class="nav-text">What creates happens-before</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Initialization"><span class="nav-number">1.3.1.</span> <span class="nav-text">Initialization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Goroutine-Creation"><span class="nav-number">1.3.2.</span> <span class="nav-text">Goroutine Creation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Goroutine-Destruction"><span class="nav-number">1.3.3.</span> <span class="nav-text">Goroutine Destruction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Channel-Communication"><span class="nav-number">1.3.4.</span> <span class="nav-text">Channel Communication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Locks"><span class="nav-number">1.3.5.</span> <span class="nav-text">Locks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Once"><span class="nav-number">1.3.6.</span> <span class="nav-text">Once</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Atomic-Values"><span class="nav-number">1.3.7.</span> <span class="nav-text">Atomic Values</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Finalizer"><span class="nav-number">1.3.8.</span> <span class="nav-text">Finalizer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Others"><span class="nav-number">1.3.9.</span> <span class="nav-text">Others</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-Is-Data-Race-Harmful"><span class="nav-number">1.4.</span> <span class="nav-text">Why Is Data Race Harmful</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Examples"><span class="nav-number">2.</span> <span class="nav-text">Examples</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Formal-Memory-Model"><span class="nav-number">3.</span> <span class="nav-text">Formal Memory Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Operation"><span class="nav-number">3.1.</span> <span class="nav-text">Memory Operation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Requirement-of-Memory-Model"><span class="nav-number">3.2.</span> <span class="nav-text">Requirement of Memory Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DRF-SC"><span class="nav-number">3.3.</span> <span class="nav-text">DRF-SC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation-Restrictions-of-Data-Races"><span class="nav-number">3.4.</span> <span class="nav-text">Implementation Restrictions of Data Races</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Implementation-Restriction-Example"><span class="nav-number">3.5.</span> <span class="nav-text">Implementation Restriction Example</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Anyu Elin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/01/31/Go-Memory-Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Go Memory Model | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go Memory Model
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-01-31 02:41:04" itemprop="dateCreated datePublished" datetime="2023-01-31T02:41:04+08:00">2023-01-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-02-03 00:26:45" itemprop="dateModified" datetime="2023-02-03T00:26:45+08:00">2023-02-03</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>7 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Memory-Model"><a href="#Memory-Model" class="headerlink" title="Memory Model"></a>Memory Model</h1><p>One example:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> done <span class="type">bool</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="number">42</span></span><br><span class="line">    done = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> setup()</span><br><span class="line">    <span class="keyword">for</span> !done &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>The example above may have 3 possibilities:</p>
+<ul>
+<li>print 42</li>
+<li>never return</li>
+<li>print 0</li>
+</ul>
+<p>Why:</p>
+<ul>
+<li><em>Reordering</em><ul>
+<li>Compiler and Processor can reorder the instructions</li>
+</ul>
+</li>
+<li><em>Memory Visibility</em><ul>
+<li>Registers; L1, L2, shared L3 cache; CPU sockets</li>
+</ul>
+</li>
+</ul>
+<p><em>Go Concurrency Primitives</em>: Goroutines, Channels</p>
+<p><em>Go memory model</em>: specifies the conditions under which read of a variable in one goroutine can observe values produced by writes to the same variable in another goroutine.</p>
+<p><em>Data race</em>: write to a <em>memory location</em> happening <em>concurrently</em> with another <strong>read</strong> or <strong>write</strong> to that same location. Unless all the accesses involved are <strong>atomic</strong>.</p>
+<h2 id="Within-a-Single-Goroutine"><a href="#Within-a-Single-Goroutine" class="headerlink" title="Within a Single Goroutine"></a>Within a Single Goroutine</h2><ul>
+<li>Reads and writes must behave as if they <strong>executed in the order specified by the program</strong>.</li>
+<li><strong>Compiler can reorder</strong> as long as it doesn’t change the behavior defined in the language specification.</li>
+<li><strong>Order observed by one goroutine may differ from order perceived by another</strong>.<ul>
+<li>goroutine 1 sets <code>a=1, b=2</code>, but goroutine 2 may see <code>b=2</code> first, and later see <code>a=1</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Happens-Before"><a href="#Happens-Before" class="headerlink" title="Happens Before"></a>Happens Before</h2><ul>
+<li>Happens-Before is <strong>partial ordering of operations</strong></li>
+<li>Happens-Before is <strong>transitive</strong></li>
+<li>Within a single goroutine, happens-before order is the order expressed by program</li>
+<li><strong>To guarantee a read of a variable observes a write to the same variable, the write must happen before the read</strong></li>
+<li><strong>If two operation don’t have happen-before relation, they happen concurrently</strong></li>
+<li><strong>Certain operation creates happen-before relation: lock, etc</strong></li>
+</ul>
+<h2 id="What-creates-happens-before"><a href="#What-creates-happens-before" class="headerlink" title="What creates happens-before"></a>What creates happens-before</h2><h3 id="Initialization"><a href="#Initialization" class="headerlink" title="Initialization"></a>Initialization</h3><p>Program initialization runs in a single goroutine, but that goroutine may create other goroutines, which run concurrently.</p>
+<p><em>If a package</em> <code>p</code> <em>imports package</em> <code>q</code><em>, the completion of</em> <code>q</code><em>‘s</em> <code>init</code> <em>functions happens before the start of any of</em> <code>p</code><em>‘s.</em></p>
+<p><em>The completion of all</em> <code>init</code> <em>functions is synchronized before the start of the function</em> <code>main.main</code><em>.</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// for example, if q import p, </span></span><br><span class="line"><span class="comment">// then p.init-&gt;q.init-&gt;main.main</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// q.go</span></span><br><span class="line"><span class="keyword">package</span> q</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;p&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//p.go</span></span><br><span class="line"><span class="keyword">package</span> p</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Goroutine-Creation"><a href="#Goroutine-Creation" class="headerlink" title="Goroutine Creation"></a>Goroutine Creation</h3><p>The go statement that start a new goroutine <strong>happens before</strong> the goroutine’s execution begins</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span> <span class="comment">// happens before print statement</span></span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Goroutine-Destruction"><a href="#Goroutine-Destruction" class="headerlink" title="Goroutine Destruction"></a>Goroutine Destruction</h3><p>The exit of a goroutine is <strong>not guaranteed to be synchronized before any event</strong> in the program.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; a = <span class="string">&quot;hello world&quot;</span> &#125;() </span><br><span class="line">    <span class="comment">// an aggressive compiler might even delete the entire go statement.</span></span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Channel-Communication"><a href="#Channel-Communication" class="headerlink" title="Channel Communication"></a>Channel Communication</h3><p>A send on a channel <strong>happens before</strong> the corresponding receive from that channel completes.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span>	<span class="comment">// happens before the print statement</span></span><br><span class="line">    c &lt;- <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    &lt;-c</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The closing of a channel <strong>happens before</strong> a receive that returns a zero value because the close is closed.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span>	<span class="comment">// happens before the print statement</span></span><br><span class="line">    <span class="built_in">close</span>(c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    &lt;-c</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A receive from an unbuffered channel <strong>happens before</strong> the send on that channel completes.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span>	<span class="comment">// happens before the print statement</span></span><br><span class="line">    &lt;-c	<span class="comment">// happens before the print statement(where send operation completes)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    c &lt;- <span class="number">0</span></span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>The</em> $k$th receive on a channel with capacity $C$ is synchronized before the completion of the $k+C$th send from that channel completes.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, w := <span class="keyword">range</span> work &#123;</span><br><span class="line">        w := w</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            c &lt;- <span class="number">0</span></span><br><span class="line">            w()</span><br><span class="line">            &lt;-c</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">select</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Locks"><a href="#Locks" class="headerlink" title="Locks"></a>Locks</h3><p><em>For any</em> <code>sync.Mutex</code> <em>or</em> <code>sync.RWMutex</code> <em>variable</em> <code>mu</code> <em>and</em> n &lt; m, call n <em>of</em> <code>mu.Unlock()</code> <em>is synchronized before call</em> m <em>of</em> <code>mu.Lock()</code> <em>returns.</em></p>
+<p>For any call to <code>l.RLock</code> on a <code>sync.RWMutex</code> variable <code>l</code>, there is an <em>n</em> such that the <em>n</em>th call to <code>l.Unlock</code> is synchronized before the return from <code>l.RLock</code>, and the matching call to <code>l.RUnlock</code> is synchronized before the return from call <em>n</em>+1 to <code>l.Lock</code>.</p>
+<p>A successful call to <code>l.TryLock</code> (or <code>l.TryRLock</code>) is equivalent to a call to <code>l.Lock</code> (or <code>l.RLock</code>). An unsuccessful call has no synchronizing effect at all. As far as the memory model is concerned, <code>l.TryLock</code> (or <code>l.TryRLock</code>) may be considered to be able to return false even when the mutex <em>l</em> is unlocked.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mu sync.Mutex</span><br><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span></span><br><span class="line">    mu.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    mu.Lock()</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    mu.Lock()</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The first call to <code>mu.Unlock()</code> (in <code>f</code>) is synchronized before the second call to <code>mu.Lock()</code> (in <code>main</code>) returns, which is <em>sequenced before</em> the <code>print</code>.</p>
+<h3 id="Once"><a href="#Once" class="headerlink" title="Once"></a>Once</h3><p>The <code>sync</code> package provides a safe mechanism for initialization in the presence of multiple goroutines through the use of the <code>Once</code> type. Multiple threads can execute <code>once.Do(f)</code> for a particular <code>f</code>, but only one will run <code>f()</code>, and the other calls block until <code>f()</code> has returned.</p>
+<p>A completion of a single call of <code>f()</code> from <code>once.Do(f)</code> <strong>happens before</strong> any call of <code>once.Do(f)</code> returns</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> once sync.Once</span><br><span class="line"><span class="keyword">var</span> a <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">&quot;hello world&quot;</span>	<span class="comment">//happens before the print</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    once.Do(setup)</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Atomic-Values"><a href="#Atomic-Values" class="headerlink" title="Atomic Values"></a>Atomic Values</h3><p>If the effect of an atomic operation <em>A</em> is observed by atomic operation <em>B</em>, then <em>A</em> is synchronized before <em>B</em>. All the atomic operations executed in a program behave as though executed in some sequentially consistent order.</p>
+<p>The definition of atomic values has the same semantics as C++’s sequentially consistent atomics and Java’s <code>volatile</code> variables.</p>
+<h3 id="Finalizer"><a href="#Finalizer" class="headerlink" title="Finalizer"></a>Finalizer</h3><p>The <a target="_blank" rel="noopener" href="https://go.dev/pkg/runtime/"><code>runtime</code></a> package provides a <code>SetFinalizer</code> function that adds a finalizer to be called when the object is no longer reachable by the program. Garbage Collector will clear the association and runs finalizer in a separate goroutine.</p>
+<p>A call to <code>SetFinalizer(x, f)</code> is synchronized before the finalization call <code>f(x)</code>.</p>
+<h3 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h3><ul>
+<li>Functions in the sync package<ul>
+<li>Wait Groups</li>
+<li>Allocation Pools</li>
+<li>Condition Variables</li>
+<li>Lock-Free Maps</li>
+</ul>
+</li>
+</ul>
+<h2 id="Why-Is-Data-Race-Harmful"><a href="#Why-Is-Data-Race-Harmful" class="headerlink" title="Why Is Data Race Harmful"></a>Why Is Data Race Harmful</h2><p>Data race is not ok, it doesn’t just give you stale values.</p>
+<ul>
+<li>Memory corruption</li>
+<li>Panics<ul>
+<li>unexpected fault address: 0x0</li>
+<li>fatal error: concurrent map read and write</li>
+</ul>
+</li>
+<li>May be fine now, but cause problems at any time</li>
+<li>Program will break when compiler upgrades, switch OS, switch processor.<ul>
+<li>compiler optimization strategy</li>
+<li>different processors have different reordering strategies</li>
+</ul>
+</li>
+</ul>
+<h1 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> singleton <span class="keyword">struct</span> &#123;</span><br><span class="line">    x, y <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> instance *singleton</span><br><span class="line"><span class="keyword">var</span> mu sync.Mutex</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetInstance</span><span class="params">()</span></span> *singleton &#123;</span><br><span class="line">    <span class="keyword">if</span> instance == <span class="literal">nil</span> &#123;</span><br><span class="line">        mu.Lock()</span><br><span class="line">        <span class="keyword">defer</span> mu.Unlock()</span><br><span class="line">        instance = &amp;singleton&#123;<span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Problems:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance = &amp;singleton&#123;3, 4&#125;</span><br></pre></td></tr></table></figure>
+
+<p>to</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s := singleton&#123;&#125;</span><br><span class="line">s.x = <span class="number">3</span></span><br><span class="line">s.y = <span class="number">4</span></span><br><span class="line">instance = &amp;s</span><br></pre></td></tr></table></figure>
+
+<p>can be reordered to</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">s := singleton&#123;&#125;</span><br><span class="line">instance = &amp;s</span><br><span class="line">s.x = <span class="number">3</span></span><br><span class="line">s.y = <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>Assume there are 2 goroutines, goroutine 1 is executing <code>instance = &amp;s</code>, and at this point goroutine 2 sees that <code>instance != nil</code>, and returns it, and then get the partially created instance </p>
+<p>Essence: synchronize the read and write</p>
+<h1 id="Formal-Memory-Model"><a href="#Formal-Memory-Model" class="headerlink" title="Formal Memory Model"></a>Formal Memory Model</h1><h2 id="Memory-Operation"><a href="#Memory-Operation" class="headerlink" title="Memory Operation"></a>Memory Operation</h2><p>A memory operation is modeled by 4 details:</p>
+<ul>
+<li>its <strong>kind</strong>, indicating whether it is an <em>ordinary data read</em>, an <em>ordinary data write</em>, or a <em>synchronizing operation</em> such as an <em>atomic data access</em>, a <em>mutex operation</em>, or a <em>channel operation</em>,</li>
+<li>its <strong>location</strong> in the program,</li>
+<li>the <strong>memory location</strong> or variable being accessed,</li>
+<li>the <strong>values</strong> read or written by the operation.</li>
+</ul>
+<p>Read-like operation: read, atomic read, <strong>mutex lock</strong>, and <strong>channel receive</strong>.</p>
+<p>Write-like operation: write, atomic write, <strong>mutex unlock</strong>, <strong>channel send</strong>, and <strong>channel close</strong>.</p>
+<p>Both read-like and write-like: atomic compare-and-swap.</p>
+<p>A goroutine execution is a set of memory operations executed by a single goroutine.</p>
+<h2 id="Requirement-of-Memory-Model"><a href="#Requirement-of-Memory-Model" class="headerlink" title="Requirement of Memory Model"></a>Requirement of Memory Model</h2><p>Requirements:</p>
+<ol>
+<li>The memory operations in each goroutine must correspond to a correct sequential execution of that goroutine. That execution must be consistent with the <em><strong>sequenced before</strong></em> relation.</li>
+<li>For a given program execution, the mapping <em>W</em>, when limited to synchronizing operations, must be explainable by some implicit total order of the synchronizing operations that is consistent with sequencing and the values read and written by those operations.</li>
+<li>For an ordinary (non-synchronizing) data read <em>r</em> on a memory location <em>x</em>, <em>W</em>(<em>r</em>) must be a write <em>w</em> that is <em>visible</em> to <em>r</em>, where visible means that both of the following hold:<ol>
+<li><em>w</em> happens before <em>r</em>.</li>
+<li><em>w</em> does not happen before any other write <em>w’</em> (to <em>x</em>) that happens before <em>r</em>.</li>
+</ol>
+</li>
+</ol>
+<p>The <em><strong>sequential before</strong></em> relation is the memory operation order within a single goroutine</p>
+<p>The <em><strong>synchronized before</strong></em> relation is a partial order on synchronizing memory operations, derived from <em>W</em></p>
+<p>The <em><strong>happens before</strong></em> relation is defined as the <strong>transitive closure</strong> of the union of the <strong>sequenced before</strong> and <strong>synchronized before</strong> relations.</p>
+<p>A Go <em>program execution</em> is modeled as</p>
+<ul>
+<li>a set of goroutine executions,</li>
+<li>together with a mapping <em>W</em> that specifies the write-like operation that each read-like operation reads from.</li>
+</ul>
+<h2 id="DRF-SC"><a href="#DRF-SC" class="headerlink" title="DRF-SC"></a>DRF-SC</h2><p><em>DRF-SC</em>: data-race-free programs execute in a sequentially consistent manner.</p>
+<p><em>Data races</em>:</p>
+<ul>
+<li>A <em>read-write data race</em> on memory location <em>x</em> consists of a read-like memory operation <em>r</em> on <em>x</em> and a write-like memory operation <em>w</em> on <em>x</em>, at least one of which is non-synchronizing, which are unordered by happens before (that is, neither <em>r</em> happens before <em>w</em> nor <em>w</em> happens before <em>r</em>).</li>
+<li>A <em>write-write data race</em> on memory location <em>x</em> consists of two write-like memory operations <em>w</em> and <em>w’</em> on <em>x</em>, at least one of which is non-synchronizing, which are unordered by happens before.</li>
+</ul>
+<p>Data-race-free program:</p>
+<ul>
+<li>A Go program without <em>read-write data race</em> and <em>write-write data race</em> is data-race-free.</li>
+<li>It have outcomes explained by some sequentially consistent interleaving of the goroutine executions. </li>
+<li>This property is called DRF-SC</li>
+</ul>
+<h2 id="Implementation-Restrictions-of-Data-Races"><a href="#Implementation-Restrictions-of-Data-Races" class="headerlink" title="Implementation Restrictions of Data Races"></a>Implementation Restrictions of Data Races</h2><p>First, any implementation can, upon detecting a data race, report the race and halt execution of the program. Implementations using ThreadSanitizer (accessed with “<code>go</code> <code>build</code> <code>-race</code>”) do exactly this.</p>
+<p>Otherwise, a read <em>r</em> of a memory location <em>x</em> that is not larger than a machine word must observe some write <em>w</em> such that <em>r</em> does not happen before <em>w</em> and there is no write <em>w’</em> such that <em>w</em> happens before <em>w’</em> and <em>w’</em> happens before <em>r</em>. That is, each read must observe a value written by a preceding or concurrent write.</p>
+<p>Additionally, observation of acausal and “out of thin air” writes is disallowed.</p>
+<p>Reads of memory locations larger than a single machine word are encouraged but not required to meet the same semantics as word-sized memory locations, observing a single allowed write <em>w</em>. For performance reasons, implementations may instead treat larger operations as a set of individual machine-word-sized operations in an unspecified order. This means that races on multiword data structures can lead to inconsistent values not corresponding to a single write. When the values depend on the consistency of internal (pointer, length) or (pointer, type) pairs, as can be the case for interface values, maps, slices, and strings in most Go implementations, such races can in turn lead to arbitrary memory corruption.</p>
+<h2 id="Implementation-Restriction-Example"><a href="#Implementation-Restriction-Example" class="headerlink" title="Implementation Restriction Example"></a>Implementation Restriction Example</h2><p>The Go memory model restricts compiler optimizations as much as it does Go programs. Some compiler optimizations that would be valid in single-threaded programs are not valid in all Go programs. </p>
+<p>In particular, </p>
+<ul>
+<li>a compiler must not introduce writes that do not exist in the original program, </li>
+<li>it must not allow a single read to observe multiple values, </li>
+<li>and it must not allow a single write to write multiple values.</li>
+</ul>
+<p>Not introducing data races into race-free programs means not moving writes out of conditional statements in which they appear. </p>
+<p>Not introducing data races also means not assuming that loops terminate. </p>
+<p>Not introducing data races also means not assuming that called functions always return or are free of synchronization operations. </p>
+<p>Not allowing a single read to observe multiple values means not reloading local variables from shared memory. </p>
+<p>Not allowing a single write to write multiple values also means not using the memory where a local variable will be written as temporary storage before the write.</p>
+<p>Note that all these optimizations are permitted in C&#x2F;C++ compilers: a Go compiler sharing a back end with a C&#x2F;C++ compiler must take care to disable optimizations that are invalid for Go.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Go/" rel="tag"><i class="fa fa-tag"></i> Go</a>
+              <a href="/tags/Concurrency/" rel="tag"><i class="fa fa-tag"></i> Concurrency</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/30/System-Design/" rel="prev" title="System Design">
+                  <i class="fa fa-chevron-left"></i> System Design
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/31/Distributed-System/" rel="next" title="Distributed System">
+                  Distributed System <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>Word count total: </span>
+    <span title="Word count total">24k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>Reading time total &asymp;</span>
+    <span title="Reading time total">1:27</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

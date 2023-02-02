@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介软件架构 软件整体结构和组件的抽象描述 用于指导软件系统各个方面的设计  单机架构所有功能都实现在一个进程中，并部署在一个机器上 问题：  C10K problem 运维需要停服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System Design">
+<meta property="og:url" content="http://anyu10.github.io/2023/01/30/System-Design/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="简介软件架构 软件整体结构和组件的抽象描述 用于指导软件系统各个方面的设计  单机架构所有功能都实现在一个进程中，并部署在一个机器上 问题：  C10K problem 运维需要停服">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Blog\source_images\image-20230130173228027.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230130173731025.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230130225126408.png">
+<meta property="article:published_time" content="2023-01-30T08:47:29.000Z">
+<meta property="article:modified_time" content="2023-02-01T08:54:46.101Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="System">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Blog\source_images\image-20230130173228027.png">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2023/01/30/System-Design/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/01/30/System-Design/","path":"2023/01/30/System-Design/","title":"System Design"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>System Design | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">软件架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">单机架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84-%E5%9E%82%E7%9B%B4%E5%BA%94%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">单体架构 | 垂直应用架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOA%E6%9E%B6%E6%9E%84-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">SOA架构 | 微服务架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">架构剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cloud-Computing"><span class="nav-number">2.1.</span> <span class="nav-text">Cloud Computing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cloud-Native"><span class="nav-number">2.2.</span> <span class="nav-text">Cloud Native</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%B9%E6%80%A7%E8%B5%84%E6%BA%90"><span class="nav-number">2.2.2.</span> <span class="nav-text">弹性资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DevOps"><span class="nav-number">2.2.3.</span> <span class="nav-text">DevOps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="nav-number">2.2.4.</span> <span class="nav-text">微服务架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%BD%91%E6%A0%BC"><span class="nav-number">2.2.5.</span> <span class="nav-text">服务网格</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%8C%91%E6%88%98"><span class="nav-number">2.3.</span> <span class="nav-text">架构挑战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8C%96"><span class="nav-number">2.4.</span> <span class="nav-text">架构优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E5%9C%A8%E7%BA%BF%E8%B5%84%E6%BA%90%E5%B9%B6%E6%B1%A0"><span class="nav-number">2.4.1.</span> <span class="nav-text">离在线资源并池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E7%9A%84%E6%89%A9%E7%BC%A9%E5%AE%B9"><span class="nav-number">2.4.2.</span> <span class="nav-text">资源的扩缩容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E4%BA%B2%E5%92%8C%E6%80%A7%E9%83%A8%E7%BD%B2"><span class="nav-number">2.4.3.</span> <span class="nav-text">微服务的亲和性部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%B2%BB%E7%90%86"><span class="nav-number">2.4.4.</span> <span class="nav-text">流量治理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU%E6%B0%B4%E4%BD%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">2.4.5.</span> <span class="nav-text">CPU水位负载均衡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6"><span class="nav-number">3.</span> <span class="nav-text">微服务框架</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Anyu Elin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/01/30/System-Design/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="System Design | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          System Design
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-01-30 16:47:29" itemprop="dateCreated datePublished" datetime="2023-01-30T16:47:29+08:00">2023-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-02-01 16:54:46" itemprop="dateModified" datetime="2023-02-01T16:54:46+08:00">2023-02-01</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><h2 id="软件架构"><a href="#软件架构" class="headerlink" title="软件架构"></a>软件架构</h2><ul>
+<li>软件整体结构和组件的抽象描述</li>
+<li>用于指导软件系统各个方面的设计</li>
+</ul>
+<h2 id="单机架构"><a href="#单机架构" class="headerlink" title="单机架构"></a>单机架构</h2><p>所有功能都实现在一个进程中，并部署在一个机器上</p>
+<p>问题：</p>
+<ul>
+<li>C10K problem</li>
+<li>运维需要停服</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="单体架构-垂直应用架构"><a href="#单体架构-垂直应用架构" class="headerlink" title="单体架构 | 垂直应用架构"></a>单体架构 | 垂直应用架构</h2><p>单体：分布式部署，每个机器都有所有功能</p>
+<p>垂直应用：分布式部署，按应用垂直切分的单体</p>
+<p>优点：</p>
+<ul>
+<li>水平扩容</li>
+<li>运维不需要停服</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>职责太多，效率不高</li>
+</ul>
+<h2 id="SOA架构-微服务架构"><a href="#SOA架构-微服务架构" class="headerlink" title="SOA架构 | 微服务架构"></a>SOA架构 | 微服务架构</h2><p>SOA:</p>
+<ul>
+<li>将应用的不同功能单元抽象为服务</li>
+<li>定义服务之间的通信标准</li>
+</ul>
+<p>微服务：SOA去中心化</p>
+<p>问题：</p>
+<ul>
+<li>数据一致性</li>
+<li>高可用：如何协同合作</li>
+<li>治理：服务出错时的容灾</li>
+<li>解耦 vs 过微：运维成本上升</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>需求量增大 –&gt; 增加机器</p>
+<p>需求复杂 –&gt; 分工工作</p>
+<p>演进思路：</p>
+<ul>
+<li>垂直切分</li>
+<li>水平切分: 耦合性降低，模块独立性变强</li>
+</ul>
+<h1 id="架构剖析"><a href="#架构剖析" class="headerlink" title="架构剖析"></a>架构剖析</h1><h2 id="Cloud-Computing"><a href="#Cloud-Computing" class="headerlink" title="Cloud Computing"></a>Cloud Computing</h2><p>云计算：通过<strong>软件自动化管理</strong>，<strong>提供计算资源</strong>的<strong>服务网络</strong></p>
+<p>基础：</p>
+<ul>
+<li>虚拟化技术 - 整租 &amp; 合租</li>
+<li>编排方案 - 业主 &amp; 租赁平台</li>
+</ul>
+<p>架构：</p>
+<ul>
+<li>IaaS (Infrastructure as a Service) –&gt; 房屋租赁平台 &amp; 买房子(繁琐)</li>
+<li>PaaS (Platform as a Service) –&gt; 全包 &amp; 清包(繁琐)</li>
+<li>SaaS (Software as a Service) –&gt; 雇佣培训过的师傅 &amp; 从零培训师傅(繁琐)</li>
+<li>FaaS (Function as a Service) –&gt; 批量生产 &amp; 手工生产(繁琐)</li>
+</ul>
+<h2 id="Cloud-Native"><a href="#Cloud-Native" class="headerlink" title="Cloud Native"></a>Cloud Native</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><p>Cloud Native:</p>
+<ul>
+<li>弹性资源<ul>
+<li>虚拟化容器</li>
+<li>快速扩缩容</li>
+</ul>
+</li>
+<li>微服务架构<ul>
+<li>业务的功能单元解耦</li>
+<li>统一的通信标准</li>
+</ul>
+</li>
+<li>DevOps<ul>
+<li>Swift Development</li>
+<li>CI&#x2F;CD</li>
+</ul>
+</li>
+<li>服务网格<ul>
+<li>业务与治理结构</li>
+<li>异构系统的治理统一化</li>
+<li>复杂治理能力</li>
+</ul>
+</li>
+</ul>
+<h3 id="弹性资源"><a href="#弹性资源" class="headerlink" title="弹性资源"></a>弹性资源</h3><p>弹性计算资源分类：</p>
+<ul>
+<li>服务资源调度 (占用资源量级)<ul>
+<li>微服务 (使用量比较低)</li>
+<li>大服务 (使用量比较高)</li>
+</ul>
+</li>
+<li>计算资源调度<ul>
+<li>在线: 榜单 </li>
+<li>离线: 榜单更新</li>
+</ul>
+</li>
+<li>消息队列<ul>
+<li>在线: 削峰，解耦</li>
+<li>离线: 大数据分析</li>
+</ul>
+</li>
+</ul>
+<p>弹性存储资源分类：</p>
+<ul>
+<li>经典<ul>
+<li>对象: 宣传视频等</li>
+<li>大数据: 用户消费记录</li>
+</ul>
+</li>
+<li>关系型数据库<ul>
+<li>收银记录</li>
+</ul>
+</li>
+<li>元数据<ul>
+<li>服务发现</li>
+</ul>
+</li>
+<li>NoSQL<ul>
+<li>KV数据</li>
+</ul>
+</li>
+</ul>
+<h3 id="DevOps"><a href="#DevOps" class="headerlink" title="DevOps"></a>DevOps</h3><p>云原生时代软件交付的工具</p>
+<p><img src="D:\Blog\source_images\image-20230130173228027.png" alt="image-20230130173228027"></p>
+<h3 id="微服务架构"><a href="#微服务架构" class="headerlink" title="微服务架构"></a>微服务架构</h3><p>通信标准：</p>
+<ul>
+<li>HTTP</li>
+<li>RPC</li>
+</ul>
+<p>微服务中间件： RPC or HTTP</p>
+<ul>
+<li>性能: RPC wins</li>
+<li>服务治理: RPC wins</li>
+<li>协议可解释性: HTTP wins</li>
+</ul>
+<p><img src="D:\Blog\source_images\image-20230130173731025.png" alt="image-20230130173731025"></p>
+<h3 id="服务网格"><a href="#服务网格" class="headerlink" title="服务网格"></a>服务网格</h3><p>Service Mesh (服务网格)</p>
+<ul>
+<li>微服务之间通信的中间层</li>
+<li>高性能网络代理</li>
+<li>业务代码和服务网格解耦</li>
+</ul>
+<p>对比 RPC&#x2F;HTTP 框架</p>
+<ul>
+<li>异构系统治理统一化</li>
+<li>与业务进程解耦，生命周期易于管理</li>
+</ul>
+<h2 id="架构挑战"><a href="#架构挑战" class="headerlink" title="架构挑战"></a>架构挑战</h2><ul>
+<li>基础设施层面<ul>
+<li>物理资源是有限的<ul>
+<li>机器是有限的</li>
+<li>带宽是有限的</li>
+</ul>
+</li>
+<li>资源利用率受制于部署服务</li>
+</ul>
+</li>
+<li>用户层面<ul>
+<li>网络通信开销增大</li>
+<li>网络抖动导致运维成本增高</li>
+<li>异构环境下，不同实例资源水位不均</li>
+</ul>
+</li>
+</ul>
+<h2 id="架构优化"><a href="#架构优化" class="headerlink" title="架构优化"></a>架构优化</h2><h3 id="离在线资源并池"><a href="#离在线资源并池" class="headerlink" title="离在线资源并池"></a>离在线资源并池</h3><p>核心收益：降低物理资源成本，提供更多的弹性资源 –&gt; 合并在线池和离线池</p>
+<p>在线业务的特点：</p>
+<ul>
+<li>IO 密集型为主</li>
+<li>潮汐性，实时性</li>
+</ul>
+<p>离线业务的特点：</p>
+<ul>
+<li>计算密集型</li>
+<li>非实时性</li>
+</ul>
+<h3 id="资源的扩缩容"><a href="#资源的扩缩容" class="headerlink" title="资源的扩缩容"></a>资源的扩缩容</h3><p>利用在线业务的潮汐性做自动扩缩容，结合离在线资源并池</p>
+<h3 id="微服务的亲和性部署"><a href="#微服务的亲和性部署" class="headerlink" title="微服务的亲和性部署"></a>微服务的亲和性部署</h3><ul>
+<li>将满足亲和性条件的容器调度到一台宿主机</li>
+<li>微服务中间件和服务网格通过共享内存或IPC方式通信</li>
+<li>服务网格控制面实施动态灵活的流量调度</li>
+</ul>
+<h3 id="流量治理"><a href="#流量治理" class="headerlink" title="流量治理"></a>流量治理</h3><ul>
+<li>提高微服务的容错性</li>
+<li>容灾</li>
+<li>提高开发效率</li>
+</ul>
+<p>解决思路：基于微服务的中间件 &amp; 服务网格的流量治理</p>
+<ul>
+<li>熔断、重试</li>
+<li>单元化</li>
+<li>复杂环境(功能、预览)的流量调度</li>
+</ul>
+<h3 id="CPU水位负载均衡"><a href="#CPU水位负载均衡" class="headerlink" title="CPU水位负载均衡"></a>CPU水位负载均衡</h3><p>核心收益：</p>
+<ul>
+<li>异构环境算力差异</li>
+<li>自动扩缩容</li>
+</ul>
+<p>解决思路：CPU水位负载均衡</p>
+<ul>
+<li>IaaS: 提供资源探针</li>
+<li>服务网格: 动态负载均衡</li>
+</ul>
+<p><img src="D:\Blog\source_images\image-20230130225126408.png" alt="image-20230130225126408"></p>
+<h1 id="微服务框架"><a href="#微服务框架" class="headerlink" title="微服务框架"></a>微服务框架</h1>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/System/" rel="tag"><i class="fa fa-tag"></i> System</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/24/gorm/" rel="prev" title="gorm">
+                  <i class="fa fa-chevron-left"></i> gorm
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/31/Go-Memory-Model/" rel="next" title="Go Memory Model">
+                  Go Memory Model <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>Word count total: </span>
+    <span title="Word count total">24k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>Reading time total &asymp;</span>
+    <span title="Reading time total">1:27</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
