@@ -22,15 +22,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="article">
+    <meta name="description" content="Redis是什么为什么需要Redis 数据从单表演进成了分库分表 MySQL由单机演化为了集群 数据量增长 读写数据压力增加">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Redis">
 <meta property="og:url" content="http://anyu10.github.io/2023/02/18/Redis/index.html">
 <meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="Redis是什么为什么需要Redis 数据从单表演进成了分库分表 MySQL由单机演化为了集群 数据量增长 读写数据压力增加">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218200050157.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218200347244.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218201011218.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218201637692.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218203133638.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218204022883.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218214135362.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218220800118.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218221153202.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230218222629473.png">
 <meta property="article:published_time" content="2023-02-18T11:15:25.000Z">
-<meta property="article:modified_time" content="2023-02-18T11:15:25.702Z">
+<meta property="article:modified_time" content="2023-02-18T15:59:59.603Z">
 <meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="Database">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Blog\source_images\image-20230218200050157.png">
 
 
 <link rel="canonical" href="http://anyu10.github.io/2023/02/18/Redis/">
@@ -128,7 +143,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -141,6 +156,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">Redis是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81Redis"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要Redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">Redis基本工作原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">Redis 应用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E7%AD%BE%E5%88%B0"><span class="nav-number">2.1.</span> <span class="nav-text">连续签到</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String"><span class="nav-number">2.1.1.</span> <span class="nav-text">String</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%80%9A%E7%9F%A5"><span class="nav-number">2.2.</span> <span class="nav-text">消息通知</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List"><span class="nav-number">2.2.1.</span> <span class="nav-text">List</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">计数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hash"><span class="nav-number">2.3.1.</span> <span class="nav-text">Hash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="nav-number">2.4.</span> <span class="nav-text">排行榜</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZSet"><span class="nav-number">2.4.1.</span> <span class="nav-text">ZSet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">2.5.</span> <span class="nav-text">限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">2.6.</span> <span class="nav-text">分布式锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.</span> <span class="nav-text">Redis使用注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7Key"><span class="nav-number">3.1.</span> <span class="nav-text">大Key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%83%ADKey"><span class="nav-number">3.2.</span> <span class="nav-text">热Key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E5%9C%BA%E6%99%AF"><span class="nav-number">3.3.</span> <span class="nav-text">慢查询场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E3%80%81%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9"><span class="nav-number">3.4.</span> <span class="nav-text">缓存穿透、缓存雪崩</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -155,13 +171,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -216,8 +232,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2023-02-18 19:15:25" itemprop="dateCreated datePublished" datetime="2023-02-18T19:15:25+08:00">2023-02-18</time>
+      <time title="Created: 2023-02-18 19:15:25 / Modified: 23:59:59" itemprop="dateCreated datePublished" datetime="2023-02-18T19:15:25+08:00">2023-02-18</time>
     </span>
 
   
@@ -227,14 +244,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>0</span>
+      <span>1.5k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
+      <span>6 mins.</span>
     </span>
 </div>
 
@@ -245,7 +262,162 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h1 id="Redis是什么"><a href="#Redis是什么" class="headerlink" title="Redis是什么"></a>Redis是什么</h1><h2 id="为什么需要Redis"><a href="#为什么需要Redis" class="headerlink" title="为什么需要Redis"></a>为什么需要Redis</h2><ul>
+<li>数据从单表演进成了分库分表</li>
+<li>MySQL由单机演化为了集群<ul>
+<li>数据量增长</li>
+<li>读写数据压力增加</li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+
+<p><img src="D:\Blog\source_images\image-20230218200050157.png" alt="image-20230218200050157"></p>
+<p>数据分为冷数据和热数据</p>
+<p>将热数据存储到内存中</p>
+<h2 id="Redis基本工作原理"><a href="#Redis基本工作原理" class="headerlink" title="Redis基本工作原理"></a>Redis基本工作原理</h2><p>数据从内存中读写</p>
+<p>数据保存到硬盘防止重启数据丢失</p>
+<ul>
+<li>增量数据保存到AOF文件</li>
+<li>全量数据保存到RDB文件</li>
+</ul>
+<p>单线程处理所有操作命令</p>
+<p><img src="D:\Blog\source_images\image-20230218200347244.png" alt="image-20230218200347244"></p>
+<h1 id="Redis-应用案例"><a href="#Redis-应用案例" class="headerlink" title="Redis 应用案例"></a>Redis 应用案例</h1><h2 id="连续签到"><a href="#连续签到" class="headerlink" title="连续签到"></a>连续签到</h2><p>Redis可以设置过期时间</p>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><p>String数据结构: </p>
+<ul>
+<li>可以存储字符串、数字、二进制数据</li>
+<li>通常和expire一起配合使用</li>
+<li>场景: 存储计数，Session</li>
+</ul>
+<p><img src="D:\Blog\source_images\image-20230218201011218.png" alt="image-20230218201011218"></p>
+<h2 id="消息通知"><a href="#消息通知" class="headerlink" title="消息通知"></a>消息通知</h2><p>用list作为消息队列</p>
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>List数据结构QuickList</p>
+<p>QuickList由一个双向链表和listpack实现</p>
+<p>listpack: 一个entry存储了多个元素</p>
+<ul>
+<li>tot-bytes: 32 bits</li>
+<li>num-elements: 16 bits</li>
+<li>element-N: variable length<ul>
+<li>encoding-type: 编码类型和data长度</li>
+<li>element-data: 实际数据</li>
+<li>element-tot-len: 元素总长度 type+data，从左往右遍历时不需要，主要在从右往左遍历时使用</li>
+</ul>
+</li>
+<li>listpack-end-byte: 8 bits, value of 255</li>
+</ul>
+<p><img src="D:\Blog\source_images\image-20230218201637692.png" alt="image-20230218201637692"></p>
+<h2 id="计数"><a href="#计数" class="headerlink" title="计数"></a>计数</h2><p>使用hash数据结构进行技术</p>
+<p>一次性Set多个key或Get多个key的时候可以使用<strong>Pipeline</strong>功能</p>
+<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>和Golang中map的实现类似</p>
+<p>当负载因子大于1的时候触发rehash</p>
+<p>ht[0] 表示原 hash table，ht[1] 表示新 hash table</p>
+<p>每次用户访问都会迁移少量数据，以amortize rehash的性能损耗</p>
+<p><img src="D:\Blog\source_images\image-20230218203133638.png" alt="image-20230218203133638"></p>
+<h2 id="排行榜"><a href="#排行榜" class="headerlink" title="排行榜"></a>排行榜</h2><p>积分变化时，排名需要实时更新</p>
+<p>使用ZSet数据结构实现</p>
+<h3 id="ZSet"><a href="#ZSet" class="headerlink" title="ZSet"></a>ZSet</h3><p>ZSet数据结构 ZSkipList</p>
+<p><img src="D:\Blog\source_images\image-20230218204022883.png" alt="image-20230218204022883"></p>
+<p>Redis使用了SkipList和Hash的结构</p>
+<p>通过backward可以轻易实现倒排</p>
+<p>可以通过hash进行反查SkipList的节点</p>
+<p><img src="D:\Blog\source_images\image-20230218214135362.png" alt="image-20230218214135362"></p>
+<h2 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h2><p>要求1s内放行的请求为N，超过N则禁止访问</p>
+<p>key: comment_freq_limit_1671356046，其中1671356046表示时间戳，每访问一次都对这个key调用INCR，超过N则禁止访问。</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><p>并发场景下，要求一次只有一个协程执行。执行完成后，其中等待中的协程才能执行</p>
+<p>Redis实现分布式锁的特性:</p>
+<ul>
+<li>Redis核心是单线程</li>
+<li>SETNX只有未设置过的才能成功</li>
+</ul>
+<p>Redis实现的分布式锁不是高可用的分布式锁，存在的问题:</p>
+<ul>
+<li>业务超时解锁，导致解锁时业务未完成</li>
+<li>主备切换的临界点，主节点持有的锁未同步到新的主节点，而另一个从节点可以获取到锁</li>
+<li>Redis集群出现脑裂，导致出现多个主节点，多个主节点同时持有锁</li>
+</ul>
+<h1 id="Redis使用注意事项"><a href="#Redis使用注意事项" class="headerlink" title="Redis使用注意事项"></a>Redis使用注意事项</h1><h2 id="大Key"><a href="#大Key" class="headerlink" title="大Key"></a>大Key</h2><p>什么样的Key属于大Key</p>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>临界点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String</td>
+<td>value的字节数大于10KB</td>
+</tr>
+<tr>
+<td>Hash&#x2F;Set&#x2F;Zset&#x2F;List等复杂数据结构</td>
+<td>元素个数大于5000个或总value大于10KB</td>
+</tr>
+</tbody></table>
+<p>大Key的危害</p>
+<ul>
+<li>读取成本高</li>
+<li>容易导致慢查询(过期，删除)</li>
+<li>主从复制异常，服务阻塞，无法正常响应请求</li>
+</ul>
+<p><img src="D:\Blog\source_images\image-20230218220800118.png" alt="image-20230218220800118"></p>
+<p>消除大Key的办法:</p>
+<ol>
+<li>压缩: 使用gzip，snappy，lz4等压缩算法压缩。如果是JSON字符串，可以考虑MessagePack进行序列化，主要需要考虑解压缩的时间</li>
+<li>拆分: 将大Key拆分为小Key</li>
+<li>对集合类结构hash，list，set，zset等<ol>
+<li>拆分: 可以使用hash取余，以位掩码的方式决定存放在哪个key中</li>
+<li>区分冷热: 如榜单列表使用zset，只缓存前10页数据，之后的数据走db</li>
+</ol>
+</li>
+</ol>
+<p><img src="D:\Blog\source_images\image-20230218221153202.png" alt="image-20230218221153202"></p>
+<h2 id="热Key"><a href="#热Key" class="headerlink" title="热Key"></a>热Key</h2><p>什么是热Key: 用户访问一个Key的QPS特别高，导致Server实例出现CPU负载突增或不均的情况</p>
+<p>热Key没有明确的定义，QPS超过500一般认为为热Key</p>
+<p>如何解决热Key:</p>
+<ol>
+<li>设置Local Cache<ul>
+<li>在访问Redis之前，在业务服务侧设置LocalCache，降低Redis的QPS，LocalCache缓存过期或未命中，将Redis中的数据更新到LocalCache。例如Golang的Bigcache。</li>
+<li>缓存过期管理</li>
+<li>缓存分片</li>
+<li>本机内存</li>
+</ul>
+</li>
+<li>拆分<ul>
+<li>将key:value这一个热Key写入多份，例如key1:value, key2:value，访问的时候访问多个Key，但是value是同一个，以此将QPS分散到Redis集群中不同的实例上。但是更新时需要更新多个Key，而且存在数据短暂不一致的风险</li>
+</ul>
+</li>
+<li>使用Redis代理的热Key承载能力<ul>
+<li>Redis访问代理具有热Key承载能力。本质上结合了热Key发现和LocalCache两个功能</li>
+<li>Redis访问代理相当于Redis的路由</li>
+</ul>
+</li>
+</ol>
+<p><img src="D:\Blog\source_images\image-20230218222629473.png" alt="image-20230218222629473"></p>
+<h2 id="慢查询场景"><a href="#慢查询场景" class="headerlink" title="慢查询场景"></a>慢查询场景</h2><p>容易导致慢查询的操作:</p>
+<ol>
+<li>批量操作一次传入过多的key&#x2F;value，如mset&#x2F;hmset&#x2F;sadd&#x2F;zadd等O(n)操作，但此操作单批次不要超过100</li>
+<li>zset大部分命令都是O(log(n))，带下不要超过5000</li>
+<li>操作的单个value是大Key</li>
+<li>对大Key的delete&#x2F;expire操作</li>
+</ol>
+<h2 id="缓存穿透、缓存雪崩"><a href="#缓存穿透、缓存雪崩" class="headerlink" title="缓存穿透、缓存雪崩"></a>缓存穿透、缓存雪崩</h2><p>缓存穿透: 热点数据查询绕过缓存，直接查询数据库</p>
+<p>缓存雪崩: 大量缓存同时过期</p>
+<p>危害:</p>
+<ol>
+<li>查询一个一定不存在的数据: 通常不会缓存不存在的数据，这类请求会查询db。这类查询多时可能会导致db响应慢甚至宕机</li>
+<li>缓存过期时: 在高并发下，如果一个热Key过期，会有大量请求到db，影响db。同一时间有大量db过期也会导致大量请求到db上</li>
+</ol>
+<p>减少缓存穿透:</p>
+<ol>
+<li>缓存空值: 如果某个值在db中不存在，则缓存一个空值</li>
+<li>bloom filter: 利用bloom filter判断某个值是否存在</li>
+</ol>
+<p>减少缓存雪崩:</p>
+<ol>
+<li>分散缓存失效时间。例如在原有失效时间加上一个随机值。热点数据过期时间设置长一点，冷门数据过期时间设置短一点</li>
+<li>使用缓存集群，避免单机宕机造成的缓存雪崩</li>
+</ol>
+
     </div>
 
     
@@ -253,6 +425,10 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+              <a href="/tags/Database/" rel="tag"><i class="fa fa-tag"></i> Database</a>
+          </div>
 
         
 
@@ -263,6 +439,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2023/02/19/ClickHouse/" rel="next" title="ClickHouse">
+                  ClickHouse <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -295,14 +474,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>Word count total: </span>
-    <span title="Word count total">27k</span>
+    <span title="Word count total">29k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>Reading time total &asymp;</span>
-    <span title="Reading time total">1:38</span>
+    <span title="Reading time total">1:44</span>
   </span>
 </div>
 

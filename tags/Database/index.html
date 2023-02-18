@@ -22,30 +22,23 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Introetcd 简介A distributed, reliable key-value store for critical data of distributed systems  分布式键值存储 配置共享 服务发现 分布式锁 分布式队列 分布式通知与协调 主备选举">
-<meta property="og:type" content="article">
-<meta property="og:title" content="etcd">
-<meta property="og:url" content="http://anyu10.github.io/2023/01/23/etcd/index.html">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="Anyu">
+<meta property="og:url" content="http://anyu10.github.io/tags/Database/index.html">
 <meta property="og:site_name" content="Anyu">
-<meta property="og:description" content="Introetcd 简介A distributed, reliable key-value store for critical data of distributed systems  分布式键值存储 配置共享 服务发现 分布式锁 分布式队列 分布式通知与协调 主备选举">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="d:\Blog\source_images\image-20230123211311435.png">
-<meta property="article:published_time" content="2023-01-23T12:55:21.000Z">
-<meta property="article:modified_time" content="2023-01-28T08:54:45.704Z">
 <meta property="article:author" content="Anyu Elin">
-<meta property="article:tag" content="etcd">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="d:\Blog\source_images\image-20230123211311435.png">
 
 
-<link rel="canonical" href="http://anyu10.github.io/2023/01/23/etcd/">
+<link rel="canonical" href="http://anyu10.github.io/tags/Database/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/01/23/etcd/","path":"2023/01/23/etcd/","title":"etcd"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":"","permalink":"","path":"tags/Database/index.html","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>etcd | Anyu</title>
+<title>Tag: Database | Anyu</title>
   
 
 
@@ -133,7 +126,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -146,7 +139,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#etcd-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">etcd 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#etcd-%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">etcd 架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#etcd-%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.3.</span> <span class="nav-text">etcd 集群部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E4%BC%AA%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.3.1.</span> <span class="nav-text">单节点伪集群部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-number">1.3.2.</span> <span class="nav-text">多节点集群部署</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,181 +175,50 @@
 
     </div>
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner tag posts-collapse">
 
 
   
-
-
-<div class="post-block">
   
   
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/01/23/etcd/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Anyu Elin">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anyu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="etcd | Anyu">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          etcd
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        <h1 class="collection-header">Database
+          <small>Tag</small>
         </h1>
+      </div>
 
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-01-23 20:55:21" itemprop="dateCreated datePublished" datetime="2023-01-23T20:55:21+08:00">2023-01-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-01-28 16:54:45" itemprop="dateModified" datetime="2023-01-28T16:54:45+08:00">2023-01-28</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>321</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><h2 id="etcd-简介"><a href="#etcd-简介" class="headerlink" title="etcd 简介"></a>etcd 简介</h2><p>A distributed, reliable key-value store for critical data of distributed systems</p>
-<ul>
-<li>分布式键值存储</li>
-<li>配置共享</li>
-<li>服务发现</li>
-<li>分布式锁</li>
-<li>分布式队列</li>
-<li>分布式通知与协调</li>
-<li>主备选举</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="etcd-架构"><a href="#etcd-架构" class="headerlink" title="etcd 架构"></a>etcd 架构</h2><p><img src="D:\Blog\source_images\image-20230123211311435.png" alt="image-20230123211311435"></p>
-<h2 id="etcd-集群部署"><a href="#etcd-集群部署" class="headerlink" title="etcd 集群部署"></a>etcd 集群部署</h2><h3 id="单节点伪集群部署"><a href="#单节点伪集群部署" class="headerlink" title="单节点伪集群部署"></a>单节点伪集群部署</h3><p>etcd参数说明：</p>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>–name</td>
-<td>etcd节点名</td>
-</tr>
-<tr>
-<td>–initial-cluster</td>
-<td>etcd启动时，通过这个配置找到别的etcd节点的地址列表。格式“name&#x3D;<a href="http://ip:port,...”">http://ip:port,...”</a></td>
-</tr>
-<tr>
-<td>–initial-cluster-state</td>
-<td>初始化集群的时候，存在“new”和“existing”两种状态。new表示新建的集群，existing表示加入已存在的集群</td>
-</tr>
-<tr>
-<td>–listen-client-urls</td>
-<td>监听客户端请求的地址列表。格式“<a href="http://ip:port,...”">http://ip:port,...”</a></td>
-</tr>
-<tr>
-<td>–advertise-client-urls</td>
-<td>从多个listen-client-urls中选出一个建议的监听地址</td>
-</tr>
-<tr>
-<td>-listen-peer-urls</td>
-<td>服务端节点之间通信的监听地址。格式“<a href="http://ip:port”">http://ip:port”</a></td>
-</tr>
-<tr>
-<td>–initial-listen-peer-urls</td>
-<td>建议服务端之间通讯使用的地址列表</td>
-</tr>
-</tbody></table>
-<h3 id="多节点集群部署"><a href="#多节点集群部署" class="headerlink" title="多节点集群部署"></a>多节点集群部署</h3><ul>
-<li><p>静态配置</p>
-<ul>
-<li>节点数量已知</li>
-<li>节点的ip地址已知</li>
-</ul>
-</li>
-<li><p>etcd动态发现</p>
-<ul>
-<li>使用<code>curl https://discovery.etcd.io/new?size=3</code>获取三个节点的动态集群</li>
-<li>使用<code>--discovery $&#123;DISCOVERY&#125;</code>添加集群节点</li>
-<li>不需要指定<code>--initial-cluster</code></li>
-</ul>
-</li>
-</ul>
-<p><code>etcdctl --endpoints=$ENDPOINTS member list</code> 可以列出一个集群中所有的节点信息</p>
-
+      
+    <div class="collection-year">
+      <span class="collection-header">2023</span>
     </div>
 
-    
-    
-    
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2023-02-18T19:15:25+08:00"
+              content="2023-02-18">
+          02-18
+        </time>
+      </div>
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/etcd/" rel="tag"><i class="fa fa-tag"></i> etcd</a>
-          </div>
+      <div class="post-title">
+          <a class="post-title-link" href="/2023/02/18/Redis/" itemprop="url">
+            <span itemprop="name">Redis</span>
+          </a>
+      </div>
 
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2023/01/22/gRPC/" rel="prev" title="gRPC">
-                  <i class="fa fa-chevron-left"></i> gRPC
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2023/01/24/gorm/" rel="next" title="gorm">
-                  gorm <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
-</div>
 
-
-
-
-
+    </div>
+  </div>
+  
+  
+  
 
 </div>
   </main>
