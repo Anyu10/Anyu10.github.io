@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="消息队列消息队列(MQ): 指保存消息的一个容器，本质上是一个队列，但需要支持高吞吐，高并发，高可用  解耦，例如替代存储业务 削峰，例如限制一个服务的请求量 异步，例如减少一条链路中的长尾效应 日志处理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Message Queue">
+<meta property="og:url" content="http://anyu10.github.io/2023/02/13/Message-Queue/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="消息队列消息队列(MQ): 指保存消息的一个容器，本质上是一个队列，但需要支持高吞吐，高并发，高可用  解耦，例如替代存储业务 削峰，例如限制一个服务的请求量 异步，例如减少一条链路中的长尾效应 日志处理">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Blog\source_images\image-20230215151350639.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230215151451171.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230215152320277.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230215153828661.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230215160210435.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230216183002024.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230216183435666.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230216183924456.png">
+<meta property="og:image" content="c:\Users\Anyu\AppData\Roaming\Typora\typora-user-images\image-20230216184839487.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230217161020936.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230217162544987.png">
+<meta property="og:image" content="d:\Blog\source_images\image-20230217162038461.png">
+<meta property="article:published_time" content="2023-02-13T11:08:52.000Z">
+<meta property="article:modified_time" content="2023-02-17T08:25:55.712Z">
+<meta property="article:author" content="Anyu Elin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Blog\source_images\image-20230215151350639.png">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2023/02/13/Message-Queue/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/02/13/Message-Queue/","path":"2023/02/13/Message-Queue/","title":"Message Queue"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Message Queue | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka"><span class="nav-number">2.</span> <span class="nav-text">Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">2.2.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Producer"><span class="nav-number">2.3.</span> <span class="nav-text">Producer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Broker"><span class="nav-number">2.4.</span> <span class="nav-text">Broker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Consumer"><span class="nav-number">2.5.</span> <span class="nav-text">Consumer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">2.6.</span> <span class="nav-text">Conclusion</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BMQ"><span class="nav-number">3.</span> <span class="nav-text">BMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">架构模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">读写流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer%E5%86%99"><span class="nav-number">3.2.1.</span> <span class="nav-text">Producer写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer%E8%AF%BB"><span class="nav-number">3.2.2.</span> <span class="nav-text">Consumer读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="nav-number">3.3.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%B3%E9%81%93%E6%B6%88%E6%81%AF"><span class="nav-number">3.3.1.</span> <span class="nav-text">泳道消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Databus"><span class="nav-number">3.3.2.</span> <span class="nav-text">Databus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mirror"><span class="nav-number">3.3.3.</span> <span class="nav-text">Mirror</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Index"><span class="nav-number">3.3.4.</span> <span class="nav-text">Index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parquet"><span class="nav-number">3.3.5.</span> <span class="nav-text">Parquet</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RocketMQ"><span class="nav-number">4.</span> <span class="nav-text">RocketMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%9E%8B-1"><span class="nav-number">4.1.</span> <span class="nav-text">架构模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7-1"><span class="nav-number">4.2.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%9C%BA%E6%99%AF"><span class="nav-number">4.2.1.</span> <span class="nav-text">事务场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E5%8F%91%E9%80%81"><span class="nav-number">4.2.2.</span> <span class="nav-text">延迟发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E9%87%8D%E8%AF%95%E5%92%8C%E6%AD%BB%E4%BF%A1%E9%98%9F%E5%88%97"><span class="nav-number">4.2.3.</span> <span class="nav-text">消费重试和死信队列</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Anyu Elin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/02/13/Message-Queue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Message Queue | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Message Queue
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-02-13 19:08:52" itemprop="dateCreated datePublished" datetime="2023-02-13T19:08:52+08:00">2023-02-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-02-17 16:25:55" itemprop="dateModified" datetime="2023-02-17T16:25:55+08:00">2023-02-17</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h1><p>消息队列(MQ): 指保存消息的一个容器，本质上是一个队列，但需要支持<strong>高吞吐，高并发，高可用</strong></p>
+<ul>
+<li>解耦，例如替代存储业务</li>
+<li>削峰，例如限制一个服务的请求量</li>
+<li>异步，例如减少一条链路中的长尾效应</li>
+<li>日志处理</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>应用场景:</p>
+<ul>
+<li>日志信息</li>
+<li>Metrics数据</li>
+<li>用户行为数据</li>
+</ul>
+<p>如何使用:</p>
+<ol>
+<li>创建集群</li>
+<li>新增Topic，设置分区数量</li>
+<li>编写生产者逻辑</li>
+<li>编写消费者逻辑</li>
+</ol>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><img src="D:\Blog\source_images\image-20230215151350639.png" alt="image-20230215151350639"></p>
+<p>Topic: 逻辑队列，用于不同的业务场景</p>
+<p>Cluster: 物理集群，每个集群中可以建立多个不同的Topic</p>
+<p>Producer: 生产者，负责将消息发送到Topic之中</p>
+<p>Consumer: 消费者，负责消费Topic中的信息</p>
+<p>ConsumerGroup: 消费者组，不同的Consumer消费进度互不干涉</p>
+<p>Partition: 一个Topic有多个Partition，不同的Partition的消息可以并发处理</p>
+<p><img src="D:\Blog\source_images\image-20230215151451171.png" alt="image-20230215151451171"></p>
+<p>Offset，消息在Partition中的相对位置信息，可以理解为唯一ID，在Partition内部严格递增</p>
+<p>Replica: 每个Partition会有多个Replica，Leader Replica会从ISR(In-Sync Replicas)中选出</p>
+<ul>
+<li>Leader会从Producer中写数据，被Consumer读数据</li>
+<li>Follower从Leader中拉取数据</li>
+</ul>
+<h2 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h2><p>batch发送，批量发送可以减少IO次数，进而增强发送能力</p>
+<p>通过压缩，减少消息大小，支持Snappy, Gzip, LZ4, ZSTD压缩算法</p>
+<h2 id="Broker"><a href="#Broker" class="headerlink" title="Broker"></a>Broker</h2><p>将消息存储到本地磁盘，文件系统如下</p>
+<p>顺序写，末尾追加，提升了写入效率</p>
+<p><img src="D:\Blog\source_images\image-20230215152320277.png" alt="image-20230215152320277"></p>
+<p>Broker如何寻找消息？</p>
+<p>Consumer发送FetchRequest请求消息数据，Broker会将指定的Offset处的消息，按照时间窗口和消息大小窗口发送给Consumer。</p>
+<p>Broker寻找offset的日志:</p>
+<ul>
+<li>通过二分法寻找小于目标offset的最大文件</li>
+<li>对于偏移量索引文件，先二分，再遍历</li>
+<li>对于时间索引文件，先通过时间戳利用二分法在时间索引文件中找到offset，然后根据这个offset二次查询</li>
+</ul>
+<p>Broker的零拷贝优化:</p>
+<p>原路径: file –&gt; Read Buffer –&gt; Application Buffer –&gt; Socket Buffer –&gt; NIC Buffer –&gt; Consumer</p>
+<p>优化路径: file –&gt; Read Buffer –&gt; NIC Buffer –&gt; Consumer</p>
+<p><img src="D:\Blog\source_images\image-20230215153828661.png" alt="image-20230215153828661"></p>
+<h2 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h2><p>Partition在Consumer Group中的分配问题？</p>
+<ul>
+<li>手动分配，哪一个Consumer消费哪个Partition完全由业务决定<ul>
+<li>不能自动容灾，例如某一个Consumer挂掉，则有Partition空闲</li>
+<li>扩缩容复杂，如新增一个Consumer需要重新分配</li>
+</ul>
+</li>
+<li>自动分配，在Broker集群中，对每个Consumer Group，选出一个Coordinator，进行Consumer集群的自动分配(Re-balance)</li>
+</ul>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Kafka用于提高吞吐和稳定性的功能？</p>
+<ul>
+<li>Producer: 批量发送，数据压缩</li>
+<li>Broker: 顺序写，消息索引，零拷贝</li>
+<li>Consumer: Rebalance</li>
+</ul>
+<p>Kafka的缺点</p>
+<ul>
+<li>重启，替换，扩容，缩容都很复杂</li>
+<li>负载不均衡时，解决方案复杂</li>
+<li>运维成本高</li>
+<li>没有缓存，完全依赖文件系统的Page Cache</li>
+<li>Controller 和 Coordinator 和 Broker 在同一进程中，大量IO会导致性能下降</li>
+</ul>
+<h1 id="BMQ"><a href="#BMQ" class="headerlink" title="BMQ"></a>BMQ</h1><h2 id="架构模型"><a href="#架构模型" class="headerlink" title="架构模型"></a>架构模型</h2><p>兼容Kafka协议，<strong>存算分离</strong>，云原生消息队列</p>
+<p><img src="D:\Blog\source_images\image-20230215160210435.png" alt="image-20230215160210435"></p>
+<p>解决了Kafka中的负载均衡的问题 –&gt; 存算分离，利用分布式存储系统让partition的读取负载均衡</p>
+<p>解决了Kafka运维成本高和扩缩容复杂的问题 –&gt; Broker-Partition 状态机</p>
+<h2 id="读写流程"><a href="#读写流程" class="headerlink" title="读写流程"></a>读写流程</h2><h3 id="Producer写"><a href="#Producer写" class="headerlink" title="Producer写"></a>Producer写</h3><p><img src="D:\Blog\source_images\image-20230216183002024.png" alt="image-20230216183002024"></p>
+<p><img src="D:\Blog\source_images\image-20230216183435666.png" alt="image-20230216183435666"></p>
+<p>Failover: DataNode节点挂了导致写文件失败</p>
+<h3 id="Consumer读"><a href="#Consumer读" class="headerlink" title="Consumer读"></a>Consumer读</h3><p><img src="D:\Blog\source_images\image-20230216183924456.png" alt="image-20230216183924456"></p>
+<h2 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h2><h3 id="泳道消息"><a href="#泳道消息" class="headerlink" title="泳道消息"></a>泳道消息</h3><p>解决了主干泳道流量问题以及用到资源重复创建的问题</p>
+<p>主干Topic用于线上环境，另一个Topic用于测试环境，且只需要一个Topic</p>
+<p><img src="C:\Users\Anyu\AppData\Roaming\Typora\typora-user-images\image-20230216184839487.png" alt="image-20230216184839487"></p>
+<h3 id="Databus"><a href="#Databus" class="headerlink" title="Databus"></a>Databus</h3><p>可以动态配置</p>
+<p>对高吞吐支持较好</p>
+<h3 id="Mirror"><a href="#Mirror" class="headerlink" title="Mirror"></a>Mirror</h3><p>通过最终一致性的方式，解决跨 Region 读写问题</p>
+<h3 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h3><p>一般: 通过offset或timestamp查询</p>
+<p>直接在BMQ中将数据结构化，配置索引DDL，异步建立索引，之后通过Index Query服务读出数据</p>
+<h3 id="Parquet"><a href="#Parquet" class="headerlink" title="Parquet"></a>Parquet</h3><p>Apache Parquet 数据存储格式</p>
+<p>直接在BMQ中将数据结构化，通过Parquet Engine，以不同的方式构建Parquet格式文件</p>
+<h1 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a>RocketMQ</h1><h2 id="架构模型-1"><a href="#架构模型-1" class="headerlink" title="架构模型"></a>架构模型</h2><p>用于低延时场景，和峰值场景</p>
+<p><img src="D:\Blog\source_images\image-20230217161020936.png" alt="image-20230217161020936"></p>
+<h2 id="高级特性-1"><a href="#高级特性-1" class="headerlink" title="高级特性"></a>高级特性</h2><h3 id="事务场景"><a href="#事务场景" class="headerlink" title="事务场景"></a>事务场景</h3><p>RocketMQ支持事务</p>
+<p>通过2PC实现</p>
+<p><img src="D:\Blog\source_images\image-20230217162544987.png" alt="image-20230217162544987"></p>
+<h3 id="延迟发送"><a href="#延迟发送" class="headerlink" title="延迟发送"></a>延迟发送</h3><ol>
+<li>通过一个ScheduleTopic的Consumer消费消息，然后将消息送往延迟服务</li>
+<li>时间到之后，延迟服务再将消息送回消息队列，让别的Consumer正常消费</li>
+</ol>
+<p><img src="D:\Blog\source_images\image-20230217162038461.png" alt="image-20230217162038461"></p>
+<h3 id="消费重试和死信队列"><a href="#消费重试和死信队列" class="headerlink" title="消费重试和死信队列"></a>消费重试和死信队列</h3><p>消费失败时:</p>
+<ul>
+<li>没有超过重试次数，发到延时服务，延时投递至Topic进行重试</li>
+<li>超过重试次数，发送到死信队列，人工介入</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/09/Distributed-Timer/" rel="prev" title="Distributed Timer">
+                  <i class="fa fa-chevron-left"></i> Distributed Timer
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/02/13/RPC/" rel="next" title="RPC">
+                  RPC <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>Word count total: </span>
+    <span title="Word count total">27k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>Reading time total &asymp;</span>
+    <span title="Reading time total">1:38</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
