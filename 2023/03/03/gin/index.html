@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha256-Z1K5uhUaJXA7Ll0XrZ/0JhX4lAtZFpT6jkKrEDT0drU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"anyu10.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.14.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Gintemplate基本语法模板的定义与加载 使用 loadHTMLGlob 函数加载一个文件夹，*匹配所有文件,**匹配一个文件夹 &amp;#123;&amp;#123; define &quot;admin&#x2F;default.html&quot; &amp;#125;&amp;#125; &amp;#123;&amp;#123; end &amp;#125;&amp;#125; 指定模板的名称">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gin">
+<meta property="og:url" content="http://anyu10.github.io/2023/03/03/gin/index.html">
+<meta property="og:site_name" content="Anyu">
+<meta property="og:description" content="Gintemplate基本语法模板的定义与加载 使用 loadHTMLGlob 函数加载一个文件夹，*匹配所有文件,**匹配一个文件夹 &amp;#123;&amp;#123; define &quot;admin&#x2F;default.html&quot; &amp;#125;&amp;#125; &amp;#123;&amp;#123; end &amp;#125;&amp;#125; 指定模板的名称">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-03-03T07:26:53.000Z">
+<meta property="article:modified_time" content="2023-03-03T07:28:27.834Z">
+<meta property="article:author" content="Anyu Elin">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://anyu10.github.io/2023/03/03/gin/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://anyu10.github.io/2023/03/03/gin/","path":"2023/03/03/gin/","title":"gin"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>gin | Anyu</title>
+  
+
+
+
+
+
+
+  <script async defer data-website-id="" src=""></script>
+
+  <script defer data-domain="" src=""></script>
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Anyu</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Gin"><span class="nav-number">1.</span> <span class="nav-text">Gin</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#template%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">template基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.1.1.</span> <span class="nav-text">模板的定义与加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8D%B0%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">打印变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">控制流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E6%9D%BF%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.4.</span> <span class="nav-text">预定义模板函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A8%A1%E6%9D%BF%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.5.</span> <span class="nav-text">自定义模板函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97template"><span class="nav-number">1.1.6.</span> <span class="nav-text">嵌套template</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1"><span class="nav-number">1.1.7.</span> <span class="nav-text">配置静态路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96GET%E5%92%8CPOST%E7%9A%84%E8%AF%B7%E6%B1%82%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.</span> <span class="nav-text">获取GET和POST的请求数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GET%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">GET请求中的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">POST请求中的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1"><span class="nav-number">1.2.3.</span> <span class="nav-text">动态路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%88%86%E7%BB%84%E5%92%8C%E6%8E%A7%E5%88%B6%E5%99%A8%E5%88%86%E7%BB%84"><span class="nav-number">1.3.</span> <span class="nav-text">路由分组和控制器分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%88%86%E7%BB%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">路由分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E5%88%86%E7%BB%84"><span class="nav-number">1.3.2.</span> <span class="nav-text">控制器分组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.4.</span> <span class="nav-text">中间件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">中间件执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">全局中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E4%B8%AD%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">路由中使用中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E4%B8%AD%E4%BC%A0%E9%80%92%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.4.</span> <span class="nav-text">中间件中传递数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.4.5.</span> <span class="nav-text">默认中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E4%B8%AD%E4%BD%BF%E7%94%A8goroutine"><span class="nav-number">1.4.6.</span> <span class="nav-text">中间件中使用goroutine</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.5.</span> <span class="nav-text">文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.1.</span> <span class="nav-text">单文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">多文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie"><span class="nav-number">1.6.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">Cookie的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E5%9F%9F%E5%90%8D%E5%85%B1%E4%BA%ABCookie"><span class="nav-number">1.6.2.</span> <span class="nav-text">二级域名共享Cookie</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session"><span class="nav-number">1.7.</span> <span class="nav-text">Session</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Session%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">1.7.1.</span> <span class="nav-text">Session中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8FSession"><span class="nav-number">1.7.2.</span> <span class="nav-text">分布式Session</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Anyu Elin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Anyu Elin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://anyu10.github.io/2023/03/03/gin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Anyu Elin">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anyu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="gin | Anyu">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gin
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-03-03 15:26:53 / Modified: 15:28:27" itemprop="dateCreated datePublished" datetime="2023-03-03T15:26:53+08:00">2023-03-03</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="Word count in article">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">Word count in article: </span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="Reading time">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">Reading time &asymp;</span>
+      <span>4 mins.</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Gin"><a href="#Gin" class="headerlink" title="Gin"></a>Gin</h1><h2 id="template基本语法"><a href="#template基本语法" class="headerlink" title="template基本语法"></a>template基本语法</h2><h3 id="模板的定义与加载"><a href="#模板的定义与加载" class="headerlink" title="模板的定义与加载"></a>模板的定义与加载</h3><ul>
+<li>使用 <code>loadHTMLGlob</code> 函数加载一个文件夹，<code>*</code>匹配所有文件,<code>**</code>匹配一个文件夹</li>
+<li><code>&#123;&#123; define "admin/default.html" &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 指定模板的名称</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="打印变量"><a href="#打印变量" class="headerlink" title="打印变量"></a>打印变量</h3><ul>
+<li><code>&#123;&#123; .variable_name &#125;&#125;</code> 打印变量</li>
+<li><code>&#123;&#123; $obj = .name &#125;&#125;</code> 定义变量</li>
+<li><code>&#123;&#123; $obj &#125;&#125;</code> 打印定义的变量</li>
+<li><code>&#123;&#123; .struct.member &#125;&#125;</code> 打印结构体的变量</li>
+<li><code>&#123;&#123;- .name -&#125;&#125;</code> 左边的 <code>-</code> 表示去掉左边的空格, 右边的 <code>-</code> 表示去掉右边的空格</li>
+</ul>
+<h3 id="控制流"><a href="#控制流" class="headerlink" title="控制流"></a>控制流</h3><ul>
+<li><code>&#123;&#123; if ... &#125;&#125;</code> <code>&#123;&#123; else if ... &#125;&#125;</code> <code>&#123;&#123; else &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 条件判断<ul>
+<li>通过 <code>gt</code>, <code>eq</code>, <code>ne</code>, <code>lt</code>, <code>le</code>, <code>ge</code> 等进行比较</li>
+<li>eg, <code>gt .name 70</code></li>
+</ul>
+</li>
+<li><code>&#123;&#123; range $key,$value := .obj &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 进行循环遍历<ul>
+<li><code>&#123;&#123; range $key,$value := .obj &#125;&#125;</code> <code>&#123;&#123; else &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 增加了else</li>
+</ul>
+</li>
+<li><code>&#123;&#123;with .obj&#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 进行结构体的解构</li>
+</ul>
+<h3 id="预定义模板函数"><a href="#预定义模板函数" class="headerlink" title="预定义模板函数"></a>预定义模板函数</h3><ul>
+<li><code>&#123;&#123; and .x .y &#125;&#125;</code> 等价于 <code>if x then y else y</code> 返回第一个empty参数或最后一个参数</li>
+<li><code>&#123;&#123; or .x .y &#125;&#125;</code> 等价于 <code>if x then x else y</code> 返回第一个非empty参数或最后一个参数</li>
+<li><code>&#123;&#123; not .x &#125;&#125;</code></li>
+<li><code>&#123;&#123; len .x &#125;&#125;</code></li>
+</ul>
+<h3 id="自定义模板函数"><a href="#自定义模板函数" class="headerlink" title="自定义模板函数"></a>自定义模板函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UnixToTime</span><span class="params">(timestamp <span class="type">int</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    t := time.Unix(<span class="type">int64</span>(timestamp), <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> t.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 放在加载模板函数前</span></span><br><span class="line">r.SetFuncMap(template.FuncMap&#123;</span><br><span class="line">    <span class="string">&quot;UnixToTime&quot;</span>: UnixToTime   </span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">r.LoadHTMLGlob(<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="嵌套template"><a href="#嵌套template" class="headerlink" title="嵌套template"></a>嵌套template</h3><ul>
+<li><code>&#123;&#123;template "template_name.html" .&#125;&#125;</code></li>
+</ul>
+<h3 id="配置静态路由"><a href="#配置静态路由" class="headerlink" title="配置静态路由"></a>配置静态路由</h3><ul>
+<li><code>r.Static(&quot;/static&quot;, &quot;./static&quot;)</code> 第一个参数表示路由, 第二个参数表示映射的目录</li>
+</ul>
+<h2 id="获取GET和POST的请求数据"><a href="#获取GET和POST的请求数据" class="headerlink" title="获取GET和POST的请求数据"></a>获取GET和POST的请求数据</h2><h3 id="GET请求中的数据"><a href="#GET请求中的数据" class="headerlink" title="GET请求中的数据"></a>GET请求中的数据</h3><ul>
+<li>通过<code>c.Query()</code>函数进行请求</li>
+<li>通过<code>c.ShouldBind()</code>或<code>c.Bind()</code>函数将其绑定到结构体, 其中结构体有 <code>form:&quot;xxx&quot;</code> 的tag</li>
+</ul>
+<h3 id="POST请求中的数据"><a href="#POST请求中的数据" class="headerlink" title="POST请求中的数据"></a>POST请求中的数据</h3><ul>
+<li>通过<code>c.PostForm()</code>函数进行请求</li>
+<li>通过<code>c.ShouldBind()</code>或<code>c.Bind()</code>函数将其绑定到结构体, 其中结构体有 <code>form:&quot;xxx&quot;</code> 的tag</li>
+<li>通过<code>c.GetRawData()</code>获取请求体中的信息, 然后再进行解析</li>
+</ul>
+<h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><ul>
+<li>通过<code>c.Param()</code>函数获取</li>
+<li>通过<code>c.BindUri</code>或<code>c.ShouldBindUri()</code>函数将其绑定到结构体, 其中结构体有 <code>uri:&quot;xxx&quot; binding:&quot;xxx&quot;</code> 的tag</li>
+</ul>
+<h2 id="路由分组和控制器分组"><a href="#路由分组和控制器分组" class="headerlink" title="路由分组和控制器分组"></a>路由分组和控制器分组</h2><h3 id="路由分组"><a href="#路由分组" class="headerlink" title="路由分组"></a>路由分组</h3><p>用Group函数组织</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">defaultRouter := r.Group(<span class="string">&quot;/admin&quot;</span>)</span><br><span class="line">&#123;</span><br><span class="line">    defaultRouter.GET(<span class="string">&quot;/list&quot;</span>, GetList)</span><br><span class="line">    defaultRouter.POST(<span class="string">&quot;/putlist&quot;</span>, PutList)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="控制器分组"><a href="#控制器分组" class="headerlink" title="控制器分组"></a>控制器分组</h3><p>用结构体组织</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> adminController <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserIndex(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserAdd(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserDelete(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>控制器可以”继承”</p>
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><h3 id="中间件执行流程"><a href="#中间件执行流程" class="headerlink" title="中间件执行流程"></a>中间件执行流程</h3><p><code>c.Next()</code> 会继续之后的请求</p>
+<p><code>c.Abort()</code> 会中止调用该请求的剩余程序</p>
+<h3 id="全局中间件"><a href="#全局中间件" class="headerlink" title="全局中间件"></a>全局中间件</h3><p><code>r.Use()</code></p>
+<h3 id="路由中使用中间件"><a href="#路由中使用中间件" class="headerlink" title="路由中使用中间件"></a>路由中使用中间件</h3><ul>
+<li><code>r.Group(&quot;/&quot;, middleware)</code>中使用中间件</li>
+<li><code>defaultRouter.Use(middleware)</code>中使用中间件</li>
+</ul>
+<h3 id="中间件中传递数据"><a href="#中间件中传递数据" class="headerlink" title="中间件中传递数据"></a>中间件中传递数据</h3><ul>
+<li>通过<code>c.Set(string1, string2)</code>设置数据</li>
+<li>通过<code>c.Get(string1)</code>使用在别的中间件中设置的数据, 注意<code>c.Get()</code>得到的数据为<code>any</code>类型</li>
+</ul>
+<h3 id="默认中间件"><a href="#默认中间件" class="headerlink" title="默认中间件"></a>默认中间件</h3><p><code>gin.Default()</code>会默认使用<code>Logger</code>和<code>Recovery</code>中间件</p>
+<ul>
+<li><code>Logger</code>中间件会将日志写入<code>gin.DefaultWriter</code></li>
+<li><code>Recovery</code>中间件会recovery任何panic, 如果有panic, 写入500状态码</li>
+</ul>
+<p><code>gin.New()</code>创建不带任何中间件的路由</p>
+<h3 id="中间件中使用goroutine"><a href="#中间件中使用goroutine" class="headerlink" title="中间件中使用goroutine"></a>中间件中使用goroutine</h3><p>在handler中启动新的goroutine时, 不能使用c(*gin.Context), 需要使用<code>c.Copy()</code></p>
+<p>gin中不需要使用WaitGroup, 因为<code>gin.Run()</code>主程序永远不会退出</p>
+<h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><h3 id="单文件"><a href="#单文件" class="headerlink" title="单文件"></a>单文件</h3><p><code>r.MaxMultipartMemory = 8 &lt;&lt; 20</code> 将内存限制设置为8MB, 默认为32MB</p>
+<p><code>file, err := c.FileForm(&quot;file&quot;)</code>, 返回一个<code>*multipart.FileHeader</code>类型的<code>file</code>.</p>
+<p><code>c.SaveUploadedFile(file, dst)</code> 将文件存入到对印的路径</p>
+<h3 id="多文件"><a href="#多文件" class="headerlink" title="多文件"></a>多文件</h3><p><code>r.MaxMultipartMemory = 8 &lt;&lt; 20</code> 将内存限制设置为8MB, 默认为32MB</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">form, err := c.MultipartForm()</span><br><span class="line">files := form.File[<span class="string">&quot;upload[]&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _, file := <span class="keyword">range</span> files &#123;</span><br><span class="line">    dst := path.Join(<span class="string">&quot;./&quot;</span>, file.Filename)</span><br><span class="line">    c.SaveUploadedFile(file, dst))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><h3 id="Cookie的使用"><a href="#Cookie的使用" class="headerlink" title="Cookie的使用"></a>Cookie的使用</h3><p>通过<code>gin.SetCookie(name, value, maxAge, path, domain, secure, httpOnly)</code>函数进行设置Cookie</p>
+<ul>
+<li>name 表示 key</li>
+<li>value 表示 value</li>
+<li>maxAge 表示过期时间, 如果小于等于0, 怎表示删除该 Cookie</li>
+<li>path 表示 cookie 的路径, 表示什么路径可以访问该 Cookie</li>
+<li>domain 表示 cookie 路径的 domain 作用域, 本地可为 localhost, 线上环境为域名</li>
+<li>secure 为 true 表示在 HTTP 中无效</li>
+<li>httpOnly 为 true 表示在程序(JS脚本, applet等)中无效, 防止 XSS 攻击</li>
+</ul>
+<h3 id="二级域名共享Cookie"><a href="#二级域名共享Cookie" class="headerlink" title="二级域名共享Cookie"></a>二级域名共享Cookie</h3><p>在设置domain的时候省略最后一级作用域</p>
+<p>例如: a.anyu.com 和 b.anyu.com 共享时, 只需要将 domain 设置为 <code>.anyu.com</code> 即可</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><h3 id="Session中间件"><a href="#Session中间件" class="headerlink" title="Session中间件"></a>Session中间件</h3><p>需要通过 github.com&#x2F;gin-contrib&#x2F;sessions 中的第三方的 Session 中间件完成</p>
+<p><code>github.com/gin-contrib/sessions</code> 中支持的存储引擎: </p>
+<ul>
+<li>cookie</li>
+<li>memstore</li>
+<li>redis</li>
+<li>memcached</li>
+<li>mongodb</li>
+<li>gorm</li>
+<li>postgresql</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建基于cookie的存储引擎, 并指定加密用的密钥</span></span><br><span class="line">store := cookie.NewStore([]<span class="type">byte</span>&#123;<span class="string">&quot;your_secret_key&quot;</span>&#125;)</span><br><span class="line"><span class="comment">// 配置session的中间件, 指定存储引擎</span></span><br><span class="line">r.Use(sessions.Sessions(<span class="string">&quot;mysession&quot;</span>, store)) <span class="comment">// mysession 为cookie中的key</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// session的设置</span></span><br><span class="line">session := sessions.Default(c)</span><br><span class="line">session.Set(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;information&quot;</span>)</span><br><span class="line">session.Save()	<span class="comment">// 必须调用Save才能保存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// session的使用</span></span><br><span class="line">username := session.Get(<span class="string">&quot;username&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="分布式Session"><a href="#分布式Session" class="headerlink" title="分布式Session"></a>分布式Session</h3><p>使用Redis作为存储引擎</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 配置Redis存储引擎并配置Session </span></span><br><span class="line">store, _ := redis.NewStore(<span class="number">10</span>, <span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;addr:port&quot;</span>, <span class="string">&quot;password&quot;</span>, []<span class="type">byte</span>(<span class="string">&quot;secret_key&quot;</span>))</span><br><span class="line">r.Use(sessions.Sessions(<span class="string">&quot;mysession&quot;</span>, store))</span><br><span class="line"></span><br><span class="line">session := sessions.Default(c)</span><br><span class="line"><span class="comment">// 设置 session 的过期时间</span></span><br><span class="line">session.Options(session.Options&#123;</span><br><span class="line">    MaxAge: <span class="number">3600</span> * <span class="number">6</span> <span class="comment">// 6 hours</span></span><br><span class="line">&#125;)</span><br><span class="line">session.Set(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;information&quot;</span>)</span><br><span class="line">session.Save()	<span class="comment">// 必须调用Save才能保存</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Go/" rel="tag"><i class="fa fa-tag"></i> Go</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/03/02/Golang/" rel="prev" title="Golang">
+                  <i class="fa fa-chevron-left"></i> Golang
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Anyu Elin</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>Word count total: </span>
+    <span title="Word count total">31k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>Reading time total &asymp;</span>
+    <span title="Reading time total">1:54</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

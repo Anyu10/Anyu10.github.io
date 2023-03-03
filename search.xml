@@ -1,6 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>gin</title>
+    <url>/2023/03/03/gin/</url>
+    <content><![CDATA[<h1 id="Gin"><a href="#Gin" class="headerlink" title="Gin"></a>Gin</h1><h2 id="template基本语法"><a href="#template基本语法" class="headerlink" title="template基本语法"></a>template基本语法</h2><h3 id="模板的定义与加载"><a href="#模板的定义与加载" class="headerlink" title="模板的定义与加载"></a>模板的定义与加载</h3><ul>
+<li>使用 <code>loadHTMLGlob</code> 函数加载一个文件夹，<code>*</code>匹配所有文件,<code>**</code>匹配一个文件夹</li>
+<li><code>&#123;&#123; define "admin/default.html" &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 指定模板的名称</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="打印变量"><a href="#打印变量" class="headerlink" title="打印变量"></a>打印变量</h3><ul>
+<li><code>&#123;&#123; .variable_name &#125;&#125;</code> 打印变量</li>
+<li><code>&#123;&#123; $obj = .name &#125;&#125;</code> 定义变量</li>
+<li><code>&#123;&#123; $obj &#125;&#125;</code> 打印定义的变量</li>
+<li><code>&#123;&#123; .struct.member &#125;&#125;</code> 打印结构体的变量</li>
+<li><code>&#123;&#123;- .name -&#125;&#125;</code> 左边的 <code>-</code> 表示去掉左边的空格, 右边的 <code>-</code> 表示去掉右边的空格</li>
+</ul>
+<h3 id="控制流"><a href="#控制流" class="headerlink" title="控制流"></a>控制流</h3><ul>
+<li><code>&#123;&#123; if ... &#125;&#125;</code> <code>&#123;&#123; else if ... &#125;&#125;</code> <code>&#123;&#123; else &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 条件判断<ul>
+<li>通过 <code>gt</code>, <code>eq</code>, <code>ne</code>, <code>lt</code>, <code>le</code>, <code>ge</code> 等进行比较</li>
+<li>eg, <code>gt .name 70</code></li>
+</ul>
+</li>
+<li><code>&#123;&#123; range $key,$value := .obj &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 进行循环遍历<ul>
+<li><code>&#123;&#123; range $key,$value := .obj &#125;&#125;</code> <code>&#123;&#123; else &#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 增加了else</li>
+</ul>
+</li>
+<li><code>&#123;&#123;with .obj&#125;&#125;</code> <code>&#123;&#123; end &#125;&#125;</code> 进行结构体的解构</li>
+</ul>
+<h3 id="预定义模板函数"><a href="#预定义模板函数" class="headerlink" title="预定义模板函数"></a>预定义模板函数</h3><ul>
+<li><code>&#123;&#123; and .x .y &#125;&#125;</code> 等价于 <code>if x then y else y</code> 返回第一个empty参数或最后一个参数</li>
+<li><code>&#123;&#123; or .x .y &#125;&#125;</code> 等价于 <code>if x then x else y</code> 返回第一个非empty参数或最后一个参数</li>
+<li><code>&#123;&#123; not .x &#125;&#125;</code></li>
+<li><code>&#123;&#123; len .x &#125;&#125;</code></li>
+</ul>
+<h3 id="自定义模板函数"><a href="#自定义模板函数" class="headerlink" title="自定义模板函数"></a>自定义模板函数</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UnixToTime</span><span class="params">(timestamp <span class="type">int</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    t := time.Unix(<span class="type">int64</span>(timestamp), <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> t.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 放在加载模板函数前</span></span><br><span class="line">r.SetFuncMap(template.FuncMap&#123;</span><br><span class="line">    <span class="string">&quot;UnixToTime&quot;</span>: UnixToTime   </span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">r.LoadHTMLGlob(<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="嵌套template"><a href="#嵌套template" class="headerlink" title="嵌套template"></a>嵌套template</h3><ul>
+<li><code>&#123;&#123;template "template_name.html" .&#125;&#125;</code></li>
+</ul>
+<h3 id="配置静态路由"><a href="#配置静态路由" class="headerlink" title="配置静态路由"></a>配置静态路由</h3><ul>
+<li><code>r.Static(&quot;/static&quot;, &quot;./static&quot;)</code> 第一个参数表示路由, 第二个参数表示映射的目录</li>
+</ul>
+<h2 id="获取GET和POST的请求数据"><a href="#获取GET和POST的请求数据" class="headerlink" title="获取GET和POST的请求数据"></a>获取GET和POST的请求数据</h2><h3 id="GET请求中的数据"><a href="#GET请求中的数据" class="headerlink" title="GET请求中的数据"></a>GET请求中的数据</h3><ul>
+<li>通过<code>c.Query()</code>函数进行请求</li>
+<li>通过<code>c.ShouldBind()</code>或<code>c.Bind()</code>函数将其绑定到结构体, 其中结构体有 <code>form:&quot;xxx&quot;</code> 的tag</li>
+</ul>
+<h3 id="POST请求中的数据"><a href="#POST请求中的数据" class="headerlink" title="POST请求中的数据"></a>POST请求中的数据</h3><ul>
+<li>通过<code>c.PostForm()</code>函数进行请求</li>
+<li>通过<code>c.ShouldBind()</code>或<code>c.Bind()</code>函数将其绑定到结构体, 其中结构体有 <code>form:&quot;xxx&quot;</code> 的tag</li>
+<li>通过<code>c.GetRawData()</code>获取请求体中的信息, 然后再进行解析</li>
+</ul>
+<h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><ul>
+<li>通过<code>c.Param()</code>函数获取</li>
+<li>通过<code>c.BindUri</code>或<code>c.ShouldBindUri()</code>函数将其绑定到结构体, 其中结构体有 <code>uri:&quot;xxx&quot; binding:&quot;xxx&quot;</code> 的tag</li>
+</ul>
+<h2 id="路由分组和控制器分组"><a href="#路由分组和控制器分组" class="headerlink" title="路由分组和控制器分组"></a>路由分组和控制器分组</h2><h3 id="路由分组"><a href="#路由分组" class="headerlink" title="路由分组"></a>路由分组</h3><p>用Group函数组织</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">defaultRouter := r.Group(<span class="string">&quot;/admin&quot;</span>)</span><br><span class="line">&#123;</span><br><span class="line">    defaultRouter.GET(<span class="string">&quot;/list&quot;</span>, GetList)</span><br><span class="line">    defaultRouter.POST(<span class="string">&quot;/putlist&quot;</span>, PutList)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="控制器分组"><a href="#控制器分组" class="headerlink" title="控制器分组"></a>控制器分组</h3><p>用结构体组织</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> adminController <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserIndex(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserAdd(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(con adminController)</span></span> UserDelete(c *gin.Context) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>控制器可以”继承”</p>
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><h3 id="中间件执行流程"><a href="#中间件执行流程" class="headerlink" title="中间件执行流程"></a>中间件执行流程</h3><p><code>c.Next()</code> 会继续之后的请求</p>
+<p><code>c.Abort()</code> 会中止调用该请求的剩余程序</p>
+<h3 id="全局中间件"><a href="#全局中间件" class="headerlink" title="全局中间件"></a>全局中间件</h3><p><code>r.Use()</code></p>
+<h3 id="路由中使用中间件"><a href="#路由中使用中间件" class="headerlink" title="路由中使用中间件"></a>路由中使用中间件</h3><ul>
+<li><code>r.Group(&quot;/&quot;, middleware)</code>中使用中间件</li>
+<li><code>defaultRouter.Use(middleware)</code>中使用中间件</li>
+</ul>
+<h3 id="中间件中传递数据"><a href="#中间件中传递数据" class="headerlink" title="中间件中传递数据"></a>中间件中传递数据</h3><ul>
+<li>通过<code>c.Set(string1, string2)</code>设置数据</li>
+<li>通过<code>c.Get(string1)</code>使用在别的中间件中设置的数据, 注意<code>c.Get()</code>得到的数据为<code>any</code>类型</li>
+</ul>
+<h3 id="默认中间件"><a href="#默认中间件" class="headerlink" title="默认中间件"></a>默认中间件</h3><p><code>gin.Default()</code>会默认使用<code>Logger</code>和<code>Recovery</code>中间件</p>
+<ul>
+<li><code>Logger</code>中间件会将日志写入<code>gin.DefaultWriter</code></li>
+<li><code>Recovery</code>中间件会recovery任何panic, 如果有panic, 写入500状态码</li>
+</ul>
+<p><code>gin.New()</code>创建不带任何中间件的路由</p>
+<h3 id="中间件中使用goroutine"><a href="#中间件中使用goroutine" class="headerlink" title="中间件中使用goroutine"></a>中间件中使用goroutine</h3><p>在handler中启动新的goroutine时, 不能使用c(*gin.Context), 需要使用<code>c.Copy()</code></p>
+<p>gin中不需要使用WaitGroup, 因为<code>gin.Run()</code>主程序永远不会退出</p>
+<h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><h3 id="单文件"><a href="#单文件" class="headerlink" title="单文件"></a>单文件</h3><p><code>r.MaxMultipartMemory = 8 &lt;&lt; 20</code> 将内存限制设置为8MB, 默认为32MB</p>
+<p><code>file, err := c.FileForm(&quot;file&quot;)</code>, 返回一个<code>*multipart.FileHeader</code>类型的<code>file</code>.</p>
+<p><code>c.SaveUploadedFile(file, dst)</code> 将文件存入到对印的路径</p>
+<h3 id="多文件"><a href="#多文件" class="headerlink" title="多文件"></a>多文件</h3><p><code>r.MaxMultipartMemory = 8 &lt;&lt; 20</code> 将内存限制设置为8MB, 默认为32MB</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">form, err := c.MultipartForm()</span><br><span class="line">files := form.File[<span class="string">&quot;upload[]&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _, file := <span class="keyword">range</span> files &#123;</span><br><span class="line">    dst := path.Join(<span class="string">&quot;./&quot;</span>, file.Filename)</span><br><span class="line">    c.SaveUploadedFile(file, dst))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><h3 id="Cookie的使用"><a href="#Cookie的使用" class="headerlink" title="Cookie的使用"></a>Cookie的使用</h3><p>通过<code>gin.SetCookie(name, value, maxAge, path, domain, secure, httpOnly)</code>函数进行设置Cookie</p>
+<ul>
+<li>name 表示 key</li>
+<li>value 表示 value</li>
+<li>maxAge 表示过期时间, 如果小于等于0, 怎表示删除该 Cookie</li>
+<li>path 表示 cookie 的路径, 表示什么路径可以访问该 Cookie</li>
+<li>domain 表示 cookie 路径的 domain 作用域, 本地可为 localhost, 线上环境为域名</li>
+<li>secure 为 true 表示在 HTTP 中无效</li>
+<li>httpOnly 为 true 表示在程序(JS脚本, applet等)中无效, 防止 XSS 攻击</li>
+</ul>
+<h3 id="二级域名共享Cookie"><a href="#二级域名共享Cookie" class="headerlink" title="二级域名共享Cookie"></a>二级域名共享Cookie</h3><p>在设置domain的时候省略最后一级作用域</p>
+<p>例如: a.anyu.com 和 b.anyu.com 共享时, 只需要将 domain 设置为 <code>.anyu.com</code> 即可</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><h3 id="Session中间件"><a href="#Session中间件" class="headerlink" title="Session中间件"></a>Session中间件</h3><p>需要通过 github.com&#x2F;gin-contrib&#x2F;sessions 中的第三方的 Session 中间件完成</p>
+<p><code>github.com/gin-contrib/sessions</code> 中支持的存储引擎: </p>
+<ul>
+<li>cookie</li>
+<li>memstore</li>
+<li>redis</li>
+<li>memcached</li>
+<li>mongodb</li>
+<li>gorm</li>
+<li>postgresql</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建基于cookie的存储引擎, 并指定加密用的密钥</span></span><br><span class="line">store := cookie.NewStore([]<span class="type">byte</span>&#123;<span class="string">&quot;your_secret_key&quot;</span>&#125;)</span><br><span class="line"><span class="comment">// 配置session的中间件, 指定存储引擎</span></span><br><span class="line">r.Use(sessions.Sessions(<span class="string">&quot;mysession&quot;</span>, store)) <span class="comment">// mysession 为cookie中的key</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// session的设置</span></span><br><span class="line">session := sessions.Default(c)</span><br><span class="line">session.Set(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;information&quot;</span>)</span><br><span class="line">session.Save()	<span class="comment">// 必须调用Save才能保存</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// session的使用</span></span><br><span class="line">username := session.Get(<span class="string">&quot;username&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="分布式Session"><a href="#分布式Session" class="headerlink" title="分布式Session"></a>分布式Session</h3><p>使用Redis作为存储引擎</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 配置Redis存储引擎并配置Session </span></span><br><span class="line">store, _ := redis.NewStore(<span class="number">10</span>, <span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;addr:port&quot;</span>, <span class="string">&quot;password&quot;</span>, []<span class="type">byte</span>(<span class="string">&quot;secret_key&quot;</span>))</span><br><span class="line">r.Use(sessions.Sessions(<span class="string">&quot;mysession&quot;</span>, store))</span><br><span class="line"></span><br><span class="line">session := sessions.Default(c)</span><br><span class="line"><span class="comment">// 设置 session 的过期时间</span></span><br><span class="line">session.Options(session.Options&#123;</span><br><span class="line">    MaxAge: <span class="number">3600</span> * <span class="number">6</span> <span class="comment">// 6 hours</span></span><br><span class="line">&#125;)</span><br><span class="line">session.Set(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;information&quot;</span>)</span><br><span class="line">session.Save()	<span class="comment">// 必须调用Save才能保存</span></span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <tags>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang</title>
+    <url>/2023/03/02/Golang/</url>
+    <content><![CDATA[<h1 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h1><h2 id="扩容规则"><a href="#扩容规则" class="headerlink" title="扩容规则"></a>扩容规则</h2><p>在Go 1.18以前: 当原 slice 容量小于 <code>1024</code> 的时候，新 slice 容量变成原来的 <code>2</code> 倍；原 slice 容量超过 <code>1024</code>，新 slice 容量变成原来的 <code>1.25</code> 倍。</p>
+<p>Go 1.18及以后: 当原slice容量(oldcap)小于256的时候，新slice(newcap)容量为原来的 <code>2</code> 倍；原 slice 容量大于 <code>256</code>，新slice 容量 <code>newcap = oldcap+(oldcap+3*256)/4</code> (threadhold &#x3D; 256)</p>
+<p><strong>其中最后会对内存进行对齐操作</strong></p>
+<span id="more"></span>
+
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// go 1.18 src/runtime/slice.go:178</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">growslice</span><span class="params">(et *_type, old slice, <span class="built_in">cap</span> <span class="type">int</span>)</span></span> slice &#123;</span><br><span class="line">    <span class="comment">// ……</span></span><br><span class="line">    newcap := old.<span class="built_in">cap</span></span><br><span class="line">	doublecap := newcap + newcap</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">cap</span> &gt; doublecap &#123;</span><br><span class="line">		newcap = <span class="built_in">cap</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">const</span> threshold = <span class="number">256</span></span><br><span class="line">		<span class="keyword">if</span> old.<span class="built_in">cap</span> &lt; threshold &#123;</span><br><span class="line">			newcap = doublecap</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> <span class="number">0</span> &lt; newcap &amp;&amp; newcap &lt; <span class="built_in">cap</span> &#123;</span><br><span class="line">                <span class="comment">// Transition from growing 2x for small slices</span></span><br><span class="line">				<span class="comment">// to growing 1.25x for large slices. This formula</span></span><br><span class="line">				<span class="comment">// gives a smooth-ish transition between the two.</span></span><br><span class="line">				newcap += (newcap + <span class="number">3</span>*threshold) / <span class="number">4</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> newcap &lt;= <span class="number">0</span> &#123;</span><br><span class="line">				newcap = <span class="built_in">cap</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// ……</span></span><br><span class="line">    </span><br><span class="line">	capmem = roundupsize(<span class="type">uintptr</span>(newcap) * ptrSize)</span><br><span class="line">	newcap = <span class="type">int</span>(capmem / ptrSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> _MaxSmallSize = <span class="number">32768</span></span><br><span class="line"><span class="keyword">const</span> smallSizeMax = <span class="number">1024</span></span><br><span class="line"><span class="keyword">const</span> smallSizeDiv = <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">roundupsize</span><span class="params">(size <span class="type">uintptr</span>)</span></span> <span class="type">uintptr</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> size &lt; _MaxSmallSize &#123;</span><br><span class="line">		<span class="keyword">if</span> size &lt;= smallSizeMax<span class="number">-8</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="type">uintptr</span>(class_to_size[size_to_class8[divRoundUp(size, smallSizeDiv)]])</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="type">uintptr</span>(class_to_size[size_to_class128[divRoundUp(size-smallSizeMax, largeSizeDiv)]])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> size+_PageSize &lt; size &#123;</span><br><span class="line">		<span class="keyword">return</span> size</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> alignUp(size, _PageSize)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h1>]]></content>
+      <tags>
+        <tag>Go</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hashing</title>
+    <url>/2023/02/21/Hashing/</url>
+    <content><![CDATA[<h1 id="Hash-Collision"><a href="#Hash-Collision" class="headerlink" title="Hash Collision"></a>Hash Collision</h1><ul>
+<li>Open Addressing Scheme<ul>
+<li>Linear Probing Hashing</li>
+<li>Quadratic Probing Hashing</li>
+<li>Double Hashing</li>
+<li>Robin Hood Hashing</li>
+<li>Hopscotch Hashing</li>
+<li>Cuckoo Hashing</li>
+</ul>
+</li>
+<li>Chaining Scheme<ul>
+<li>Separate Chaining Hashing</li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+]]></content>
+  </entry>
+  <entry>
     <title>ClickHouse</title>
     <url>/2023/02/19/ClickHouse/</url>
     <content><![CDATA[<h1 id="数据库基本概念"><a href="#数据库基本概念" class="headerlink" title="数据库基本概念"></a>数据库基本概念</h1><h2 id="数据库介绍"><a href="#数据库介绍" class="headerlink" title="数据库介绍"></a>数据库介绍</h2><p>数据库: 结构化的信息，数据的集合，存储在存储介质中，可以通过查询语言查询信息</p>
