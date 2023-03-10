@@ -30,8 +30,13 @@
 <meta property="og:description" content="编译器和静态分析编译器的结构">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="d:\Blog\source_images\image-20230120191244188.png">
+<meta property="og:image" content="https://golang.design/go-questions/compile/assets/7.png">
+<meta property="og:image" content="https://golang.design/go-questions/compile/assets/8.png">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fb1507b67fb41d6860254c2266ab00e~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp">
+<meta property="og:image" content="https://golang.design/go-questions/compile/assets/11.png">
+<meta property="og:image" content="https://golang.design/go-questions/compile/assets/21.png">
 <meta property="article:published_time" content="2023-01-20T09:10:28.000Z">
-<meta property="article:modified_time" content="2023-01-28T08:54:56.120Z">
+<meta property="article:modified_time" content="2023-03-08T10:25:03.291Z">
 <meta property="article:author" content="Anyu Elin">
 <meta property="article:tag" content="Go">
 <meta property="article:tag" content="Compiler">
@@ -147,7 +152,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">编译器和静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">编译器的结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">静态分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Go-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Go 编译器优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%86%85%E8%81%94-Function-Inlining"><span class="nav-number">2.1.</span> <span class="nav-text">函数内联 (Function Inlining)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E8%81%94%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">内联优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90-Escape-Analysis"><span class="nav-number">2.3.</span> <span class="nav-text">逃逸分析 (Escape Analysis)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%83%E9%80%B8%E4%BC%98%E5%8C%96"><span class="nav-number">2.4.</span> <span class="nav-text">逃逸优化</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">编译器和静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">编译器的结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">静态分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Go-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Go 编译器优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%86%85%E8%81%94-Function-Inlining"><span class="nav-number">2.1.</span> <span class="nav-text">函数内联 (Function Inlining)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E8%81%94%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">内联优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90-Escape-Analysis"><span class="nav-number">2.3.</span> <span class="nav-text">逃逸分析 (Escape Analysis)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%83%E9%80%B8%E4%BC%98%E5%8C%96"><span class="nav-number">2.4.</span> <span class="nav-text">逃逸优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Go-%E7%BC%96%E8%AF%91%E4%B8%8E%E9%93%BE%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text">Go 编译与链接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%92%8C%E6%B1%87%E7%BC%96"><span class="nav-number">3.1.</span> <span class="nav-text">编译和汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90-%E5%89%8D%E7%AB%AF"><span class="nav-number">3.1.1.</span> <span class="nav-text">词法分析(前端)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90-%E5%89%8D%E7%AB%AF"><span class="nav-number">3.1.2.</span> <span class="nav-text">语法分析(前端)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90-%E5%89%8D%E7%AB%AF"><span class="nav-number">3.1.3.</span> <span class="nav-text">语义分析(前端)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90-%E5%89%8D%E7%AB%AF"><span class="nav-number">3.1.4.</span> <span class="nav-text">中间代码生成(前端)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96-%E5%90%8E%E7%AB%AF"><span class="nav-number">3.1.5.</span> <span class="nav-text">代码优化(后端)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90-%E5%90%8E%E7%AB%AF"><span class="nav-number">3.1.6.</span> <span class="nav-text">目标代码生成(后端)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">链接过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Go-%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4%E5%92%8C%E5%90%AF%E5%8A%A8"><span class="nav-number">4.</span> <span class="nav-text">Go 编译命令和启动</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4"><span class="nav-number">4.1.</span> <span class="nav-text">编译命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E5%90%AF%E5%8A%A8"><span class="nav-number">4.2.</span> <span class="nav-text">程序启动</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -162,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -231,7 +236,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-01-28 16:54:56" itemprop="dateModified" datetime="2023-01-28T16:54:56+08:00">2023-01-28</time>
+      <time title="Modified: 2023-03-08 18:25:03" itemprop="dateModified" datetime="2023-03-08T18:25:03+08:00">2023-03-08</time>
     </span>
 
   
@@ -241,14 +246,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>674</span>
+      <span>4.5k</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>2 mins.</span>
+      <span>16 mins.</span>
     </span>
 </div>
 
@@ -266,7 +271,7 @@
 <li>分析部分 (front end)<ul>
 <li>词法分析 –&gt; 词素(lexeme)</li>
 <li>语法分析 –&gt; 抽象语法树(AST, Abstract Syntax Tree)</li>
-<li>语义分析，收集类型信息，进行语义检查 –&gt; decorated AST</li>
+<li>语义分析，<strong>收集类型信息</strong>，<strong>进行语义检查</strong> –&gt; decorated AST</li>
 <li>中间代码生成 –&gt; Intermediate Representation(IR) <ul>
 <li>IR 是<strong>机器无关</strong>的</li>
 </ul>
@@ -317,14 +322,36 @@
 <p>内联策略：调用和被调用函数的规模</p>
 <h2 id="内联优化"><a href="#内联优化" class="headerlink" title="内联优化"></a>内联优化</h2><p>Go函数内联受到的限制多：interface，defer等语言特性限制了内联，内联策略非常保守</p>
 <p>优化：调整函数内联的策略</p>
-<h2 id="逃逸分析-Escape-Analysis"><a href="#逃逸分析-Escape-Analysis" class="headerlink" title="逃逸分析 (Escape Analysis)"></a>逃逸分析 (Escape Analysis)</h2><p>分析代码中指针的动态作用域：指针在何处能被访问</p>
+<h2 id="逃逸分析-Escape-Analysis"><a href="#逃逸分析-Escape-Analysis" class="headerlink" title="逃逸分析 (Escape Analysis)"></a>逃逸分析 (Escape Analysis)</h2><p>逃逸分析: 在编译原理中, 分析指针动态作用域(指针能在何处被访问)的方法称之为逃逸分析. 当一个对象的指针被多个方法或线程引用时, 我们称这个指针发生了逃逸.</p>
+<p>Go语言的逃逸分析是编译器执行<strong>静态代码分析</strong>(不执行程序的情况下对代码进行语法分析, 数据流分析, 控制流分析等分析方法)后，<strong>对内存管理进行的优化和简化</strong>，它可以决定一个<strong>变量是分配到堆还栈</strong>上.</p>
+<p>Go语言逃逸分析最基本的原则是: </p>
+<ul>
+<li>如果一个函数返回对一个变量的引用，那么它就会发生逃逸. 编译器会分析代码的特征和代码生命周期, Go中的变量只有在编译器可以证明在函数返回后不会再被引用的, 才分配到栈上, 其他情况下都是分配到堆上。</li>
+<li>对一个变量取地址, 可能会被分配到堆上. 但是编译器进行逃逸分析后, 如果考察到在函数返回后, 此变量不会被引用, 那么还是会被分配到栈上.</li>
+</ul>
+<p>编译器会根据变量是否被外部引用来决定是否逃逸:</p>
+<ol>
+<li>如果函数外部没有引用，则<strong>优先</strong>放到栈中;<ul>
+<li>栈内存分配则会非常快. 栈分配内存只需要两个CPU指令: “PUSH”和”RELEASE”, 分配和释放;</li>
+</ul>
+</li>
+<li>如果函数外部存在引用，则<strong>必定</strong>放到堆中;<ul>
+<li>堆适合不可预知大小的内存分配. 但是为此付出的代价是分配速度较慢, 而且会形成内存碎片. 堆分配内存首先需要去找到一块大小合适的内存块, 之后要通过垃圾回收才能释放.</li>
+</ul>
+</li>
+</ol>
+<p><code>go build -gcflags &quot;-m -l&quot; main.go</code> 可以进行逃逸分析. 其中 <code>-gcflags</code> 用于设置编译器选项: <code>-l</code> 和 <code>-m</code>. <code>-m</code> 表示打印出逃逸分析的结果, <code>-l</code> 表示禁用内联函数(内联函数可以逃逸优化)</p>
+<p><code>go tool compile -S main.go</code> 可以查看汇编后的代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span> *<span class="type">int</span> &#123;</span><br><span class="line">	t := <span class="number">3</span></span><br><span class="line">	<span class="keyword">return</span> &amp;t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	x := foo()</span><br><span class="line">	fmt.Println(*x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码的结果是: &amp;t escapes to heap; *x escapes to heap. 其中 x 也逃逸了是因为它被传递给了 <code>fmt.Fprintln</code> 函数，这个函数的参数是 interface{} 类型, 所以编译器无法确定它的具体类型, 也就无法确定它的生命周期. 因此, 为了安全起见, 编译器会把x分配到堆上, 而不是栈上.</p>
 <p>大致思路：</p>
 <ul>
 <li>从对象被分配处出发，沿着控制流观察对象的数据流：</li>
 <li>若发现指针 p 在当前作用域 s 的时候：<ul>
 <li>作为参数传递给别的函数</li>
 <li>传递给全局变量</li>
-<li>传递给其他goroutine</li>
+<li>传递给其他 goroutine</li>
 <li>传递给已逃逸的指针指向的对象</li>
 </ul>
 </li>
@@ -335,6 +362,108 @@
 <ul>
 <li>栈的分配和回收速度很快：移动sp</li>
 <li>减少在heap上的分配，减轻GC的负担</li>
+</ul>
+<h1 id="Go-编译与链接"><a href="#Go-编译与链接" class="headerlink" title="Go 编译与链接"></a>Go 编译与链接</h1><h2 id="编译和汇编"><a href="#编译和汇编" class="headerlink" title="编译和汇编"></a>编译和汇编</h2><p>通常将编译和链接合并到一起的过程称为构建(Build)</p>
+<p><img src="https://golang.design/go-questions/compile/assets/7.png" alt="compile"></p>
+<p>编译过程:</p>
+<ul>
+<li>编译器是将高级语言翻译成机器语言的一个工具, 编译过程一般分为 6 步: <strong>词法分析(扫描)</strong>, <strong>语法分析</strong>, <strong>语义分析</strong>, <strong>源代码优化</strong>, <strong>代码生成</strong>, <strong>目标代码优化</strong>. 编译过程就是对源文件进行<strong>词法分析</strong>, <strong>语法分析</strong>, <strong>语义分析</strong>, <strong>优化</strong>, 最后生成汇编代码文件, 以 <code>.s</code> 作为文件后缀.</li>
+<li>汇编器会将汇编代码转变成机器可以执行的指令. 由于每一条汇编语句几乎都与一条机器指令相对应, 所以只是一个简单的一一对应, 比较简单, 没有语法, 语义分析, 也没有优化这些步骤.</li>
+</ul>
+<p><img src="https://golang.design/go-questions/compile/assets/8.png" alt="编译过程总览"></p>
+<h3 id="词法分析-前端"><a href="#词法分析-前端" class="headerlink" title="词法分析(前端)"></a>词法分析(前端)</h3><p>Go 程序源文件在机器看来不过是一堆二进制位。我们能读懂，是因为编辑器按照 UTF-8 的方式把二进制位进行了编码. 将所有的二进制字符串对映成了对应的码字之后, 我们就可以看到有意义的字符串.</p>
+<p>词法分析其实就是做的类似的工作. 输入是原始的 Go 程序文件, 在词法分析器看来, 就是一长串二进制位, 经过它的分析后, 变成有意义的记号. 简单来说, <strong>词法分析(lexical analysis)是计算机科学中将字符序列转换为标记(token)序列的过程</strong>. <strong>进行词法分析的程序或者函数叫作词法分析器(lexical analyzer, 简称 lexer), 也叫扫描器(scanner). 词法分析器一般以函数的形式存在, 供语法分析器调用</strong>.</p>
+<p>Scanner(Lexer) 采用类似有限状态机的算法(DFA: Deterministic Finite Automachine), 将源代码的字符分割为一系列的记号(Token)</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fb1507b67fb41d6860254c2266ab00e~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>记号一般包含以下种类: 关键字, 标识符, 字面量(字符串, 数字), 特殊符号(加减乘除, 等号等等).</p>
+<p>其中词法分析中最关键的函数是 <code>next()</code>, 它不断的读取下一个字符, 直到这些字符可以构成一个 token.</p>
+<p>代码的主要逻辑就是通过 <code>c := s.getr()</code> 获取下一个未被解析的字符, 并且会跳过之后的空格, 回车, 换行, tab 字符, 然后进入一个大的 <code>switch-case</code> 语句, 匹配各种不同的情形, 最终可以解析出一个 Token. 并且把相关的行, 列数字记录下来, 这样就完成一次解析过程.</p>
+<blockquote>
+<p>当前包中的词法分析器 scanner 也只是为上层提供了 next 方法, 词法解析的过程都是惰性的, 只有在上层的解析器需要时才会调用 next() 获取最新的 Token.</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *scanner)</span></span> next() &#123;</span><br><span class="line"><span class="comment">// ……</span></span><br><span class="line"></span><br><span class="line">redo:</span><br><span class="line">	<span class="comment">// skip white space</span></span><br><span class="line">	c := s.getr()</span><br><span class="line">	<span class="keyword">for</span> c == <span class="string">&#x27; &#x27;</span> || c == <span class="string">&#x27;\t&#x27;</span> || c == <span class="string">&#x27;\n&#x27;</span> &amp;&amp; !nlsemi || c == <span class="string">&#x27;\r&#x27;</span> &#123;</span><br><span class="line">		c = s.getr()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// token start</span></span><br><span class="line">	s.line, s.col = s.source.line0, s.source.col0</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> isLetter(c) || c &gt;= utf8.RuneSelf &amp;&amp; s.isIdentRune(c, <span class="literal">true</span>) &#123;</span><br><span class="line">		s.ident()</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">switch</span> c &#123;</span><br><span class="line">    <span class="comment">// ……</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;\n&#x27;</span>:</span><br><span class="line">		s.lit = <span class="string">&quot;newline&quot;</span></span><br><span class="line">		s.tok = _Semi</span><br><span class="line"></span><br><span class="line">	<span class="keyword">case</span> <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;5&#x27;</span>, <span class="string">&#x27;6&#x27;</span>, <span class="string">&#x27;7&#x27;</span>, <span class="string">&#x27;8&#x27;</span>, <span class="string">&#x27;9&#x27;</span>:</span><br><span class="line">		s.number(c)</span><br><span class="line">		</span><br><span class="line">	<span class="comment">// ……</span></span><br><span class="line">	</span><br><span class="line">   <span class="keyword">default</span>:</span><br><span class="line">		s.tok = <span class="number">0</span></span><br><span class="line">		s.<span class="type">error</span>(fmt.Sprintf(<span class="string">&quot;invalid character %#U&quot;</span>, c))</span><br><span class="line">		<span class="keyword">goto</span> redo</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">assignop:</span><br><span class="line">	<span class="keyword">if</span> c == <span class="string">&#x27;=&#x27;</span> &#123;</span><br><span class="line">		s.tok = _AssignOp</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	s.ungetr()</span><br><span class="line">	s.tok = _Operator</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="语法分析-前端"><a href="#语法分析-前端" class="headerlink" title="语法分析(前端)"></a>语法分析(前端)</h3><p>语法分析是根据某种特定的形式文法（Grammar）对 Token 序列构成的输入文本进行分析并确定其语法结构的一种过程</p>
+<p>由词法分析得到的 Token 序列, 通过进一步的处理, 生成一颗以表达式为节点的语法树, 称为<strong>抽象语法树(Abstract Syntax Tree, AST)</strong>. 符号表达式和数字表达式是最小的表达式, 他们不能被分解, 往往作为语法树的叶子节点. 语法分析的过程可以检测一些形式上的错误, 例如: 括号是否缺少一半, <code>+</code> 号表达式缺少一个操作数等</p>
+<hr>
+<p>Context-Free Grammar: 上下文无关语法, 表示语言句子不需要考虑上下文就可以判断正确性.</p>
+<p>上下文无关语法G: <strong>终结符集合T + 非终结符集合N + 产生式集合P + 起始符号S</strong></p>
+<ul>
+<li><strong>终结符</strong>: 组成串的基本符号. 可以理解为词法分析器产生的token集合. 比如 <code>+</code> <code>Id</code> <code>(</code> <code>)</code> 等.</li>
+<li><strong>非终结符</strong>: 表示token的的集合的语法变量. 比如 <code>stmt</code> <code>varDecl</code> 等等.</li>
+<li><strong>产生式</strong>: 表示形式, <code>S : AB</code>, 就是说 S 的含义可以用语法 AB 进行表达.</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">start：blockStmts ;               <span class="comment">//起始</span></span><br><span class="line">block : <span class="string">&#x27;&#123;&#x27;</span> blockStmts <span class="string">&#x27;&#125;&#x27;</span> ;      <span class="comment">//语句块</span></span><br><span class="line">blockStmts : stmt* ;              <span class="comment">//语句块中的语句</span></span><br><span class="line">stmt = varDecl | expStmt | returnStmt | block;   <span class="comment">//语句</span></span><br><span class="line">varDecl : <span class="keyword">type</span> Id varInitializer？ <span class="string">&#x27;;&#x27;</span> ;         <span class="comment">//变量声明</span></span><br><span class="line"><span class="keyword">type</span> : Int | Long ;                              <span class="comment">//类型</span></span><br><span class="line">varInitializer : <span class="string">&#x27;=&#x27;</span> exp ;                       <span class="comment">//变量初始化</span></span><br><span class="line">expStmt : exp <span class="string">&#x27;;&#x27;</span> ;                              <span class="comment">//表达式语句</span></span><br><span class="line">returnStmt : Return exp <span class="string">&#x27;;&#x27;</span> ;                    <span class="comment">//return语句</span></span><br><span class="line">exp : add ;                                      <span class="comment">//表达式       </span></span><br><span class="line">add : add <span class="string">&#x27;+&#x27;</span> mul | mul;                         <span class="comment">//加法表达式</span></span><br><span class="line">mul : mul <span class="string">&#x27;*&#x27;</span> pri | pri;                         <span class="comment">//乘法表达式</span></span><br><span class="line">pri : IntLiteral | Id | <span class="string">&#x27;(&#x27;</span> exp <span class="string">&#x27;)&#x27;</span> ;            <span class="comment">//基础表达式 </span></span><br></pre></td></tr></table></figure>
+
+<p><code>展开</code>(expand)：将P(A-&gt;<em>u</em>)应用到符号串vAw中，得到新串v<em>u</em>w</p>
+<p><code>折叠</code>(reduce)：将P(A-&gt;<em>uu</em>)应用到符号串v<em>uu</em>w中，得到新串vAw</p>
+<p><code>推导</code>(derivate)：符号串<em>u</em>应用一系列产生式, 变成符号串<em>v</em>, 则<em>u</em>&#x3D;&gt;<em>v：S &#x3D;&gt; ab | b | bb</em></p>
+<hr>
+<p>巴科斯范式(BNF): BNF是描述上下文无关理论的一种具体方法，通过BNF可以实现上下文无关文法的具体化、公式化、科学化，是实现代码解析的必要条件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">expr</span>&gt;</span> ::= <span class="tag">&lt;<span class="name">expr</span>&gt;</span> + <span class="tag">&lt;<span class="name">term</span>&gt;</span></span><br><span class="line">         | <span class="tag">&lt;<span class="name">expr</span>&gt;</span> - <span class="tag">&lt;<span class="name">term</span>&gt;</span></span><br><span class="line">         | <span class="tag">&lt;<span class="name">term</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">term</span>&gt;</span> ::= <span class="tag">&lt;<span class="name">term</span>&gt;</span> * <span class="tag">&lt;<span class="name">factor</span>&gt;</span></span><br><span class="line">         | <span class="tag">&lt;<span class="name">term</span>&gt;</span> / <span class="tag">&lt;<span class="name">factor</span>&gt;</span></span><br><span class="line">         | <span class="tag">&lt;<span class="name">factor</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">factor</span>&gt;</span> ::= ( <span class="tag">&lt;<span class="name">expr</span>&gt;</span> )</span><br><span class="line">           | Num</span><br></pre></td></tr></table></figure>
+
+<p>BNF 本质上就是树形分解, 分解成一棵抽象语法树</p>
+<ul>
+<li>每个产生式就是一个子树, 在写编译器时, 每个子树对应一个解析函数.</li>
+<li>叶子节点叫做<strong>终结符</strong>, 非叶子节点叫做<strong>非终结符</strong>.</li>
+</ul>
+<p>解析 BNF 范式: 递归下降算法(Recursive Descent Parsing)</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Recursive_descent_parser">递归下降算法有两种基本形式：带回溯和不带回溯。带回溯的递归下降算法在确定使用哪个产生式时，会尝试每个可能的产生式，如果失败了就回退到上一步重新选择。不带回溯的递归下降算法在确定使用哪个产生式时，会根据输入字符串中当前字符和预测字符来做出决定，如果失败了就报错。</a><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Recursive_descent_parser">1</a><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/recursive-descent-parser/">4</a></p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Recursive_descent_parser">带回溯的递归下降算法可以处理任何文法，但是不能保证一定能终止。不带回溯的递归下降算法只能处理LL(k)文法，但是可以保证一定能终止。</a></p>
+</blockquote>
+<h3 id="语义分析-前端"><a href="#语义分析-前端" class="headerlink" title="语义分析(前端)"></a>语义分析(前端)</h3><p>语法分析完成后, 我们并不知道语句的具体意义是什么. 例如如果 <code>*</code> 号的两棵子树如果是两个指针, 这是不合法的, 但语法分析检测不出来, 语义分析就是用来检测语法是否正确的. </p>
+<p>编译期所能检查的是静态语义, 可以认为这是在”代码”阶段, 包括变量类型的匹配, 转换等. 例如, 将一个浮点值赋给一个指针变量的时候, 明显的类型不匹配, 就会报编译错误. 而对于运行期间才会出现的错误: 不小心除了一个 0, 语义分析是没办法检测的.</p>
+<p>语义分析阶段完成之后，会在每个节点上标注上类型. Go 语言编译器在这一阶段检查常量, 类型, 函数声明以及变量赋值语句的类型, 然后检查哈希中键的类型. 实现类型检查的函数通常都是几千行的巨型 switch&#x2F;case 语句.</p>
+<blockquote>
+<p>类型检查是 Go 语言编译的第二个阶段，在词法和语法分析之后我们得到了每个文件对应的抽象语法树，随后的类型检查会遍历抽象语法树中的节点，对每个节点的类型进行检验，找出其中存在的语法错误。</p>
+</blockquote>
+<blockquote>
+<p>在这个过程中也可能会对抽象语法树进行改写，这不仅能够去除一些不会被执行的代码对编译进行优化提高执行效率，而且也会修改 make、new 等关键字对应节点的操作类型。</p>
+</blockquote>
+<blockquote>
+<p>例如比较常用的 make 关键字，用它可以创建各种类型，如 slice，map，channel 等等。到这一步的时候，对于 make 关键字，也就是 OMAKE 节点，会先检查它的参数类型，根据类型的不同，进入相应的分支。如果参数类型是 slice，就会进入 TSLICE case 分支，检查 len 和 cap 是否满足要求，如 len &lt;&#x3D; cap。最后节点类型会从 OMAKE 改成 OMAKESLICE</p>
+</blockquote>
+<h3 id="中间代码生成-前端"><a href="#中间代码生成-前端" class="headerlink" title="中间代码生成(前端)"></a>中间代码生成(前端)</h3><p>中间代码生成阶段将 decorated AST 转化为中间代码(Intermediate Representation, IR), IR 是语法树的顺序表示.</p>
+<p>IR 与机器和运行时环境无关, 通常分为: <strong>三地址码</strong>, <strong>P-代码</strong>.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">三地址码:</span><br><span class="line">x = y op z</span><br></pre></td></tr></table></figure>
+
+<p>Go 语言的中间代码表示形式为 SSA(Static Single-Assignment, 静态单赋值), 之所以称之为单赋值, 是因为每个名字在 SSA 中仅被赋值一次.</p>
+<p>这一阶段中: 会根据CPU的架构设置用于生成中间代码的变量, 例如编译器使用的指针和寄存器的大小, 可用寄存器列表等. 中间代码和最终的机器码会共享这部分设置.</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/8853318">中间代码生成是机器无关的，但是它也需要考虑目标机器的一些特性，以便于后续的目标代码生成。中间代码生成时，编译器会根据 CPU 的架构设置一些参数，例如指针和寄存器的大小、可用寄存器列表等，这些参数会影响中间代码的表示形式和优化策略。但是这并不意味着中间代码本身就是机器相关的，它仍然可以在不同的平台上运行或转换。</a></p>
+</blockquote>
+<p>在生成中间代码之前, 会对AST中部分节点进行替换, 部分替换如下图所示:</p>
+<p><img src="https://golang.design/go-questions/compile/assets/11.png" alt="builtin mapping"></p>
+<blockquote>
+<p>Go 语言的主程序在执行时会调用 runtime 中的函数，也就是说关键字和内置函数的功能其实是由语言的编译器和运行时共同完成的。</p>
+<p>中间代码的生成过程其实就是从 AST 抽象语法树到 SSA 中间代码的转换过程，在这期间会对语法树中的关键字在进行一次更新，更新后的语法树会经过多轮处理转变最后的 SSA 中间代码。</p>
+</blockquote>
+<h3 id="代码优化-后端"><a href="#代码优化-后端" class="headerlink" title="代码优化(后端)"></a>代码优化(后端)</h3><p>代码优化器会对一些指令进行优化, 例如使用移位指令代替乘法指令等.</p>
+<h3 id="目标代码生成-后端"><a href="#目标代码生成-后端" class="headerlink" title="目标代码生成(后端)"></a>目标代码生成(后端)</h3><p>不同机器的机器字长, 寄存器等等都不一样, 意味着在不同机器上跑的机器码是不一样的. 最后一步的目的就是要生成能在不同 CPU 架构上运行的代码.</p>
+<h2 id="链接过程"><a href="#链接过程" class="headerlink" title="链接过程"></a>链接过程</h2><p>编译过程是对单个文件而言的, 文件和文件之间需要引用定义在其他模块的变量或函数. 这些变量和函数的地址在此阶段确定.</p>
+<p>链接过程就是要把编译阶段得到的一个个目标文件链接成可执行文件, 得到的文件分为数据段, 代码段等. 运行时会被装载到内存中, 各个段的属性不同, 保证了程序的安全运行.</p>
+<h1 id="Go-编译命令和启动"><a href="#Go-编译命令和启动" class="headerlink" title="Go 编译命令和启动"></a>Go 编译命令和启动</h1><h2 id="编译命令"><a href="#编译命令" class="headerlink" title="编译命令"></a>编译命令</h2><p><code>go run</code>, <code>go build</code>, <code>go install</code></p>
+<p><code>-x</code>: 列出代码执行过程</p>
+<p><code>-work</code>: 打印编译过程中的临时文件夹, 通常情况编译完成后会被删除</p>
+<p><code>-v</code>: 打印命令执行过程中所涉及到的代码包名称</p>
+<p><code>-race</code>: 检测并报告程序中的数据竞争问题</p>
+<h2 id="程序启动"><a href="#程序启动" class="headerlink" title="程序启动"></a>程序启动</h2><p><code>go build -gcflags &quot;-N -l&quot; -o hello src/main.go</code> 命令中 <code>-N</code> 表示关闭编译器优化, <code>-l</code> 表示关闭函数内联.</p>
+<p>在 linux 上运行时入口文件为 <code>src/runtime/rt0_linux_amd64.s</code>, runtime 目录下有各种不同名称的程序入口文件, 支持各种操作系统和架构.</p>
+<p>go 程序 bootstrap 的过程:</p>
+<ol>
+<li>检查运行平台的CPU, 设置好程序运行需要相关标志.</li>
+<li>TLS的初始化.</li>
+<li><code>runtime.args</code>, <code>runtime.osinit</code>, <code>runtime.schedinit</code> 三个方法做好程序运行需要的各种变量与调度器.</li>
+<li><code>runtime.newproc</code> 创建新的 goroutine 用于绑定用户写的 main 方法.</li>
+<li><code>runtime.mstart</code> 开始 goroutine 的调度.</li>
+</ol>
+<p><img src="https://golang.design/go-questions/compile/assets/21.png" alt="golang bootstrap"></p>
+<p>main 函数里执行的一些重要的操作包括:</p>
+<ul>
+<li>新建一个线程执行 sysmon 函数</li>
+<li>定期垃圾回收和调度抢占</li>
+<li>执行所有的 init 函数等等</li>
 </ul>
 
     </div>
@@ -393,14 +522,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>Word count total: </span>
-    <span title="Word count total">49k</span>
+    <span title="Word count total">61k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>Reading time total &asymp;</span>
-    <span title="Reading time total">3:01</span>
+    <span title="Reading time total">3:43</span>
   </span>
 </div>
 
